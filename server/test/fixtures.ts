@@ -27,3 +27,21 @@ export function makeItem(db: Db, venueId: string, over: Partial<ItemRow> = {}, a
   recordCreation(db, id, over.state ?? 'found', { userId: null, label: 'test' });
   return id;
 }
+
+import { hashPassword } from '../src/auth/password';
+import type { FastifyInstance } from 'fastify';
+
+export function makeUser(db: Db, venueId: string, role: 'staff' | 'admin' = 'staff', email = `${role}@test.dev`): string {
+  const id = newId();
+  db.prepare('INSERT INTO users (id, venue_id, email, name, role, password_hash, created_at) VALUES (?,?,?,?,?,?,?)')
+    .run(id, venueId, email, `Test ${role}`, role, hashPassword('pw'), nowIso());
+  return id;
+}
+
+/** Log in via the API and return a Cookie header value. */
+export async function loginCookie(app: FastifyInstance, email: string, password = 'pw'): Promise<string> {
+  const res = await app.inject({ method: 'POST', url: '/api/auth/login', payload: { email, password } });
+  const c = res.cookies.find((x) => x.name === 'vlf_session');
+  if (!c) throw new Error(`login failed: ${res.body}`);
+  return `vlf_session=${c.value}`;
+}
