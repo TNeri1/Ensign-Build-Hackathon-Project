@@ -1,7 +1,9 @@
 import { useEffect, useId, useRef, useState } from 'react';
 import { Icon } from '../m3/Icon';
+import { canUseLiveCamera } from '../../lib/camera';
 import { Button } from '../m3/Button';
 import { IconButton } from '../m3/IconButton';
+import { CameraDialog } from './CameraDialog';
 import './PhotoPicker.css';
 
 interface Props {
@@ -10,8 +12,9 @@ interface Props {
 }
 
 /**
- * Large tappable "Add photo" card over a native file input (opens the rear camera on phones), plus an
- * "Upload photo" button for an existing picture (gallery / files, no camera). Shows a preview once chosen.
+ * Large tappable "Add photo" card: opens the in-app camera (CameraDialog) where live camera access is allowed
+ * (https or localhost), else the native input with capture="environment" (the phone's camera app). Plus an
+ * "Upload photo" button for an existing picture (gallery / files). Shows a preview once chosen.
  * Setting `file` to null also clears the native inputs.
  */
 export function PhotoPicker({ file, onChange }: Props) {
@@ -19,6 +22,8 @@ export function PhotoPicker({ file, onChange }: Props) {
   const [preview, setPreview] = useState<string | null>(null);
   const input = useRef<HTMLInputElement>(null);
   const upload = useRef<HTMLInputElement>(null);
+  const [cameraOpen, setCameraOpen] = useState(false);
+  const nativeCamera = useRef(false);
 
   useEffect(() => {
     if (!file) {
@@ -40,6 +45,11 @@ export function PhotoPicker({ file, onChange }: Props) {
         type="file"
         accept="image/*"
         capture="environment"
+        onClick={(e) => {
+          // Label tap or keyboard: prefer the in-app camera; the native picker only as fallback.
+          if (!nativeCamera.current && canUseLiveCamera()) { e.preventDefault(); setCameraOpen(true); }
+          nativeCamera.current = false;
+        }}
         onChange={(e) => onChange(e.target.files?.[0] ?? null)}
       />
       <label htmlFor={id} className="photo-picker__target">
@@ -74,6 +84,12 @@ export function PhotoPicker({ file, onChange }: Props) {
           {preview ? 'Choose a different photo' : 'Upload photo'}
         </Button>
       </div>
+      <CameraDialog
+        open={cameraOpen}
+        onClose={() => setCameraOpen(false)}
+        onCapture={onChange}
+        onFallback={() => { setCameraOpen(false); nativeCamera.current = true; input.current?.click(); }}
+      />
       {preview && (
         <IconButton icon="close" label="Remove photo" variant="tonal" className="photo-picker__remove" onClick={() => onChange(null)} />
       )}

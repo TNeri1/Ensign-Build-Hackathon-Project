@@ -1,4 +1,5 @@
 import { useEffect, useId, useRef, type FormEvent, type MouseEvent, type SyntheticEvent } from 'react';
+import { createPortal } from 'react-dom';
 import { Button } from './Button';
 import { Icon } from './Icon';
 import type { IconName } from './icons';
@@ -84,7 +85,9 @@ export function Dialog({
     downOnScrim.current = false;
   };
 
-  return (
+  // Portal to <body>: the dialog has its own <form>, which must never be nested inside a page <form>
+  // (invalid HTML; e.g. Intake's camera dialog). React events still bubble through the component tree.
+  return createPortal(
     <dialog
       ref={ref}
       className={`md-dialog${icon ? ' md-dialog--with-icon' : ''}`}
@@ -116,6 +119,7 @@ export function Dialog({
           </Button>
         </div>
       </form>
-    </dialog>
+    </dialog>,
+    document.body,
   );
 }

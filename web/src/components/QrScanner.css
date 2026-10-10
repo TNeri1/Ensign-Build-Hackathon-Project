@@ -15,8 +15,8 @@
 .qr-scanner #qr-reader { position: relative; z-index: 1; border: none !important; }
 .qr-scanner #qr-reader video { display: block; width: 100% !important; height: auto !important; }
 .qr-scanner #qr-reader img,
-.qr-scanner #qr-reader__dashboard,
-.qr-scanner #qr-reader__header_message { display: none !important; }
+.qr-scanner #qr-reader [id$="__dashboard"],
+.qr-scanner #qr-reader [id$="__header_message"] { display: none !important; }
 
 .qr-scanner__placeholder {
   position: absolute;
