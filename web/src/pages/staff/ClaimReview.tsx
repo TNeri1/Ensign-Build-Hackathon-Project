@@ -5,6 +5,7 @@ import { useGet } from '../../api/useApi';
 import { Alert } from '../../components/m3/Alert';
 import { Button } from '../../components/m3/Button';
 import { Card } from '../../components/m3/Card';
+import { ShapeIcon } from '../../components/m3/ExpressiveShape';
 import { Icon } from '../../components/m3/Icon';
 import { LinearProgress } from '../../components/m3/LinearProgress';
 import { PageHeader } from '../../components/m3/PageHeader';
@@ -43,16 +44,16 @@ export function ClaimReview() {
   return (
     <div className="app-page app-page--wide claim-review md-stack">
       {header}
-      <Card variant="filled" className="claim-review__summary">
+      <Card variant="filled" className="staff-card claim-review__summary">
         <div className="claim-review__party">
-          <span className="claim-review__person" aria-hidden="true"><Icon name="person" /></span>
+          <ShapeIcon shape="circle" tone="secondary" icon="person" size={48} />
           <div className="claims-field">
             <span className="claims-field__label">Claimant</span>
             <span className="claims-field__value claim-review__email">{claim.claimantEmail}</span>
           </div>
         </div>
         <div className="claim-review__party">
-          <CategoryAvatar category={item.category} color={item.color} />
+          <CategoryAvatar category={item.category} color={item.color} size="large" />
           <div className="claims-field claim-review__item">
             <span className="claims-field__label">Claims item</span>
             <Link to={`/staff/items/${item.id}`} className="claims-field__value claim-review__item-link">{item.title}</Link>
@@ -63,17 +64,17 @@ export function ClaimReview() {
         </div>
       </Card>
 
-      <Card variant="outlined" className="claim-review__compare" as="section">
+      <Card variant="filled" className="staff-card claim-review__compare" as="section">
         <div className="md-stack">
-          <h2 className="claims-card-title"><Icon name="assignment" size={20} />Verification answers</h2>
+          <h2 className="claims-card-title"><ShapeIcon shape="clover" tone="tertiary" icon="assignment" size={40} />Verification answers</h2>
           <AnswerComparison rows={data.comparisons} />
         </div>
       </Card>
 
       {pending ? (
-        <Card variant="elevated" className="claim-review__decision" as="section">
+        <Card variant="filled" className="staff-card claim-review__decision" as="section">
           <div className="md-stack">
-            <h2 className="claims-card-title"><Icon name="verified" size={20} />Decision</h2>
+            <h2 className="claims-card-title"><ShapeIcon shape="flower" tone="primary" icon="verified" size={40} />Decision</h2>
             <TextField
               label="Reason (required to deny)"
               value={reason}

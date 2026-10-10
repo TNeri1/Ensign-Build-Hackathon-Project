@@ -109,6 +109,7 @@
 @media (min-width: 600px) {
   .claims-row__meta { flex-direction: row; gap: 4px; }
   .claims-row__time { flex: none; }
+  .claims-row__email::before,
   .claims-row__time::before { content: '· '; }
 }
 
@@ -129,4 +130,16 @@
 
 @media (prefers-reduced-motion: reduce) {
   .staff-seglist .md-list-item { transition: none; }
+}
+
+/* Staff pages that open with a hero inside .md-stack: tighten the gap under the banner. */
+.staff-page.md-stack > .md-hero { margin-bottom: 8px; }
+/* Claims list: every row is "submitted"; on compact the chevron is enough and the title gets the room. */
+@media (max-width: 599.98px) {
+  .claims-row__trailing .md-status-chip { display: none; }
+}
+/* Hero on task pages: on compact, drop the shape icon and tighten padding so the work starts above the fold. */
+@media (max-width: 599.98px) {
+  .staff-hero-tight .md-hero { margin-bottom: 16px; padding: 20px; }
+  .staff-hero-tight .md-hero__icon { display: none; }
 }

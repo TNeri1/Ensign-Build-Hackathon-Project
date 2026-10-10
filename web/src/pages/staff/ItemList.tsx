@@ -50,7 +50,7 @@ export function ItemList() {
   const subtitle = !data ? 'Found items at this venue' : filtered ? `${total} · showing ${shown.length}` : total;
 
   return (
-    <div className="app-page app-page--wide item-list">
+    <div className="app-page app-page--wide staff-hero-tight item-list">
       <HeroHeader
         title="Inventory"
         subtitle={subtitle}

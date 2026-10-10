@@ -1,41 +1,58 @@
 /* Staff intake: the 20-second mobile flow. Narrow (840px) single column on every size. */
 
+.intake .md-page-header__title { font-weight: var(--md-sys-typescale-emphasized-weight); }
+
 .intake__layout {
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 12px;
 }
 .intake__main {
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 12px;
   min-width: 0;
 }
 
+/* Expressive section cards: tonal fill, extra-large corners, a gentle rise in. */
 .intake__section {
   padding: 16px;
-  border-radius: var(--md-sys-shape-corner-large);
-  background-color: var(--md-sys-color-surface-container-low);
+  border-radius: var(--md-sys-shape-corner-extra-large);
+  background-color: var(--staff-surface, var(--md-sys-color-surface-container-low));
+  animation: md-rise var(--md-sys-motion-spring-default-spatial-duration) var(--md-sys-motion-spring-default-spatial) both;
 }
+.intake__main > .intake__section:nth-child(2) { animation-delay: 40ms; }
+.intake__main > .intake__section:nth-child(3) { animation-delay: 80ms; }
+.intake__main > .intake__section:nth-child(4) { animation-delay: 120ms; }
+/* The first section is the photo: its card is the dashed target itself, so the section stays light. */
+.intake__photo { padding-bottom: 12px; }
 
 .intake__group {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 10px;
 }
 .intake__label {
   color: var(--md-sys-color-on-surface-variant);
   font-size: var(--md-sys-typescale-label-large-size);
   line-height: var(--md-sys-typescale-label-large-line-height);
-  font-weight: var(--md-sys-typescale-label-large-weight);
+  font-weight: var(--md-sys-typescale-emphasized-weight);
   letter-spacing: var(--md-sys-typescale-label-large-tracking);
 }
+/* Color chips: pill-shaped, 40px (48px touch target from the chip itself). */
+.intake__group .md-chip { height: 40px; border-radius: var(--md-sys-shape-corner-full); padding-right: 16px; }
+.intake__group .md-chip[aria-checked='true'] { font-weight: var(--md-sys-typescale-emphasized-weight); }
 .intake__error {
   color: var(--md-sys-color-error);
   font-size: var(--md-sys-typescale-body-small-size);
   line-height: var(--md-sys-typescale-body-small-line-height);
 }
-.intake__placeholder { color: var(--md-sys-color-on-surface-variant); }
+.intake__placeholder {
+  padding: 12px 16px;
+  border: 1px dashed var(--md-sys-color-outline-variant);
+  border-radius: var(--md-sys-shape-corner-large);
+  color: var(--md-sys-color-on-surface-variant);
+}
 
 .intake__pair {
   display: grid;
@@ -43,26 +60,41 @@
   gap: 16px;
 }
 
-/* Compact: the save button sticks above the bottom navigation bar. */
+/* Compact: the save button sticks above the bottom navigation bar on a raised, rounded sheet. */
 .intake__savebar {
   position: sticky;
   bottom: var(--app-bottom-inset, 0px);
   z-index: 5;
   margin: 0 calc(-1 * var(--md-sys-layout-margin));
   padding: 12px var(--md-sys-layout-margin);
-  background-color: var(--md-sys-color-surface);
-  border-top: 1px solid var(--md-sys-color-outline-variant);
+  border-radius: var(--md-sys-shape-corner-extra-large) var(--md-sys-shape-corner-extra-large) 0 0;
+  background-color: var(--md-sys-color-surface-container);
+  box-shadow: var(--md-sys-elevation-level2);
 }
-/* Keep snackbars above the sticky save bar (80px nav + 80px bar + gap). */
-:root:has(.intake__savebar) { --md-snackbar-bottom: 176px; }
+.intake__savebar .md-button {
+  height: 64px;
+  border-radius: var(--md-sys-shape-corner-large-increased);
+  font-size: var(--md-sys-typescale-title-medium-size);
+  font-weight: var(--md-sys-typescale-emphasized-weight);
+  transition: border-radius var(--md-sys-motion-spring-fast-spatial-duration) var(--md-sys-motion-spring-fast-spatial);
+}
+.intake__savebar .md-button:not(:disabled):active { border-radius: var(--md-sys-shape-corner-extra-large-increased); }
+/* Keep snackbars above the sticky save bar (80px nav + 88px bar + gap). */
+:root:has(.intake__savebar) { --md-snackbar-bottom: 184px; }
 
 @media (min-width: 600px) {
-  .intake__section { padding: 20px 24px; }
+  .intake__section { padding: 24px; }
+  .intake__photo { padding-bottom: 16px; }
   .intake__pair { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .intake__savebar {
-    bottom: 0;
+    bottom: 16px;
     margin: 0;
-    padding: 16px 0;
-    border-top: none;
+    padding: 12px;
+    border-radius: var(--md-sys-shape-corner-extra-large-increased);
   }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .intake__section { animation: none; }
+  .intake__savebar .md-button { transition: none; }
 }

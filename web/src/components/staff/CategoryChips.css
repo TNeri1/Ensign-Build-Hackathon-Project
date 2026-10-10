@@ -1,0 +1,59 @@
+/* Category picker chips at intake: shape + label, full-radius, 40px tall (48px touch target). Tokens only. */
+.category-chips { display: flex; flex-wrap: wrap; gap: 8px; }
+.category-chip {
+  position: relative;
+  isolation: isolate;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  height: 40px;
+  padding: 0 14px 0 4px;
+  border: 1px solid var(--md-sys-color-outline-variant);
+  border-radius: var(--md-sys-shape-corner-full);
+  background-color: var(--staff-surface, var(--md-sys-color-surface));
+  color: var(--md-sys-color-on-surface);
+  font-size: var(--md-sys-typescale-label-large-size);
+  line-height: var(--md-sys-typescale-label-large-line-height);
+  font-weight: var(--md-sys-typescale-label-large-weight);
+  letter-spacing: var(--md-sys-typescale-label-large-tracking);
+  white-space: nowrap;
+  -webkit-tap-highlight-color: transparent;
+  transition:
+    background-color var(--md-sys-motion-duration-short4) var(--md-sys-motion-easing-standard),
+    border-radius var(--md-sys-motion-spring-fast-spatial-duration) var(--md-sys-motion-spring-fast-spatial);
+}
+.category-chip::before {
+  content: '';
+  position: absolute;
+  inset: -1px;
+  z-index: -1;
+  border-radius: inherit;
+  background-color: var(--md-sys-color-on-surface);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity var(--md-sys-motion-duration-short2) var(--md-sys-motion-easing-standard);
+}
+/* 48px touch target */
+.category-chip::after { content: ''; position: absolute; left: 0; right: 0; top: 50%; height: 48px; transform: translateY(-50%); }
+@media (hover: hover) { .category-chip:hover::before { opacity: 0.08; } }
+.category-chip:active::before { opacity: 0.1; }
+.category-chip:focus-visible { outline: 3px solid var(--md-sys-color-secondary); outline-offset: 2px; }
+
+/* Selected: tonal fill, squarer corners (shape morph), spinning-in sunny check. */
+.category-chip--selected {
+  border-color: transparent;
+  border-radius: var(--md-sys-shape-corner-large);
+  background-color: var(--md-sys-color-secondary-container);
+  color: var(--md-sys-color-on-secondary-container);
+  font-weight: var(--md-sys-typescale-emphasized-weight);
+}
+.category-chip__shape { transition: transform var(--md-sys-motion-spring-default-spatial-duration) var(--md-sys-motion-spring-default-spatial); }
+.category-chip--selected .category-chip__shape.md-shape-icon { --_fill: var(--md-sys-color-primary); --_on: var(--md-sys-color-on-primary); }
+.category-chip--selected .category-chip__shape { transform: rotate(45deg) scale(1.06); }
+.category-chip--selected .category-chip__shape .md-icon { transform: rotate(-45deg); }
+
+@media (prefers-reduced-motion: reduce) {
+  .category-chip,
+  .category-chip::before,
+  .category-chip__shape { transition: none; }
+}

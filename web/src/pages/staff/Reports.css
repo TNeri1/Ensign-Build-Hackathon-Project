@@ -1,25 +1,35 @@
 /* Lost reports list: up to three lines (headline, when + contact, description). */
-.reports-list .md-list-item { align-items: flex-start; padding-block: 12px; }
+.reports-list .md-list-item { align-items: flex-start; padding-block: 16px; }
 .reports-list .md-list-item__headline { white-space: normal; }
 .reports-list .md-list-item__supporting {
   display: flex;
   flex-direction: column;
+  gap: 2px;
+  margin-top: 2px;
   -webkit-line-clamp: unset;
   line-clamp: none;
 }
-.reports-list__meta { display: flex; flex-direction: column; min-width: 0; }
+.reports-list__meta { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+.reports-list__when,
+.reports-list__email { display: inline-flex; align-items: center; gap: 6px; min-width: 0; }
 .reports-list__when { flex: none; }
 .reports-list__email { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.reports-list__when .md-icon,
+.reports-list__email .md-icon { flex: none; color: var(--md-sys-color-primary); }
 @media (min-width: 600px) {
-  .reports-list__meta { flex-direction: row; gap: 4px; }
-  .reports-list__email::before { content: '· '; }
+  .reports-list__meta { flex-direction: row; flex-wrap: wrap; gap: 4px 16px; }
 }
+/* The visitor's own words, as a quote bubble. */
 .reports-list__desc {
   display: -webkit-box;
   overflow: hidden;
   -webkit-box-orient: vertical;
   -webkit-line-clamp: 2;
   line-clamp: 2;
-  margin-top: 2px;
+  align-self: flex-start;
+  margin-top: 8px;
+  padding: 8px 14px;
+  border-radius: var(--md-sys-shape-corner-extra-small) var(--md-sys-shape-corner-large) var(--md-sys-shape-corner-large) var(--md-sys-shape-corner-large);
+  background-color: var(--staff-surface-variant, var(--md-sys-color-surface-container));
   color: var(--md-sys-color-on-surface);
 }

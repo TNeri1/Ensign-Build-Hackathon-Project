@@ -158,3 +158,16 @@
 @media (min-width: 840px) {
   .search-grid { gap: 16px; }
 }
+
+/* "This is mine" dialog: which item is being claimed. */
+.search-dialog__item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px;
+  border-radius: var(--md-sys-shape-corner-large-increased);
+  background-color: var(--md-sys-color-surface-container-highest);
+}
+.search-dialog__titles { display: flex; flex-direction: column; min-width: 0; color: var(--md-sys-color-on-surface-variant); }
+.search-dialog__title { color: var(--md-sys-color-on-surface); font-size: var(--md-sys-typescale-title-medium-size); line-height: var(--md-sys-typescale-title-medium-line-height); font-weight: var(--md-sys-typescale-emphasized-weight); }
+.search-dialog__body { display: flex; flex-direction: column; gap: 16px; padding-top: 4px; }

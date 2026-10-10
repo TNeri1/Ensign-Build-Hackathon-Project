@@ -1,6 +1,8 @@
+import { ShapeIcon } from '../m3/ExpressiveShape';
 import { Icon } from '../m3/Icon';
 import { StatusChip } from '../m3/StatusChip';
 import { formatDateTime, relativeTime } from '../../lib/format';
+import { stateStyle } from './stateStyle';
 import './CustodyTimeline.css';
 
 export interface CustodyEvent {
@@ -12,7 +14,10 @@ export interface CustodyEvent {
   note: string;
 }
 
-/** Vertical timeline of custody events, oldest first: from -> to state, actor, time, note. */
+/**
+ * Vertical timeline of custody events, oldest first: from -> to state, actor, time, note. Each node is the
+ * new state's expressive shape (tone by state); the current one is larger and slowly turns.
+ */
 export function CustodyTimeline({ events }: { events: CustodyEvent[] }) {
   if (events.length === 0) {
     return <p className="custody__empty md-typescale-body-medium">No custody events recorded.</p>;
@@ -21,11 +26,10 @@ export function CustodyTimeline({ events }: { events: CustodyEvent[] }) {
     <ol className="custody" role="list">
       {events.map((e, i) => {
         const last = i === events.length - 1;
+        const st = stateStyle(e.to_state);
         return (
           <li key={e.id} className={`custody__event${last ? ' custody__event--current' : ''}`}>
-            <span className="custody__node" aria-hidden="true">
-              <Icon name={e.from_state ? 'history' : 'add'} size={16} />
-            </span>
+            <ShapeIcon shape={st.shape} tone={st.tone} icon={e.from_state ? st.icon : 'add'} size={last ? 48 : 40} spin={last} className="custody__node" />
             <div className="custody__body">
               <div className="custody__states">
                 {e.from_state ? <StatusChip state={e.from_state} /> : <span className="custody__new">New</span>}

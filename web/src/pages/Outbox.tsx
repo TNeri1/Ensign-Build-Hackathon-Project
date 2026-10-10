@@ -3,9 +3,9 @@ import { useGet } from '../api/useApi';
 import { Alert } from '../components/m3/Alert';
 import { Card } from '../components/m3/Card';
 import { EmptyState } from '../components/m3/EmptyState';
-import { Icon } from '../components/m3/Icon';
+import { ShapeIcon } from '../components/m3/ExpressiveShape';
 import { LinearProgress } from '../components/m3/LinearProgress';
-import { PageHeader } from '../components/m3/PageHeader';
+import { HeroHeader } from '../components/m3/HeroHeader';
 import { formatDateTime, relativeTime } from '../lib/format';
 import './Outbox.css';
 
@@ -25,8 +25,10 @@ export function Outbox() {
 
   return (
     <div className="app-page outbox">
-      <PageHeader
+      <HeroHeader
         title="Outbox"
+        icon="outbox"
+        shape="flower"
         subtitle="Dev only: messages the system would have sent. No real email or SMS leaves this machine. Refreshes every 3 seconds."
       />
       {error && <Alert kind="error">{error}</Alert>}
@@ -38,11 +40,10 @@ export function Outbox() {
         <ul className="outbox-list" role="list">
           {data.map((m, i) => (
             <li key={m.id}>
-              <Card variant="outlined" as="article" className={i === 0 ? 'outbox-msg outbox-msg--latest' : 'outbox-msg'}>
+              <Card variant="filled" as="article" className={i === 0 ? 'outbox-msg outbox-msg--latest md-rise' : 'outbox-msg'}>
                 <div className="outbox-msg__head">
-                  <span className="outbox-msg__avatar" aria-hidden="true">
-                    <Icon name={m.channel === 'sms' ? 'smartphone' : 'mail'} size={20} />
-                  </span>
+                  <ShapeIcon shape={m.channel === 'sms' ? 'clover' : 'cookie'} tone={i === 0 ? 'primary' : 'surface'}
+                    icon={m.channel === 'sms' ? 'smartphone' : 'mail'} size={48} className="outbox-msg__avatar" />
                   <div className="outbox-msg__titles">
                     <h2 className="outbox-msg__subject">{m.subject}</h2>
                     <p className="outbox-msg__meta">

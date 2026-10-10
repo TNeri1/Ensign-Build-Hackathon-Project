@@ -5,8 +5,9 @@ import { Alert } from '../../components/m3/Alert';
 import { Button } from '../../components/m3/Button';
 import { Card } from '../../components/m3/Card';
 import { Checkbox } from '../../components/m3/Checkbox';
+import { ShapeIcon } from '../../components/m3/ExpressiveShape';
+import { HeroHeader } from '../../components/m3/HeroHeader';
 import { Icon } from '../../components/m3/Icon';
-import { PageHeader } from '../../components/m3/PageHeader';
 import { TextField } from '../../components/m3/TextField';
 import { QrScanner } from '../../components/QrScanner';
 import { CategoryAvatar, categoryColorLine } from '../../components/claims/CategoryAvatar';
@@ -45,23 +46,34 @@ export function Pickup() {
   }
 
   return (
-    <div className="app-page app-page--wide pickup md-stack">
-      <PageHeader title="Pickup" subtitle="Scan the claimant's pickup QR code, check their photo ID, then release the item." />
-      {msg && <Alert kind="success" title="Item released">{msg}</Alert>}
+    <div className="app-page app-page--wide staff-page staff-hero-tight pickup md-stack">
+      <HeroHeader title="Pickup" icon="qr_code_scanner" shape="sunny" subtitle="Scan the claimant's pickup QR code, check their photo ID, then release the item." />
+      {msg && (
+        <section className="pickup__done md-rise" role="status">
+          <span className="pickup__confetti pickup__confetti--a" aria-hidden="true"><ShapeIcon shape="flower" tone="tertiary" size={40} /></span>
+          <span className="pickup__confetti pickup__confetti--b" aria-hidden="true"><ShapeIcon shape="clover" tone="primary" size={28} /></span>
+          <span className="pickup__confetti pickup__confetti--c" aria-hidden="true"><ShapeIcon shape="cookie" tone="warning" size={20} /></span>
+          <ShapeIcon shape="sunny" tone="success" icon="task_alt" size={96} spin className="pickup__done-shape" />
+          <div className="pickup__done-text">
+            <h2 className="pickup__done-title">Item released</h2>
+            <p className="pickup__done-body">{msg}</p>
+          </div>
+        </section>
+      )}
       {err && <Alert kind="error">{err}</Alert>}
       {!lookup && (
         <div className="pickup__grid">
           {scanning && (
-            <Card variant="outlined" className="pickup__card" as="section">
+            <Card variant="filled" className="staff-card pickup__card" as="section">
               <div className="md-stack">
-                <h2 className="claims-card-title"><Icon name="qr_code_scanner" size={20} />Scan pickup code</h2>
+                <h2 className="claims-card-title"><ShapeIcon shape="sunny" tone="primary" icon="qr_code_scanner" size={40} />Scan pickup code</h2>
                 <QrScanner onScan={find} />
               </div>
             </Card>
           )}
-          <Card variant="outlined" className="pickup__card" as="section">
+          <Card variant="filled" className="staff-card pickup__card" as="section">
             <form className="md-stack" onSubmit={submitManual}>
-              <h2 className="claims-card-title"><Icon name="edit" size={20} />Manual entry</h2>
+              <h2 className="claims-card-title"><ShapeIcon shape="clover" tone="tertiary" icon="edit" size={40} />Manual entry</h2>
               <TextField
                 label="Can't scan? Enter the code"
                 value={manual}
@@ -79,28 +91,28 @@ export function Pickup() {
         </div>
       )}
       {lookup && (
-        <Card variant="elevated" className="pickup__result" as="section">
+        <Card variant="filled" className="staff-card pickup__result md-rise" as="section">
           <div className="md-stack md-stack--lg">
             <div className="pickup__item">
-              <CategoryAvatar category={lookup.item.category} color={lookup.item.color} size="large" />
+              <CategoryAvatar category={lookup.item.category} color={lookup.item.color} size="xlarge" />
               <div className="claims-field">
-                <span className="claims-field__label">Ready for pickup</span>
+                <span className="pickup__ready"><Icon name="verified" size={16} />Ready for pickup</span>
                 <h2 className="pickup__title">{lookup.item.title}</h2>
                 <span className="pickup__meta">{categoryColorLine(lookup.item.category, lookup.item.color)}</span>
                 <span className="pickup__meta"><Icon name="location_on" size={16} />Found near {lookup.item.foundArea}</span>
               </div>
             </div>
             <div className="pickup__claimant">
-              <Icon name="person" />
+              <ShapeIcon shape="circle" tone="secondary" icon="person" size={40} />
               <div className="claims-field">
                 <span className="claims-field__label">Release to</span>
                 <strong className="claims-field__value">{lookup.claimantEmail}</strong>
               </div>
             </div>
-            <div className="pickup__check">
+            <div className={`pickup__check${idChecked ? ' pickup__check--done' : ''}`}>
               <Checkbox checked={idChecked} onChange={setIdChecked} label="I checked the claimant's photo ID" />
             </div>
-            <Button variant="filled" size="large" full icon="task_alt" disabled={!idChecked} onClick={release}>Release item</Button>
+            <Button variant="filled" size="large" full icon="task_alt" disabled={!idChecked} onClick={release} className="pickup__release">Release item</Button>
           </div>
         </Card>
       )}

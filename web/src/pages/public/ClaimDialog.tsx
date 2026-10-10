@@ -4,6 +4,7 @@ import { api } from '../../api/client';
 import { Alert } from '../../components/m3/Alert';
 import { Dialog } from '../../components/m3/Dialog';
 import { TextField } from '../../components/m3/TextField';
+import { CategoryAvatar, ColorTag } from '../../components/public/ItemMeta';
 import type { PublicItem } from './FoundItemCard';
 
 /**
@@ -42,13 +43,24 @@ export function ClaimDialog({ item, onClose }: { item: PublicItem | null; onClos
       onConfirm={start}
       onClose={onClose}
     >
-      <p>
-        To prove this {item ? (item.title === item.categoryLabel ? item.title.toLowerCase() : item.title) : 'item'} is yours, you will answer a few questions about details only the owner
-        would know. Staff then check your answers.
-      </p>
-      <TextField label="Your email" type="email" value={email} onChange={(v) => { setEmail(v); setError(''); }} required leadingIcon="mail"
-        autoComplete="email" supportingText="We email you the claim link and the result." />
-      {error && <Alert kind="error">{error}</Alert>}
+      <div className="search-dialog__body">
+        {item && (
+          <div className="search-dialog__item">
+            <CategoryAvatar category={item.category} size={48} />
+            <span className="search-dialog__titles">
+              <strong className="search-dialog__title">{item.title}</strong>
+              <ColorTag color={item.color} />
+            </span>
+          </div>
+        )}
+        <p>
+          To prove this {item ? (item.title === item.categoryLabel ? item.title.toLowerCase() : item.title) : 'item'} is yours, you will answer a few questions about details only the owner
+          would know. Staff then check your answers.
+        </p>
+        <TextField label="Your email" type="email" value={email} onChange={(v) => { setEmail(v); setError(''); }} required leadingIcon="mail"
+          autoComplete="email" supportingText="We email you the claim link and the result." />
+        {error && <Alert kind="error">{error}</Alert>}
+      </div>
     </Dialog>
   );
 }

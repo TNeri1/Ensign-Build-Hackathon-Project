@@ -6,31 +6,39 @@ import { Alert } from '../../components/m3/Alert';
 import { Button } from '../../components/m3/Button';
 import { Card } from '../../components/m3/Card';
 import { EmptyState } from '../../components/m3/EmptyState';
+import { ShapeIcon, shapePath, type ShapeName } from '../../components/m3/ExpressiveShape';
+import { HeroHeader } from '../../components/m3/HeroHeader';
 import { Icon } from '../../components/m3/Icon';
 import { LinearProgress } from '../../components/m3/LinearProgress';
 import { LinkButton } from '../../components/m3/LinkButton';
-import { PageHeader } from '../../components/m3/PageHeader';
 import { useSnackbar } from '../../components/m3/Snackbar';
 import { TextField } from '../../components/m3/TextField';
+import '../../components/claims/claims.css';
 import './Bins.css';
 
-function BinCard({ bin }: { bin: Bin }) {
+const SHAPES: ShapeName[] = ['cookie', 'clover', 'sunny', 'flower', 'puffy', 'soft-square'];
+const TONES = ['primary', 'tertiary', 'secondary'] as const;
+
+/** A bin as an expressive card: its code set big inside a shape, the label, the item count and a label link. */
+function BinCard({ bin, index }: { bin: Bin; index: number }) {
   return (
     <li>
-      <Card variant="outlined" as="article" className="staff-bin">
+      <Card variant="filled" as="article" className={`staff-bin staff-bin--${TONES[index % TONES.length]}`}>
         <div className="staff-bin__head">
-          <span className="staff-bin__avatar" aria-hidden="true"><Icon name="warehouse" size={24} /></span>
+          <span className="staff-bin__badge" aria-hidden="true">
+            <svg viewBox="0 0 100 100" focusable="false"><path d={shapePath(SHAPES[index % SHAPES.length])} /></svg>
+            <span className="staff-bin__badge-code">{bin.code}</span>
+          </span>
           <div className="staff-bin__text">
-            <h2 className="staff-bin__code">{bin.code}</h2>
+            <h2 className="staff-bin__code"><span className="md-visually-hidden">Bin </span>{bin.code}</h2>
             <p className="staff-bin__label">{bin.label}</p>
           </div>
         </div>
         <div className="staff-bin__foot">
           <span className="staff-bin__count">
-            <Icon name="inventory_2" size={18} />
-            {bin.item_count} {bin.item_count === 1 ? 'item' : 'items'}
+            <strong>{bin.item_count}</strong> {bin.item_count === 1 ? 'item' : 'items'}
           </span>
-          <LinkButton to={`/staff/bins/${bin.code}/label`} variant="text" icon="qr_code_2">QR label</LinkButton>
+          <LinkButton to={`/staff/bins/${bin.code}/label`} variant="tonal" icon="qr_code_2">QR label</LinkButton>
         </div>
       </Card>
     </li>
@@ -54,8 +62,9 @@ export function Bins() {
   }
 
   return (
-    <div className="app-page app-page--wide">
-      <PageHeader title="Storage bins" subtitle="Where stored items live. Print a QR label for each bin so staff can scan items in and out." />
+    <div className="app-page app-page--wide staff-hero-tight">
+      <HeroHeader title="Storage bins" icon="warehouse" shape="soft-square"
+        subtitle="Where stored items live. Print a QR label for each bin so staff can scan items in and out." />
       <div className="staff-bins">
         <section aria-label="Bins" className="staff-bins__list">
           {loadError && <Alert kind="error" title="Could not load bins">{loadError}</Alert>}
@@ -63,14 +72,14 @@ export function Bins() {
           {data?.length === 0 && <EmptyState icon="warehouse" title="No bins yet" body="Add your first storage bin with the form." />}
           {!!data?.length && (
             <ul role="list" className="staff-bins__grid">
-              {data.map((b) => <BinCard key={b.id} bin={b} />)}
+              {data.map((b, i) => <BinCard key={b.id} bin={b} index={i} />)}
             </ul>
           )}
         </section>
-        <Card variant="filled" as="section" className="staff-bins__form" aria-labelledby="add-bin-title">
+        <Card variant="filled" as="section" className="staff-card staff-bins__form" aria-labelledby="add-bin-title">
           <form onSubmit={add} className="md-stack">
             <div className="md-stack md-stack--xs">
-              <h2 id="add-bin-title" className="md-typescale-title-large">Add bin</h2>
+              <h2 id="add-bin-title" className="claims-card-title"><ShapeIcon shape="sunny" tone="primary" icon="add" size={40} />Add bin</h2>
               <p className="md-typescale-body-medium md-on-surface-variant">Give it a short code and a label people will recognise.</p>
             </div>
             {error && <Alert kind="error">{error}</Alert>}

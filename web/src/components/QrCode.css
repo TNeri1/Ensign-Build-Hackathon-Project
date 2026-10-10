@@ -5,8 +5,8 @@
 .qr-code {
   display: inline-block;
   max-width: 100%;
-  padding: 16px;
-  border-radius: var(--md-sys-shape-corner-large);
+  padding: 20px;
+  border-radius: var(--md-sys-shape-corner-extra-large);
   background-color: white;
   box-shadow: 0 0 0 1px var(--md-sys-color-outline-variant);
   line-height: 0;

@@ -5,7 +5,9 @@ import { useGet } from '../../api/useApi';
 import { Alert } from '../../components/m3/Alert';
 import { Button } from '../../components/m3/Button';
 import { ChoiceChips } from '../../components/m3/Chips';
-import { PageHeader } from '../../components/m3/PageHeader';
+import { ShapeIcon, type ShapeName, type ShapeTone } from '../../components/m3/ExpressiveShape';
+import { HeroHeader } from '../../components/m3/HeroHeader';
+import type { IconName } from '../../components/m3/icons';
 import { TextField } from '../../components/m3/TextField';
 import { categoryIcon } from '../../lib/categoryIcon';
 import { colorLabel, colorSwatch } from '../../lib/itemColor';
@@ -14,6 +16,19 @@ import './ReportLost.css';
 
 const local = (d: Date) => new Date(d.getTime() - d.getTimezoneOffset() * 60000).toISOString().slice(0, 16);
 const COLOR_OPTIONS = COLORS.map((c) => ({ value: c as string, label: colorLabel(c) }));
+
+/** Section legend: numbered step + an expressive shape icon. The step label is visual only. */
+function SectionTitle({ step, icon, shape, tone, children }: { step: number; icon: IconName; shape: ShapeName; tone: ShapeTone; children: string }) {
+  return (
+    <legend className="report-section__title">
+      <ShapeIcon shape={shape} tone={tone} icon={icon} size={52} />
+      <span className="report-section__titles">
+        <span className="report-section__step" aria-hidden="true">Step {step} of 3</span>
+        <span>{children}</span>
+      </span>
+    </legend>
+  );
+}
 
 export function ReportLost() {
   const cats = useGet<{ id: string; label: string }[]>('/public/categories').data ?? [];
@@ -43,10 +58,11 @@ export function ReportLost() {
 
   return (
     <div className="app-page report">
-      <PageHeader title="Report a lost item" subtitle="Tell us what you lost. If staff find a match, we will email you a link to claim it." />
+      <HeroHeader title="Report a lost item" icon="campaign" shape="clover"
+        subtitle="Tell us what you lost. If staff find a match, we will email you a link to claim it." />
       <form onSubmit={submit} className="report-form">
-        <fieldset className="report-section">
-          <legend className="report-section__title">What did you lose?</legend>
+        <fieldset className="report-section md-rise">
+          <SectionTitle step={1} icon="category" shape="cookie" tone="primary">What did you lose?</SectionTitle>
           <div className="report-group">
             <span className="report-group__label">Category</span>
             <ChoiceChips ariaLabel="Category" value={category} onChange={setCategory}
@@ -61,8 +77,8 @@ export function ReportLost() {
             supportingText="Brand, case, stickers, anything that helps us recognise it." />
         </fieldset>
 
-        <fieldset className="report-section">
-          <legend className="report-section__title">Where and when?</legend>
+        <fieldset className="report-section md-rise">
+          <SectionTitle step={2} icon="location_on" shape="clover" tone="tertiary">Where and when?</SectionTitle>
           <TextField label="Where did you lose it?" value={area} onChange={setArea} required placeholder="e.g. Gate 3" leadingIcon="location_on" />
           <div className="report-pair">
             <TextField label="Lost after" type="datetime-local" value={start} onChange={setStart} required />
@@ -70,8 +86,8 @@ export function ReportLost() {
           </div>
         </fieldset>
 
-        <fieldset className="report-section">
-          <legend className="report-section__title">How can we reach you?</legend>
+        <fieldset className="report-section md-rise">
+          <SectionTitle step={3} icon="mail" shape="sunny" tone="secondary">How can we reach you?</SectionTitle>
           <TextField label="Your email" type="email" value={email} onChange={setEmail} required leadingIcon="mail" autoComplete="email"
             supportingText="Only used to contact you about this item." />
         </fieldset>

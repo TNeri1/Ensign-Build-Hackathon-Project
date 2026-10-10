@@ -5,6 +5,7 @@ import { api } from '../../api/client';
 import { useGet } from '../../api/useApi';
 import type { Bin, CategoryInfo } from '../../api/types';
 import { CategoryFields } from '../../components/CategoryFields';
+import { CategoryChips } from '../../components/staff/CategoryChips';
 import { FormSection } from '../../components/staff/FormSection';
 import { PhotoPicker } from '../../components/staff/PhotoPicker';
 import { PhotoAssistNote } from '../../components/staff/PhotoAssistNote';
@@ -15,10 +16,10 @@ import { PageHeader } from '../../components/m3/PageHeader';
 import { Select } from '../../components/m3/Select';
 import { useSnackbar } from '../../components/m3/Snackbar';
 import { TextField } from '../../components/m3/TextField';
-import { categoryIcon } from '../../lib/categoryIcon';
 import { colorLabel, colorSwatch } from '../../lib/itemColor';
 import { applySuggestion } from '../../lib/applySuggestion';
 import { usePhotoAssist } from './usePhotoAssist';
+import '../../components/claims/claims.css';
 import './Intake.css';
 
 const BIN_KEY = 'vlf:lastBin';
@@ -100,18 +101,18 @@ export function Intake() {
     <form onSubmit={submit} className="app-page intake">
       <PageHeader title="Log found item" subtitle="Photo, category, color, where. About 20 seconds." back="/staff" />
       <div className="intake__layout">
-        <FormSection icon="photo_camera" title="Photo" className="intake__section intake__photo">
+        <FormSection icon="photo_camera" title="Photo" shape="sunny" tone="primary" className="intake__section intake__photo">
           <PhotoPicker file={photo} onChange={choosePhoto} />
           <PhotoAssistNote state={assist.state} canRun={!!photo && assist.available && assist.state.kind !== 'reading'}
             onRun={() => photo && void assist.run(photo)} />
         </FormSection>
 
         <div className="intake__main">
-          <FormSection icon="category" title="What is it" className="intake__section">
+          <FormSection icon="category" title="What is it" shape="clover" tone="tertiary" className="intake__section">
             <div className="intake__group">
               <span className="intake__label">Category *</span>
-              <ChoiceChips
-                options={cats.map((c) => ({ value: c.id, label: c.label, icon: categoryIcon(c.id) }))}
+              <CategoryChips
+                options={cats.map((c) => ({ value: c.id, label: c.label }))}
                 value={category}
                 onChange={chooseCategory}
                 ariaLabel="Category"
@@ -145,7 +146,7 @@ export function Intake() {
             </div>
           </FormSection>
 
-          <FormSection icon="location_on" title="Where & when" className="intake__section">
+          <FormSection icon="location_on" title="Where & when" shape="puffy" tone="secondary" className="intake__section">
             <div className="intake__pair">
               <TextField
                 label="Found where (area / zone)"
@@ -162,6 +163,8 @@ export function Intake() {
           <FormSection
             icon="edit"
             title="Details"
+            shape="flower"
+            tone="primary"
             hint={def ? 'Public details appear in the listing. Private ones become claim questions.' : undefined}
             className="intake__section"
           >
@@ -172,7 +175,7 @@ export function Intake() {
             )}
           </FormSection>
 
-          <FormSection icon="warehouse" title="Storage" className="intake__section">
+          <FormSection icon="warehouse" title="Storage" shape="soft-square" tone="secondary" className="intake__section">
             <Select
               label="Storage bin"
               value={binId}

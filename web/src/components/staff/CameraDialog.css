@@ -6,7 +6,7 @@
   max-height: 60vh;
   aspect-ratio: 4 / 3;
   object-fit: cover;
-  border-radius: var(--md-sys-shape-corner-medium);
+  border-radius: var(--md-sys-shape-corner-extra-large);
   background-color: var(--md-sys-color-surface-container-highest);
 }
 .camera-dialog__hint { margin: 0; color: var(--md-sys-color-on-surface-variant); text-align: center; }
