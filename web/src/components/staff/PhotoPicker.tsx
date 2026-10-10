@@ -1,5 +1,6 @@
 import { useEffect, useId, useRef, useState } from 'react';
 import { Icon } from '../m3/Icon';
+import { Button } from '../m3/Button';
 import { IconButton } from '../m3/IconButton';
 import './PhotoPicker.css';
 
@@ -9,17 +10,20 @@ interface Props {
 }
 
 /**
- * Large tappable "Add photo" card over a native file input (opens the rear camera on phones).
- * Shows a preview once a photo is chosen. Setting `file` to null also clears the native input.
+ * Large tappable "Add photo" card over a native file input (opens the rear camera on phones), plus an
+ * "Upload photo" button for an existing picture (gallery / files, no camera). Shows a preview once chosen.
+ * Setting `file` to null also clears the native inputs.
  */
 export function PhotoPicker({ file, onChange }: Props) {
   const id = useId();
   const [preview, setPreview] = useState<string | null>(null);
   const input = useRef<HTMLInputElement>(null);
+  const upload = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     if (!file) {
       if (input.current) input.current.value = '';
+      if (upload.current) upload.current.value = '';
       return setPreview(null);
     }
     const url = URL.createObjectURL(file);
@@ -56,6 +60,20 @@ export function PhotoPicker({ file, onChange }: Props) {
           </span>
         )}
       </label>
+      <input
+        ref={upload}
+        className="md-visually-hidden"
+        type="file"
+        accept="image/*"
+        tabIndex={-1}
+        aria-hidden="true"
+        onChange={(e) => onChange(e.target.files?.[0] ?? null)}
+      />
+      <div className="photo-picker__actions">
+        <Button variant="text" icon="image" onClick={() => upload.current?.click()}>
+          {preview ? 'Choose a different photo' : 'Upload photo'}
+        </Button>
+      </div>
       {preview && (
         <IconButton icon="close" label="Remove photo" variant="tonal" className="photo-picker__remove" onClick={() => onChange(null)} />
       )}

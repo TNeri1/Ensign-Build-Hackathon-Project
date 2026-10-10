@@ -6,3 +6,4 @@ export * from './schemas/auth';
 export * from './schemas/item';
 export * from './schemas/report';
 export * from './schemas/claim';
+export * from './schemas/vision';

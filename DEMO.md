@@ -89,6 +89,10 @@ Tap **Submit answers** → "Staff are reviewing". **Say:** "The questions never 
 
 **Bonus (5 s, if time):** tap the moon icon in the top bar to switch to dark theme. The whole app is Material 3 and works offline (no fonts, icons or scripts load from the internet).
 
+**Photo intake (only if a local vision model is running, see README):** on **Log item**, tap **Upload photo** or the camera card.
+After a few seconds the category, color and details fill in by themselves ("Filled from photo: ..."). Check them and save.
+Without a model the form works by hand as scripted above.
+
 **Alternative claim path (if asked "what if they never filed a report?"):** on the public **Search** page any shelved item has a
 **This is mine** button. Enter an email and the same verification questions open immediately; the claim then goes through the
 same staff review.

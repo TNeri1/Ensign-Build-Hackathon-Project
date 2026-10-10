@@ -30,7 +30,8 @@ npm run build -w @vlf/web              # production build check
 ```
 
 Seeded logins: `staff@venue.test` and `admin@venue.test`, password `demo1234`.
-Env (all optional): `PORT`, `DB_PATH` (default `data/vlf.db`), `PHOTO_DIR` (default `data/photos`), `PUBLIC_URL`, `MATCH_THRESHOLD` (default 70).
+Env (all optional): `PORT`, `DB_PATH` (default `data/vlf.db`), `PHOTO_DIR` (default `data/photos`), `PUBLIC_URL`, `MATCH_THRESHOLD` (default 70),
+`VISION_URL` / `VISION_MODEL` / `VISION_TIMEOUT_MS` (local vision model for photo intake, see README; `VISION_URL=off` disables).
 
 ## Architecture
 
@@ -76,7 +77,11 @@ data/photos/                uploaded photos (gitignored)
 3. Claimant `POST /api/public/claims/:token/answers` → item `claim_pending` (rate-limited per item).
 4. Staff `GET /api/claims/:id` (answers beside the private record) → `POST /api/claims/:id/decision`.
 5. Approved claim page shows a QR of `vlf:pickup:<claimToken>`. Staff `POST /api/pickup/lookup` then `/pickup/release` (`idChecked: true` required) → `released`. Single use.
-6. Retention job (hourly + manual) flags overdue items; admin batch-disposes via `POST /api/retention/dispose`.
+6. Photo intake (optional): Intake downscales the photo and calls `POST /api/vision/describe` (staff). `services/vision/` sends it to a
+   LOCAL OpenAI-compatible vision model (`client.ts`), with a prompt generated from the category plugins (`prompt.ts`), and validates
+   the reply against the registry (`sanitize.ts`: known category, allowed color, real select options). The web merges it into
+   empty fields only (`web/src/lib/applySuggestion.ts`). Nothing is stored; with no model running the UI hides the feature.
+7. Retention job (hourly + manual) flags overdue items; admin batch-disposes via `POST /api/retention/dispose`.
 
 ## Extension points (add a file, edit nothing)
 
