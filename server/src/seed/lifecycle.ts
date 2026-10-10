@@ -5,7 +5,6 @@ import { insertAttributes, insertItem } from '../repos/items';
 import { recordCreation, transitionItem } from '../services/custody';
 import { resolveAttributes } from '@vlf/shared';
 import { savePhoto } from '../services/photos';
-import { COLOR_RGB, solidPng } from './png';
 import type { ItemSpec } from './itemData';
 
 const HOUR = 3_600_000;
@@ -28,18 +27,21 @@ export const PATHS: Record<string, ItemState[]> = {
  * Insert an item, replay its lifecycle through the real state machine, then backdate
  * all timestamps so analytics have realistic spans. Returns the item id.
  */
-export function seedItem(ctx: AppContext, who: SeedActors, spec: ItemSpec, daysAgo: number, path: keyof typeof PATHS, binCode: string, withPhoto = true): string {
+export function seedItem(
+  ctx: AppContext, who: SeedActors, spec: ItemSpec, daysAgo: number, path: keyof typeof PATHS, binCode: string,
+  photo?: { data: Buffer; mimetype: string },
+): string {
   const def = ctx.categories.get(spec.category)!;
   const { attributes } = resolveAttributes(def, spec.fields);
   const id = newId();
   const foundAt = new Date(Date.now() - daysAgo * 24 * HOUR);
-  const photo = withPhoto ? savePhoto(ctx.config.photoDir, id, solidPng(COLOR_RGB[spec.color] ?? [128, 128, 128]), 'image/png') : null;
+  const photoPath = photo ? savePhoto(ctx.config.photoDir, id, photo.data, photo.mimetype) : null;
   const iso = foundAt.toISOString();
   const actor = { userId: who.staffId, label: 'Sam Rivera (staff)' };
 
   insertItem(ctx.db, {
     id, venue_id: who.venueId, category: spec.category, color: spec.color, found_area: spec.area, found_at: iso,
-    state: 'found', bin_id: null, photo_path: photo, sensitive: def.sensitive ? 1 : 0, created_by: who.staffId, created_at: iso, updated_at: iso,
+    state: 'found', bin_id: null, photo_path: photoPath, sensitive: def.sensitive ? 1 : 0, created_by: who.staffId, created_at: iso, updated_at: iso,
   });
   insertAttributes(ctx.db, id, attributes);
   recordCreation(ctx.db, id, 'found', actor, 'Logged at intake');
