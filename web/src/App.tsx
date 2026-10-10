@@ -11,6 +11,7 @@ import { Claim } from './pages/public/Claim';
 import { Claims } from './pages/staff/Claims';
 import { ClaimReview } from './pages/staff/ClaimReview';
 import { Pickup } from './pages/staff/Pickup';
+import { Reports } from './pages/staff/Reports';
 import { Retention } from './pages/admin/Retention';
 import { Dashboard } from './pages/admin/Dashboard';
 import { ItemList } from './pages/staff/ItemList';
@@ -37,6 +38,7 @@ export function App() {
             <Route path="staff/intake" element={staff(<Intake />)} />
             <Route path="staff/bins" element={staff(<Bins />)} />
             <Route path="staff/bins/:code/label" element={staff(<BinLabel />)} />
+            <Route path="staff/reports" element={staff(<Reports />)} />
             <Route path="staff/claims" element={staff(<Claims />)} />
             <Route path="staff/claims/:id" element={staff(<ClaimReview />)} />
             <Route path="staff/pickup" element={staff(<Pickup />)} />
