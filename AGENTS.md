@@ -15,6 +15,7 @@ admins see inventory, chain of custody and analytics. No external services: emai
 6. Don't add dependencies without a strong reason. No external services, payments, AI features or real email/SMS.
 7. Item state changes go through `transitionItem()` ONLY (`server/src/services/custody.ts`). Never `UPDATE items SET state`.
 8. Public (unauthenticated) routes must never expose private attributes or photos. See "Privacy".
+9. UI is Material 3 and fully offline: use `web/src/components/m3/*` and `--md-sys-*` tokens only. See "Design system".
 
 ## Commands
 
@@ -55,7 +56,8 @@ server/src/
   notify/outbox.ts          sendNotification() writes to the notifications table
   seed/                     programmatic seed (run.ts entry, seedAll.ts orchestrates)
 server/test/                API-level tests; helpers.ts (testApp, testDb) and fixtures.ts (makeVenue/Item/Bin/User, loginCookie)
-web/src/                    Vite + React + react-router. api/ (fetch wrapper, useGet), auth/, components/, pages/{public,staff,admin}
+web/src/                    Vite + React + react-router. api/ (fetch wrapper, useGet), auth/, lib/ (categoryIcon, colorSwatch, format),
+                            theme/ (Material 3 tokens + vendored Roboto), components/m3/ (design system), components/<area>/, pages/{public,staff,admin,dev}
 data/photos/                uploaded photos (gitignored)
 ```
 
@@ -127,6 +129,26 @@ Schema change: add `server/src/db/migrations/NNN_name.sql` (never edit an applie
 
 ### New web page: create `web/src/pages/<area>/<Name>.tsx`, then add ONE `<Route>` line in `web/src/App.tsx`
 (and a nav link in `components/Layout.tsx` if needed). Use `useGet<T>('/path')` and `api.post(...)` from `web/src/api/`.
+
+## Design system (Material 3, offline)
+
+- **Tokens:** `web/src/theme/tokens.css` (color roles, light + dark, GENERATED from seed `#3F6FD8`, do not hand-edit), `typography.css`
+  (`--md-sys-typescale-*`, `.md-typescale-*`), `system.css` (shape, elevation, motion, state layers, focus ring), `base.css`
+  (reset + layout helpers `.md-stack`, `.md-row`, `.md-grid`, `.md-container`). Never use raw hex colors in components.
+- **Components:** one per file in `web/src/components/m3/` with a co-located CSS file; import from the specific file
+  (`import { Button } from '../../components/m3/Button'`). Live gallery of every component and state: **`/dev/components`**.
+  Main ones: Button/LinkButton/IconButton/Fab, Card, List+ListItem, StatusChip, Alert, EmptyState, LinearProgress, Dialog,
+  Snackbar (`useSnackbar().show(...)`), Menu, PageHeader, TextField (outlined, floating label), Select, Chips
+  (FilterChip, ChoiceChips with color swatches, AssistChip), Checkbox, SegmentedButton, TopAppBar, NavigationBar/Rail.
+- **Icons:** `<Icon name="..." />` from `components/m3/Icon.tsx`; paths are vendored in `components/m3/icons.ts`
+  (Material Symbols, Apache 2.0). To add one, copy the single `d` path of the official 24px SVG into that map.
+- **Fonts:** Roboto woff2 files are vendored in `web/src/theme/fonts/`. Nothing loads from the internet:
+  `web/src/theme/offline.test.ts` fails on any external URL in web source.
+- **Page contract:** root element `<div className="app-page">` (840px reading width) or `app-page app-page--wide` (1280px);
+  start with `<PageHeader title=... />` (it also sets `document.title`). A page FAB is `<Fab className="app-fab" ... />`
+  (add `md-only-compact` if the navigation rail already offers the action). Navigation destinations per role live in
+  `web/src/components/nav.ts` (bottom bar < 600px, rail >= 600px, max 5 primary destinations).
+- **Theme:** follows the OS; the moon/sun button in the top bar sets an explicit light/dark choice (`data-theme` on `<html>`).
 
 ## Privacy (do not break)
 

@@ -5,7 +5,8 @@ import { api } from '../api/client';
 interface AuthState {
   user: SessionUser | null;
   ready: boolean;
-  login(email: string, password: string): Promise<void>;
+  /** Resolves to the logged-in user. */
+  login(email: string, password: string): Promise<SessionUser>;
   logout(): Promise<void>;
 }
 const Ctx = createContext<AuthState>(null as unknown as AuthState);
@@ -22,7 +23,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const value: AuthState = {
     user,
     ready,
-    login: async (email, password) => setUser(await api.post<SessionUser>('/auth/login', { email, password })),
+    login: async (email, password) => {
+      const u = await api.post<SessionUser>('/auth/login', { email, password });
+      setUser(u);
+      return u;
+    },
     logout: async () => { await api.post('/auth/logout'); setUser(null); },
   };
   return <Ctx.Provider value={value}>{children}</Ctx.Provider>;

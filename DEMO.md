@@ -36,23 +36,23 @@ npm run dev           # API :3001, web :5173
   "Lena filed this earlier. The Outbox is empty: nothing has matched yet."
 
 ### 0:25 – 1:05 | Staff live intake (target < 20 s)
-On the **phone** (or a narrow browser window), tab 1 → **+ Log item**. Enter exactly:
+On the **phone** (or a narrow browser window), tab 1 → tap **Log item** (the floating button bottom-right on a phone; the button at the top of the left rail on a laptop). Enter exactly:
 
 | Field | Value |
 |---|---|
 | Photo | take any photo (optional) |
-| Category | **Phone** |
-| Color | **black** |
-| Found where | `Gate 3` |
+| Category | tap the **Phone** chip |
+| Color | tap the **Black** chip |
+| Found where (area / zone) | `Gate 3` |
 | Found at | leave as now |
 | Brand | `Apple` |
 | Model | `iPhone 14` |
-| Case | `clear case with a green sticker` |
-| Lock screen | `golden retriever on a beach` |
+| Case (color/style) | `clear case with a green sticker` |
+| Lock screen / wallpaper | `golden retriever on a beach` |
 | Visible damage | `cracked top-left corner` |
 | Storage bin | **A1: Front desk shelf** (remembered after first use) |
 
-Tap **Save item**. **Say:** "Chips and defaults: about fifteen seconds. Public fields are tagged *public*; the rest stay private."
+Tap **Save item** (an "Item saved" snackbar appears). **Say:** "Chips and defaults: about fifteen seconds. Each detail is marked *public* or *private* (lock icon); private ones become the claim questions."
 
 ### 1:05 – 1:20 | The notification
 - **Show (tab 4, Outbox):** a new message appears: *"We may have found your phone"* to `lena.ortiz@example.com`, with a claim link.
@@ -60,7 +60,7 @@ Tap **Save item**. **Say:** "Chips and defaults: about fifteen seconds. Public f
   stand-in, so the venue wifi can't break it." Open the link on the claimant device.
 
 ### 1:20 – 1:55 | The claimant proves ownership
-Tab 3 (claim page). Four questions generated from the **private** details. Answer naturally, not word for word:
+Tab 3 (claim page). Four questions generated from the **private** details, each with a **Your answer** field. Answer naturally, not word for word:
 
 | Question | Answer to type |
 |---|---|
@@ -72,26 +72,28 @@ Tab 3 (claim page). Four questions generated from the **private** details. Answe
 Tap **Submit answers** → "Staff are reviewing". **Say:** "The questions never include the answers, and attempts are rate-limited per item."
 
 ### 1:55 – 2:20 | Staff verify and approve
-- Tab 1 → **Claims** → open the claim. **Show** the side-by-side table: claimant's answers vs. the private record, four green ✓ marks.
+- Tab 1 → **Claims** → open the claim. **Show** the comparison: "4 of 4 answers match", and for each question *Claimant said* vs. *On record (private)* with a green **Match** chip.
 - Type nothing (reason optional) and tap **Approve**. **Say:** "Staff decide, not the software. A denial requires a written reason and the item goes back on the shelf."
 
 ### 2:20 – 2:50 | One-time pickup QR and release
-- Tab 3 refreshes (reload the claim link): **Approved!** with a QR code.
-- Tab 1 → **Pickup scan**. Hold the phone's QR up to the laptop camera. The item card appears with the claimant's email.
+- Tab 3 (reload the claim link): **Approved! Your pickup code** with a QR code.
+- Tab 1 → **Pickup**. Hold the phone's QR up to the laptop camera. The item card appears with the claimant's email.
 - Tick **I checked the claimant's photo ID** → **Release item**. **Say:** "The code works exactly once. Scan it again and it's refused."
 
 ### 2:50 – 3:00 | The record and the dashboard
 - Tab 1 → **Inventory** → open the item → **Chain of custody**: `found → stored → claim_pending → verified → released`, each with who and when.
-- Tab 2 (admin) → **Admin**: **26 items logged · 4 returned (15%) · median time to return · 4/4 claims approved**; bars for inventory by state,
-  bin, and where items are found.
+- Tab 2 (admin): admins land on the **Dashboard** after login: **26 items logged · 15% returned to owners · median time to return · 4/4 claims approved**;
+  charts for inventory by state, bin, and where items are found.
 - **Close:** "Sensitive items (wallets, IDs, cards) get staff-only blurred photos and a retention clock. Two items on the Retention page are already past due, ready for
   one-click, logged disposal. New item types are one file each."
+
+**Bonus (5 s, if time):** tap the moon icon in the top bar to switch to dark theme. The whole app is Material 3 and works offline (no fonts, icons or scripts load from the internet).
 
 ## Fallbacks
 
 | Problem | Fix |
 |---|---|
-| Camera won't start / permission denied | On **Pickup scan**, paste the code into *Manual entry*. The code is `vlf:pickup:` + the token at the end of the claim URL. |
+| Camera won't start / permission denied | On **Pickup**, paste the code into *Can't scan? Enter the code* and tap **Look up**. The code is `vlf:pickup:` + the token at the end of the claim URL. |
 | Outbox link doesn't open on the phone | Restart with `PUBLIC_URL=http://<laptop-LAN-IP>:5173`, or just open the link in a laptop window. |
 | No notification after intake | Check the item's category, color and area match the report exactly (`phone`, `black`, `Gate 3`). Seed again and retry. |
 | "Too many claim attempts" | The per-item limit is 5 submissions/hour. Run `npm run seed` to reset. |

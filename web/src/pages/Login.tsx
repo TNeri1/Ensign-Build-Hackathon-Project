@@ -11,7 +11,7 @@ import './Login.css';
 export function Login() {
   const { login } = useAuth();
   const nav = useNavigate();
-  const from = (useLocation().state as { from?: string } | null)?.from ?? '/staff';
+  const from = (useLocation().state as { from?: string } | null)?.from;
   const [email, setEmail] = useState('staff@venue.test');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
@@ -20,7 +20,11 @@ export function Login() {
   async function submit(e: FormEvent) {
     e.preventDefault();
     setBusy(true);
-    try { await login(email, password); nav(from, { replace: true }); } catch (err) { setError((err as Error).message); } finally { setBusy(false); }
+    try {
+      const u = await login(email, password);
+      // Back to the page that required login, else the role's home: admins land on the dashboard.
+      nav(from ?? (u.role === 'admin' ? '/admin' : '/staff'), { replace: true });
+    } catch (err) { setError((err as Error).message); } finally { setBusy(false); }
   }
 
   return (
