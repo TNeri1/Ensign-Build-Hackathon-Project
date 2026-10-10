@@ -5,6 +5,7 @@ import { newId, nowIso } from '../ids';
 import { insertAttributes, insertItem } from '../repos/items';
 import { recordCreation, transitionItem } from './custody';
 import { savePhoto } from './photos';
+import { runMatchingForItem } from './matching/run';
 
 export interface PhotoUpload {
   data: Buffer;
@@ -38,5 +39,6 @@ export function createItem(ctx: AppContext, user: SessionUser, input: IntakeInpu
     recordCreation(ctx.db, id, 'found', actor, 'Logged at intake');
     if (input.binId) transitionItem(ctx.db, id, 'stored', actor, 'Placed in bin at intake', { binId: input.binId });
   })();
+  runMatchingForItem(ctx, id);
   return id;
 }

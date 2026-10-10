@@ -4,3 +4,4 @@ export * from './categories/schema';
 export * from './categories/registry';
 export * from './schemas/auth';
 export * from './schemas/item';
+export * from './schemas/report';

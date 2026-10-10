@@ -5,6 +5,8 @@ import { Layout } from './components/Layout';
 import { Home } from './pages/Home';
 import { Login } from './pages/Login';
 import { Search } from './pages/public/Search';
+import { ReportLost } from './pages/public/ReportLost';
+import { Outbox } from './pages/Outbox';
 import { ItemList } from './pages/staff/ItemList';
 import { Intake } from './pages/staff/Intake';
 import { Bins } from './pages/staff/Bins';
@@ -21,6 +23,8 @@ export function App() {
           <Route element={<Layout />}>
             <Route index element={<Home />} />
             <Route path="search" element={<Search />} />
+            <Route path="report" element={<ReportLost />} />
+            <Route path="outbox" element={<Outbox />} />
             <Route path="login" element={<Login />} />
             <Route path="staff" element={staff(<ItemList />)} />
             <Route path="staff/intake" element={staff(<Intake />)} />

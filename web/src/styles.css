@@ -28,3 +28,4 @@ button.link { border:0; background:none; color:var(--accent); padding:0; }
 .photo { max-width:100%; border-radius:10px; } .photo.blurred { filter:blur(18px); transition:filter .2s; } .photo.blurred:hover { filter:none; }
 .label-sheet { text-align:center; } .label-code { font-size:4rem; margin:.2rem 0; } .label svg { width:240px; height:240px; }
 @media print { .topbar, .no-print { display:none; } body { background:#fff; } }
+.msg { white-space:pre-wrap; word-break:break-word; font:inherit; margin:.6rem 0 0; }
