@@ -10,20 +10,22 @@ Tasks are independent: do them in any order, one per commit.
 page-prefixed class names; never use raw hex colors or external URLs (`web/src/theme/offline.test.ts` enforces it).
 Start each page with `<PageHeader title=... />` inside `<div className="app-page">` (or `app-page app-page--wide`).
 
-Task numbering: C1-C8 are categories, T1-T7 are features.
+Task numbering: T1-T7 are features. All planned categories are built (see below).
 
 ---
 
-## Category tasks (C1-C8)
+## Categories (done)
 
-All eight follow the same recipe. The specs below are already validated against the schema (they load and produce challenges), so copy them exactly.
+Built: phone, wallet, keys, bag, clothing, id_card (sensitive), payment_card (sensitive), laptop, water_bottle, headphones,
+and **other** (catch-all: public `item_type` says what it is; the photo reader picks it when nothing specific fits).
 
-**Recipe (for category `<id>`):**
-1. Create `shared/src/categories/defs/<id>.ts` modelled on `phone.ts` (same folder): `export default defineCategory({...})` with
-   `id`, `label`, `sensitive`, `retentionDays`, `fields` (from the field table) and `challengeTemplates` (from the challenge table).
-   Field `type` is omitted when it is `text`. A `select` field needs `options`. File name must equal `id`.
-2. Create `shared/src/categories/defs/<id>.test.ts` (copy the template below, change the import and expectations).
-3. Nothing else: the server loads every file in `defs/`, and the web form/filters/claim questions pick it up from the API.
+**To add another category `<id>`** (e.g. umbrella, glasses, toy):
+1. Create `shared/src/categories/defs/<id>.ts` modelled on `headphones.ts`: `export default defineCategory({...})` with `id`
+   (= file name), `label`, `sensitive`, `retentionDays`, `fields` (each `public` or private; `select` needs `options`) and
+   `challengeTemplates` (only on private fields).
+2. Create `shared/src/categories/defs/<id>.test.ts` from the template below.
+3. Optional: give it an icon in `web/src/lib/categoryIcon.ts` (one line; icon names in `web/src/components/m3/icons.ts`).
+Nothing else: the server, intake form, search filters, claim questions and the photo reader's prompt pick it up automatically.
 
 **Test template** (`shared/src/categories/defs/<id>.test.ts`):
 
@@ -52,191 +54,7 @@ describe('<id> category', () => {
 });
 ```
 
-**Acceptance (every category task):** `npm test -w @vlf/shared -- <id>` shows `4 passed`; then `npm test -w @vlf/server -- categories`
-passes (it loads every category file); then `npm test` and `npm run typecheck` are green.
-
-### C1. Category `keys`
-
-- **Goal:** add the `keys` category ("Keys").
-- **Files to create:** `shared/src/categories/defs/keys.ts`, `shared/src/categories/defs/keys.test.ts`
-- **Interface:** `defineCategory` from `shared/src/categories/schema.ts`. `id: 'keys'`, `label: 'Keys'`, `sensitive: false`, `retentionDays: 60`.
-- **Acceptance:** `npm test -w @vlf/shared -- keys` → `4 passed`.
-
-| name | label | type | visibility | required |
-|---|---|---|---|---|
-| `key_type` | Key type | select (House, Car, Office, Other) | public | yes |
-| `brand` | Brand (car fob / lock) | text | public | no |
-| `keychain` | Keychain or fob description | text | private | yes |
-| `key_count` | Number of keys | number | private | no |
-
-Challenge templates:
-
-| field | question | match |
-|---|---|---|
-| `keychain` | Describe the keychain or fob attached. | contains |
-| `key_count` | How many keys are on the ring? | exact |
-
-### C2. Category `bag`
-
-- **Goal:** add the `bag` category ("Bag").
-- **Files to create:** `shared/src/categories/defs/bag.ts`, `shared/src/categories/defs/bag.test.ts`
-- **Interface:** `defineCategory` from `shared/src/categories/schema.ts`. `id: 'bag'`, `label: 'Bag'`, `sensitive: false`, `retentionDays: 90`.
-- **Acceptance:** `npm test -w @vlf/shared -- bag` → `4 passed`.
-
-| name | label | type | visibility | required |
-|---|---|---|---|---|
-| `bag_type` | Bag type | select (Backpack, Handbag, Tote, Duffel, Other) | public | yes |
-| `brand` | Brand | text | public | no |
-| `contents` | Contents (two items) | text | private | yes |
-| `marking` | Tag, patch or marking | text | private | no |
-| `tag_name` | Name on luggage tag | text | private | no |
-
-Challenge templates:
-
-| field | question | match |
-|---|---|---|
-| `contents` | Name two items inside the bag. | contains |
-| `marking` | Describe any tag, patch or marking on the bag. | contains |
-| `tag_name` | What name is on the luggage tag? | contains |
-
-### C3. Category `clothing`
-
-- **Goal:** add the `clothing` category ("Clothing").
-- **Files to create:** `shared/src/categories/defs/clothing.ts`, `shared/src/categories/defs/clothing.test.ts`
-- **Interface:** `defineCategory` from `shared/src/categories/schema.ts`. `id: 'clothing'`, `label: 'Clothing'`, `sensitive: false`, `retentionDays: 60`.
-- **Acceptance:** `npm test -w @vlf/shared -- clothing` → `4 passed`.
-
-| name | label | type | visibility | required |
-|---|---|---|---|---|
-| `garment` | Garment | select (Jacket, Sweater, Shirt, Pants, Hat, Scarf, Shoes, Other) | public | yes |
-| `size` | Size | text | public | no |
-| `brand` | Brand label | text | private | yes |
-| `pocket_contents` | What is in the pockets | text | private | no |
-| `marking` | Name tag, stain or damage | text | private | no |
-
-Challenge templates:
-
-| field | question | match |
-|---|---|---|
-| `brand` | What brand label is on it? | contains |
-| `pocket_contents` | What was in the pocket? | contains |
-| `marking` | Describe any name tag, stain or damage. | contains |
-
-### C4. Category `id_card`
-
-- **Goal:** add the `id_card` category ("ID card").
-- **Files to create:** `shared/src/categories/defs/id_card.ts`, `shared/src/categories/defs/id_card.test.ts`
-- **Interface:** `defineCategory` from `shared/src/categories/schema.ts`. `id: 'id_card'`, `label: 'ID card'`, `sensitive: true`, `retentionDays: 30`.
-- **Acceptance:** `npm test -w @vlf/shared -- id_card` → `4 passed`.  Sensitive: photos are staff-only and blurred automatically; do not add anything extra.
-
-| name | label | type | visibility | required |
-|---|---|---|---|---|
-| `card_type` | Card type | select (Driver license, Student ID, Employee badge, Passport, Other) | public | yes |
-| `holder_name` | Name on card | text | private | yes |
-| `id_last4` | Last 4 characters of ID number | text | private | yes |
-| `date_of_birth` | Date of birth (YYYY-MM-DD) | text | private | no |
-| `issuer` | Issuer (school, employer, state) | text | private | no |
-
-Challenge templates:
-
-| field | question | match |
-|---|---|---|
-| `holder_name` | What name is on the card? | contains |
-| `id_last4` | What are the last four characters of the ID number? | exact |
-| `date_of_birth` | What is the date of birth on the card (YYYY-MM-DD)? | exact |
-| `issuer` | Who issued the card? | contains |
-
-### C5. Category `payment_card`
-
-- **Goal:** add the `payment_card` category ("Payment card").
-- **Files to create:** `shared/src/categories/defs/payment_card.ts`, `shared/src/categories/defs/payment_card.test.ts`
-- **Interface:** `defineCategory` from `shared/src/categories/schema.ts`. `id: 'payment_card'`, `label: 'Payment card'`, `sensitive: true`, `retentionDays: 30`.
-- **Acceptance:** `npm test -w @vlf/shared -- payment_card` → `4 passed`.  Sensitive: photos are staff-only and blurred automatically; do not add anything extra.
-
-| name | label | type | visibility | required |
-|---|---|---|---|---|
-| `card_network` | Card network | select (Visa, Mastercard, Amex, Discover, Other) | public | yes |
-| `card_kind` | Card kind | select (Credit, Debit, Gift) | public | no |
-| `last4` | Last 4 digits | text | private | yes |
-| `cardholder_name` | Cardholder name | text | private | yes |
-| `issuing_bank` | Issuing bank | text | private | yes |
-
-Challenge templates:
-
-| field | question | match |
-|---|---|---|
-| `last4` | What are the last four digits of the card number? | exact |
-| `cardholder_name` | What name is printed on the card? | contains |
-| `issuing_bank` | Which bank issued the card? | contains |
-
-### C6. Category `laptop`
-
-- **Goal:** add the `laptop` category ("Laptop").
-- **Files to create:** `shared/src/categories/defs/laptop.ts`, `shared/src/categories/defs/laptop.test.ts`
-- **Interface:** `defineCategory` from `shared/src/categories/schema.ts`. `id: 'laptop'`, `label: 'Laptop'`, `sensitive: false`, `retentionDays: 90`.
-- **Acceptance:** `npm test -w @vlf/shared -- laptop` → `4 passed`.
-
-| name | label | type | visibility | required |
-|---|---|---|---|---|
-| `brand` | Brand | select (Apple, Dell, HP, Lenovo, Asus, Microsoft, Other) | public | yes |
-| `screen_size` | Screen size (inches) | number | public | no |
-| `model` | Model | text | private | yes |
-| `serial_suffix` | Last 4 of serial number | text | private | no |
-| `stickers` | Stickers or decals | text | private | no |
-
-Challenge templates:
-
-| field | question | match |
-|---|---|---|
-| `model` | What model is the laptop? | contains |
-| `serial_suffix` | What are the last four characters of the serial number? | exact |
-| `stickers` | Describe any stickers or decals on the lid. | contains |
-
-### C7. Category `water_bottle`
-
-- **Goal:** add the `water_bottle` category ("Water bottle").
-- **Files to create:** `shared/src/categories/defs/water_bottle.ts`, `shared/src/categories/defs/water_bottle.test.ts`
-- **Interface:** `defineCategory` from `shared/src/categories/schema.ts`. `id: 'water_bottle'`, `label: 'Water bottle'`, `sensitive: false`, `retentionDays: 45`.
-- **Acceptance:** `npm test -w @vlf/shared -- water_bottle` → `4 passed`.
-
-| name | label | type | visibility | required |
-|---|---|---|---|---|
-| `material` | Material | select (Stainless steel, Plastic, Glass, Other) | public | yes |
-| `brand` | Brand | text | public | no |
-| `stickers` | Stickers or decals | text | private | yes |
-| `damage` | Dents or damage | text | private | no |
-| `name_label` | Name written on it | text | private | no |
-
-Challenge templates:
-
-| field | question | match |
-|---|---|---|
-| `stickers` | Describe the stickers or decals on the bottle. | contains |
-| `damage` | Describe any dents or damage. | contains |
-| `name_label` | Is a name written on the bottle? What is it? | contains |
-
-### C8. Category `headphones`
-
-- **Goal:** add the `headphones` category ("Headphones").
-- **Files to create:** `shared/src/categories/defs/headphones.ts`, `shared/src/categories/defs/headphones.test.ts`
-- **Interface:** `defineCategory` from `shared/src/categories/schema.ts`. `id: 'headphones'`, `label: 'Headphones'`, `sensitive: false`, `retentionDays: 60`.
-- **Acceptance:** `npm test -w @vlf/shared -- headphones` → `4 passed`.
-
-| name | label | type | visibility | required |
-|---|---|---|---|---|
-| `style` | Style | select (Over-ear, On-ear, Earbuds, Other) | public | yes |
-| `brand` | Brand | text | public | no |
-| `model` | Model | text | private | yes |
-| `case_description` | Case description | text | private | no |
-| `engraving` | Engraving or marking | text | private | no |
-
-Challenge templates:
-
-| field | question | match |
-|---|---|---|
-| `model` | What model are the headphones? | contains |
-| `case_description` | Describe the carrying case, if any. | contains |
-| `engraving` | Is there an engraving or marking? What does it say? | contains |
+**Acceptance:** `npm test -w @vlf/shared -- <id>` shows `4 passed`; then `npm test` and `npm run typecheck` are green.
 
 ---
 

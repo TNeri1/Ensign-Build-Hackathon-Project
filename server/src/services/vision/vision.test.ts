@@ -2,6 +2,8 @@ import { describe, it, expect } from 'vitest';
 import { buildRegistry } from '@vlf/shared';
 import phone from '../../../../shared/src/categories/defs/phone';
 import wallet from '../../../../shared/src/categories/defs/wallet';
+import other from '../../../../shared/src/categories/defs/other';
+import headphones from '../../../../shared/src/categories/defs/headphones';
 import { buildVisionPrompt } from './prompt';
 import { normalizeColor, parseModelJson, sanitizeSuggestion } from './sanitize';
 
@@ -15,6 +17,20 @@ describe('buildVisionPrompt', () => {
     expect(p).toContain('one of: Apple | Samsung | Google | Motorola | Other');
     expect(p).toContain('"cash_amount" (Approx. cash inside): a number');
     expect(p).toContain('multicolor');
+  });
+});
+
+describe('buildVisionPrompt with a catch-all', () => {
+  it('tells the model to use "other" instead of forcing a wrong category, only when "other" exists', () => {
+    expect(buildVisionPrompt(buildRegistry([phone, wallet, other]))).toMatch(/use "other" and set fields\.item_type/);
+    expect(buildVisionPrompt(reg)).not.toContain('"other"');
+  });
+  it('sanitizes an AirPods photo into headphones, or into other with item_type', () => {
+    const full = buildRegistry([phone, wallet, other, headphones]);
+    expect(sanitizeSuggestion({ category: 'headphones', color: 'white', fields: { style: 'earbuds', brand: 'Apple', model: 'AirPods Pro' } }, full))
+      .toEqual({ category: 'headphones', color: 'white', fields: { style: 'Earbuds', brand: 'Apple', model: 'AirPods Pro' } });
+    expect(sanitizeSuggestion({ category: 'other', color: 'white', fields: { item_type: 'AirPods case', model: 'ignored' } }, buildRegistry([phone, wallet, other])))
+      .toEqual({ category: 'other', color: 'white', fields: { item_type: 'AirPods case' } });
   });
 });
 
