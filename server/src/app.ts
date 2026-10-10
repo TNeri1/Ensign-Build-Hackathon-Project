@@ -5,9 +5,11 @@ import { ZodError } from 'zod';
 import { AppError } from './errors';
 import { registerRoutes } from './routes/loader';
 import type { AppContext } from './context';
+import { loadCategoryRegistry } from './services/categoryLoader';
 
-export async function buildApp(ctx: AppContext): Promise<FastifyInstance> {
+export async function buildApp(base: Omit<AppContext, 'categories'>): Promise<FastifyInstance> {
   const app = Fastify({ logger: false });
+  const ctx: AppContext = { ...base, categories: await loadCategoryRegistry() };
   app.decorate('ctx', ctx);
   await app.register(cookie);
   await app.register(multipart, { limits: { fileSize: 10 * 1024 * 1024, files: 1 } });
