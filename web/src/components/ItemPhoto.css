@@ -22,23 +22,23 @@
   transform: scale(1.15);
 }
 
-/* 56px list thumbnail */
+/* 64px list thumbnail (cards may resize it through their own class) */
 .item-photo--small {
   flex: none;
-  width: 56px;
-  height: 56px;
-  border-radius: var(--md-sys-shape-corner-medium);
+  width: 64px;
+  height: 64px;
+  border-radius: var(--md-sys-shape-corner-large-increased);
 }
 .item-photo--small .item-photo__img--blurred { filter: blur(6px) saturate(0.8); transform: scale(1.25); }
 .item-photo__badge {
   position: absolute;
-  right: 4px;
-  bottom: 4px;
+  right: 6px;
+  bottom: 6px;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 20px;
-  height: 20px;
+  width: 24px;
+  height: 24px;
   border-radius: var(--md-sys-shape-corner-full);
   background-color: var(--md-sys-color-inverse-surface);
   color: var(--md-sys-color-inverse-on-surface);
@@ -48,8 +48,8 @@
 .item-photo--large {
   width: 100%;
   aspect-ratio: 4 / 3;
-  max-height: 400px;
-  border-radius: var(--md-sys-shape-corner-large);
+  max-height: 440px;
+  border-radius: var(--md-sys-shape-corner-extra-large-increased);
 }
 .item-photo__empty {
   display: flex;
@@ -74,23 +74,23 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 48px;
-  height: 48px;
-  margin-bottom: 4px;
-  border-radius: var(--md-sys-shape-corner-full);
+  width: 56px;
+  height: 56px;
+  margin-bottom: 8px;
+  border-radius: var(--md-sys-shape-corner-large-increased);
   background-color: var(--md-sys-color-inverse-surface);
   color: var(--md-sys-color-inverse-on-surface);
 }
 .item-photo__scrim-text,
 .item-photo__scrim-hint {
-  padding: 2px 8px;
-  border-radius: var(--md-sys-shape-corner-extra-small);
+  padding: 2px 10px;
+  border-radius: var(--md-sys-shape-corner-small);
   background-color: var(--md-sys-color-inverse-surface);
   color: var(--md-sys-color-inverse-on-surface);
 }
 .item-photo__scrim-hint { margin-bottom: 12px; }
 .item-photo__hide {
   position: absolute;
-  right: 12px;
-  bottom: 12px;
+  right: 16px;
+  bottom: 16px;
 }

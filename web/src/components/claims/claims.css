@@ -1,40 +1,59 @@
-/* Shared pieces for the staff claims / pickup / reports pages. Tokens only. */
-/* A list sitting on a rounded container surface. */
-.claims-list-card {
-  overflow: hidden;
-  padding: 0;
-  border-radius: var(--md-sys-shape-corner-large);
-}
-.claims-list-card .md-list { padding: 4px 0; }
-.claims-list-card .md-list__row + .md-list__row {
-  border-top: 1px solid var(--md-sys-color-outline-variant);
+/* Shared pieces for the staff pages (claims, pickup, reports, inventory, bins). Tokens only. */
+
+/* Card / row fill: white-ish on the light brand wash, one step up from the surface in dark. */
+:root { --staff-surface: var(--md-sys-color-surface-container-lowest); --staff-surface-variant: var(--md-sys-color-surface-container); }
+:root[data-theme='dark'] { --staff-surface: var(--md-sys-color-surface-container); --staff-surface-variant: var(--md-sys-color-surface-container-high); }
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme='light']) { --staff-surface: var(--md-sys-color-surface-container); --staff-surface-variant: var(--md-sys-color-surface-container-high); }
 }
 
-.claims-avatar {
-  position: relative;
-  display: inline-flex;
-  flex: none;
-  align-items: center;
-  justify-content: center;
-  width: 40px;
-  height: 40px;
-  border-radius: var(--md-sys-shape-corner-full);
-  background-color: var(--md-sys-color-secondary-container);
-  color: var(--md-sys-color-on-secondary-container);
+/*
+ * M3 Expressive segmented list: each row is its own tonal container, 2px apart; the group's outer
+ * corners are large-increased, the inner ones extra-small. Rows lift slightly on press.
+ */
+.staff-seglist.md-list { display: flex; flex-direction: column; gap: 2px; padding: 0; }
+.staff-seglist .md-list-item {
+  overflow: hidden;
+  min-height: 80px;
+  padding: 12px 16px;
+  border-radius: var(--md-sys-shape-corner-extra-small);
+  background-color: var(--staff-surface);
+  transition:
+    border-radius var(--md-sys-motion-spring-fast-spatial-duration) var(--md-sys-motion-spring-fast-spatial),
+    background-color var(--md-sys-motion-duration-short4) var(--md-sys-motion-easing-standard);
 }
-.claims-avatar--large { width: 56px; height: 56px; }
+.staff-seglist .md-list__row:first-child .md-list-item {
+  border-top-left-radius: var(--md-sys-shape-corner-large-increased);
+  border-top-right-radius: var(--md-sys-shape-corner-large-increased);
+}
+.staff-seglist .md-list__row:last-child .md-list-item {
+  border-bottom-left-radius: var(--md-sys-shape-corner-large-increased);
+  border-bottom-right-radius: var(--md-sys-shape-corner-large-increased);
+}
+/* Pressed / hovered rows round all their corners (shape morph). */
+@media (hover: hover) {
+  .staff-seglist .md-list-item--interactive:hover { border-radius: var(--md-sys-shape-corner-large-increased); }
+}
+.staff-seglist .md-list-item--interactive:active { border-radius: var(--md-sys-shape-corner-large-increased); }
+.staff-seglist .md-list-item__headline {
+  font-weight: var(--md-sys-typescale-emphasized-weight);
+}
+
+/* Category avatar: expressive shape + item color badge. */
+.claims-avatar { position: relative; display: inline-flex; flex: none; }
 .claims-avatar__swatch {
   position: absolute;
-  right: -2px;
-  bottom: -2px;
+  right: -1px;
+  bottom: -1px;
   width: 16px;
   height: 16px;
   border-radius: var(--md-sys-shape-corner-full);
   box-shadow:
-    0 0 0 2px var(--md-sys-color-surface),
+    0 0 0 2px var(--staff-surface),
     inset 0 0 0 1px var(--md-sys-color-outline);
 }
 .claims-avatar--large .claims-avatar__swatch { width: 20px; height: 20px; }
+.claims-avatar--xlarge .claims-avatar__swatch { width: 24px; height: 24px; right: 2px; bottom: 2px; }
 
 .claims-dot {
   display: inline-block;
@@ -46,19 +65,30 @@
   vertical-align: baseline;
 }
 
-/* Title-medium heading inside a card, with an optional leading icon. */
+/* Section heading inside a card, led by a small expressive shape. */
 .claims-card-title {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 12px;
   margin: 0;
   color: var(--md-sys-color-on-surface);
-  font-size: var(--md-sys-typescale-title-medium-size);
-  line-height: var(--md-sys-typescale-title-medium-line-height);
-  font-weight: var(--md-sys-typescale-title-medium-weight);
-  letter-spacing: var(--md-sys-typescale-title-medium-tracking);
+  font-size: var(--md-sys-typescale-title-large-size);
+  line-height: var(--md-sys-typescale-title-large-line-height);
+  font-weight: var(--md-sys-typescale-emphasized-weight);
+  letter-spacing: var(--md-sys-typescale-title-large-tracking);
 }
-.claims-card-title .md-icon { color: var(--md-sys-color-primary); }
+
+/* An expressive card surface: tonal, large-increased corners. */
+.staff-card.md-card {
+  padding: 20px 16px;
+  border: none;
+  border-radius: var(--md-sys-shape-corner-extra-large);
+  background-color: var(--staff-surface);
+  box-shadow: none;
+}
+@media (min-width: 600px) {
+  .staff-card.md-card { padding: 24px; }
+}
 
 /* Label + value pair (label-medium over body-large). */
 .claims-field { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
@@ -75,8 +105,28 @@
 .claims-rows .md-list-item__supporting { display: block; }
 .claims-row__meta { display: flex; flex-direction: column; min-width: 0; }
 .claims-row__email { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.claims-row__trailing { display: inline-flex; align-items: center; gap: 4px; color: var(--md-sys-color-on-surface-variant); }
 @media (min-width: 600px) {
   .claims-row__meta { flex-direction: row; gap: 4px; }
   .claims-row__time { flex: none; }
   .claims-row__time::before { content: '· '; }
+}
+
+/* Count pill used in hero subtitles ("3 waiting"). */
+.staff-count {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 32px;
+  height: 32px;
+  padding: 0 10px;
+  border-radius: var(--md-sys-shape-corner-full);
+  background-color: var(--md-sys-color-primary);
+  color: var(--md-sys-color-on-primary);
+  font-size: var(--md-sys-typescale-title-medium-size);
+  font-weight: var(--md-sys-typescale-emphasized-weight);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .staff-seglist .md-list-item { transition: none; }
 }
