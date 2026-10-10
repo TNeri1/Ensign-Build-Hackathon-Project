@@ -4,6 +4,7 @@ import { RequireRole } from './auth/RequireRole';
 import { Layout } from './components/Layout';
 import { Home } from './pages/Home';
 import { Login } from './pages/Login';
+import { Search } from './pages/public/Search';
 import { ItemList } from './pages/staff/ItemList';
 import { Intake } from './pages/staff/Intake';
 import { Bins } from './pages/staff/Bins';
@@ -19,6 +20,7 @@ export function App() {
         <Routes>
           <Route element={<Layout />}>
             <Route index element={<Home />} />
+            <Route path="search" element={<Search />} />
             <Route path="login" element={<Login />} />
             <Route path="staff" element={staff(<ItemList />)} />
             <Route path="staff/intake" element={staff(<Intake />)} />
