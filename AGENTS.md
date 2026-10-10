@@ -71,6 +71,8 @@ data/photos/                uploaded photos (gitignored)
 
 1. Staff `POST /api/items` (multipart: `data` JSON + optional `photo`) → `services/intake.ts` → `runMatchingForItem`.
 2. Public `POST /api/public/lost-reports` → `runMatchingForReport`. A score ≥ threshold creates a claim (hashed token) and an Outbox email with `/claim/<token>`.
+   Or a visitor taps **This is mine** on a search result: `POST /api/public/items/:id/claims` (`services/claims/start.ts`) opens a claim
+   on a stored item, emails the link and returns the token, so the questions show at once (claim creation is capped per item per hour).
 3. Claimant `POST /api/public/claims/:token/answers` → item `claim_pending` (rate-limited per item).
 4. Staff `GET /api/claims/:id` (answers beside the private record) → `POST /api/claims/:id/decision`.
 5. Approved claim page shows a QR of `vlf:pickup:<claimToken>`. Staff `POST /api/pickup/lookup` then `/pickup/release` (`idChecked: true` required) → `released`. Single use.

@@ -75,3 +75,11 @@
 @media (min-width: 840px) {
   .search-grid { gap: 16px; }
 }
+
+/* "This is mine" action, pinned to the bottom of each result card. */
+.search-card__action { margin-top: auto; padding-top: 4px; display: flex; }
+.search-card__note {
+  margin: 0; display: flex; align-items: center; gap: 6px;
+  color: var(--md-sys-color-on-surface-variant);
+  font-size: var(--md-sys-typescale-body-small-size); line-height: var(--md-sys-typescale-body-small-line-height);
+}
