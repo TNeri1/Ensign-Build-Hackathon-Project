@@ -94,7 +94,9 @@ html { scroll-padding-top: calc(64px + env(safe-area-inset-top, 0px)); }
     --app-bottom-inset: 0px;
   }
   .app-shell > .md-nav-bar { display: none; }
-  .app-shell:has(.app-fab) { --app-fab-inset: 80px; } /* 56px FAB + 24px offset */
+  /* A compact-only FAB (.md-only-compact) is hidden here, so it needs no room. */
+  .app-shell:has(.app-fab) { --app-fab-inset: 0px; }
+  .app-shell:has(.app-fab:not(.md-only-compact)) { --app-fab-inset: 80px; } /* 56px FAB + 24px offset */
   .app-main { padding-top: 16px; padding-bottom: calc(var(--app-content-bottom-inset) + 32px); }
 }
 

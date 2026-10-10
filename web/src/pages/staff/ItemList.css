@@ -81,9 +81,6 @@
   letter-spacing: var(--md-sys-typescale-label-medium-tracking);
 }
 
-/* .md-fab (position: relative) loads after the shared .app-fab rule; restore the fixed placement. */
-.item-list__fab.app-fab { position: fixed; }
-
 /* Compact: let the title and the "Bins & labels" chip share one row. */
 .item-list .md-page-header { flex-wrap: nowrap; align-items: center; }
 .item-list .md-page-header__text { flex-basis: auto; }

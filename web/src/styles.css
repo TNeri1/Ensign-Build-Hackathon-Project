@@ -19,14 +19,15 @@
  * Screen FAB: <Fab className="app-fab" ... />. Bottom-right, above the navigation bar on compact.
  * <main> automatically gets extra bottom padding when it contains an .app-fab.
  */
-.app-fab {
+/* .md-fab.app-fab: must out-rank .md-fab { position: relative } from Fab.css, which loads later. */
+.md-fab.app-fab {
   position: fixed;
   right: calc(16px + env(safe-area-inset-right, 0px));
   bottom: calc(var(--app-bottom-inset, 0px) + 16px);
   z-index: 25;
 }
 @media (min-width: 600px) {
-  .app-fab { right: 24px; bottom: 24px; }
+  .md-fab.app-fab { right: 24px; bottom: 24px; }
 }
 /* M3: snackbars appear above FABs. Compact: 80px nav + 16px + 56px FAB + 16px = 168px.
    Set on :root because the snackbar host lives outside .app-shell. */
