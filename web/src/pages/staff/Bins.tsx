@@ -8,7 +8,6 @@ import { Card } from '../../components/m3/Card';
 import { EmptyState } from '../../components/m3/EmptyState';
 import { ShapeIcon, shapePath, type ShapeName } from '../../components/m3/ExpressiveShape';
 import { HeroHeader } from '../../components/m3/HeroHeader';
-import { Icon } from '../../components/m3/Icon';
 import { LinearProgress } from '../../components/m3/LinearProgress';
 import { LinkButton } from '../../components/m3/LinkButton';
 import { useSnackbar } from '../../components/m3/Snackbar';
@@ -30,8 +29,8 @@ function BinCard({ bin, index }: { bin: Bin; index: number }) {
             <span className="staff-bin__badge-code">{bin.code}</span>
           </span>
           <div className="staff-bin__text">
-            <h2 className="staff-bin__code"><span className="md-visually-hidden">Bin </span>{bin.code}</h2>
-            <p className="staff-bin__label">{bin.label}</p>
+            <span className="staff-bin__kicker" aria-hidden="true">Bin {bin.code}</span>
+            <h2 className="staff-bin__label"><span className="md-visually-hidden">Bin {bin.code}: </span>{bin.label}</h2>
           </div>
         </div>
         <div className="staff-bin__foot">

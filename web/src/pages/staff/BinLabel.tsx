@@ -5,6 +5,7 @@ import { useGet } from '../../api/useApi';
 import type { Bin } from '../../api/types';
 import { Button } from '../../components/m3/Button';
 import { Card } from '../../components/m3/Card';
+import { ShapeIcon } from '../../components/m3/ExpressiveShape';
 import { IconButton } from '../../components/m3/IconButton';
 import './BinLabel.css';
 
@@ -25,6 +26,7 @@ export function BinLabel() {
         <div className="staff-label__bar">
           <IconButton icon="arrow_back" label="Back to bins" onClick={() => navigate('/staff/bins')} />
           <h1 className="staff-label__title">QR label</h1>
+          <ShapeIcon shape="sunny" tone="surface" icon="qr_code_2" size={40} className="staff-label__shape" />
         </div>
         <div className="staff-label__paper">
           <div className="staff-label__qr" role="img" aria-label={`QR code for bin ${code}`} dangerouslySetInnerHTML={{ __html: svg }} />
@@ -32,7 +34,7 @@ export function BinLabel() {
           {bin?.label && <p className="staff-label__text">{bin.label}</p>}
         </div>
         <p className="staff-label__hint">Stick this on the bin. Scanning it during intake files items here.</p>
-        <Button variant="filled" icon="print" full onClick={() => window.print()} className="staff-label__print">Print</Button>
+        <Button variant="filled" size="large" icon="print" full onClick={() => window.print()} className="staff-label__print">Print</Button>
       </Card>
     </div>
   );
