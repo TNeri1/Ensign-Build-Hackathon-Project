@@ -3,6 +3,8 @@
 Lost-and-found for venues: staff log found items, the public searches a redacted listing and files lost reports,
 claims are verified with challenge questions built from private details, and admins see inventory, chain of custody and analytics.
 
+Requires Node 22 or newer. If `npm install` prints "install scripts blocked" (npm 12), that is fine: the SQLite binary ships prebuilt.
+
 ```bash
 npm install
 npm run seed   # demo data
