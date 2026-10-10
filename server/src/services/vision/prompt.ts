@@ -27,6 +27,8 @@ export function buildVisionPrompt(reg: CategoryRegistry): string {
     '- Only describe what is clearly visible. Leave a field out instead of guessing.',
     '- Use the exact category id and field names above. For "one of" fields use one of the listed options exactly.',
     '- Keep each value short (a few words). Numbers as plain digits.',
-    '- If the item fits no category, omit "category" and "fields" and just give "color" and "summary".',
+    reg.has('other')
+      ? '- Prefer the most specific category. If none fits (e.g. earbuds when there is no headphones category, an umbrella, a toy), use "other" and set fields.item_type to a short name for the item, like "AirPods case". Never put an item in a category it does not belong to.'
+      : '- If the item fits no category, omit "category" and "fields" and just give "color" and "summary". Never put an item in a category it does not belong to.',
   ].join('\n');
 }

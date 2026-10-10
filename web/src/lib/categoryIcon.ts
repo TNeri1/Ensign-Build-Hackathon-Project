@@ -12,6 +12,7 @@ const BY_CATEGORY: Record<string, IconName> = {
   laptop: 'laptop_mac',
   water_bottle: 'water_bottle',
   headphones: 'headphones',
+  other: 'category',
 };
 
 export function categoryIcon(categoryId: string): IconName {

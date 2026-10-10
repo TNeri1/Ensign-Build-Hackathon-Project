@@ -44,7 +44,7 @@ shared/src/                 pure code used by server AND web (no I/O)
   schemas/*.ts              Zod schemas for API payloads (auth, item, report, claim)
   categories/schema.ts      category definition schema + defineCategory()
   categories/registry.ts    buildRegistry, resolveAttributes, buildChallenges, checkAnswer
-  categories/defs/*.ts      ONE FILE PER CATEGORY (phone.ts, wallet.ts). Auto-loaded.
+  categories/defs/*.ts      ONE FILE PER CATEGORY (phone, wallet, keys, bag, ..., other). Auto-loaded.
 server/src/
   main.ts / app.ts          bootstrap; buildApp({db, config}) builds Fastify + ctx
   context.ts                AppContext = { db, config, categories }  (available as app.ctx)
@@ -91,20 +91,20 @@ data/photos/                uploaded photos (gitignored)
 import { defineCategory } from '../schema';
 
 export default defineCategory({
-  id: 'keys',                 // lowercase letters/digits/underscore; must match the file name
-  label: 'Keys',
+  id: 'umbrella',             // lowercase letters/digits/underscore; must match the file name
+  label: 'Umbrella',
   sensitive: false,           // true for IDs / payment cards: photos staff-only + blurred
   retentionDays: 60,
   fields: [
     // public: true  → shown in the public listing.  public: false → private, used for claim questions.
-    { name: 'key_type', label: 'Type', type: 'select', options: ['House', 'Car', 'Office', 'Other'], public: true, required: true },
-    { name: 'keychain', label: 'Keychain / fob', type: 'text', public: false, required: false },
-    { name: 'key_count', label: 'Number of keys', type: 'number', public: false, required: false },
+    { name: 'style', label: 'Style', type: 'select', options: ['Compact', 'Full-size', 'Golf', 'Other'], public: true, required: true },
+    { name: 'pattern', label: 'Pattern / print', type: 'text', public: false, required: false },
+    { name: 'handle', label: 'Handle', type: 'text', public: false, required: false },
   ],
   challengeTemplates: [
     // field MUST be a private field. match: 'contains' (token coverage) or 'exact'.
-    { field: 'keychain', question: 'Describe the keychain or fob.', match: 'contains' },
-    { field: 'key_count', question: 'How many keys are on the ring?', match: 'exact' },
+    { field: 'pattern', question: 'Describe the pattern or print on the umbrella.', match: 'contains' },
+    { field: 'handle', question: 'What does the handle look like?', match: 'contains' },
   ],
 });
 ```
