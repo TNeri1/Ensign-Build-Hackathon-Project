@@ -1,0 +1,94 @@
+/*
+ * App shell layout. Window size classes:
+ *   compact  < 600px   top app bar + bottom navigation bar (80px)
+ *   medium   600-839px navigation rail (80px) on the left
+ *   expanded >= 840px  navigation rail on the left
+ * Shell CSS vars (read them in page CSS instead of hard-coding):
+ *   --app-bottom-inset   space the fixed bottom UI takes (nav bar on compact, 0 otherwise)
+ *   --app-rail-width     width of the rail (0 on compact)
+ */
+.app-shell {
+  --app-rail-width: 0px;
+  --app-bottom-inset: calc(80px + env(safe-area-inset-bottom, 0px));
+  min-height: 100vh;
+  min-height: 100dvh;
+  background-color: var(--md-sys-color-surface);
+}
+
+/*
+ * Keep focused / scrolled-to elements clear of the sticky 64px top app bar and (compact) the fixed
+ * 80px bottom navigation bar (WCAG 2.4.11 Focus Not Obscured).
+ */
+html { scroll-padding-top: calc(64px + env(safe-area-inset-top, 0px)); }
+
+.app-body {
+  min-width: 0;
+  margin-left: var(--app-rail-width);
+}
+
+.app-main {
+  display: block;
+  padding: 8px var(--md-sys-layout-margin) calc(var(--app-bottom-inset) + 24px);
+}
+.app-main:focus { outline: none; }
+/* "Skip to content" and in-page jumps land below the sticky top app bar, not under it. */
+.app-main { scroll-margin-top: calc(64px + env(safe-area-inset-top, 0px)); }
+/* A page with an .app-fab gets room so the FAB never covers its last row. */
+.app-main:has(.app-fab) { padding-bottom: calc(var(--app-bottom-inset) + 96px); }
+
+.app-title {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+  max-width: 100%;
+  min-height: 48px; /* M3 touch target */
+  padding-inline: 4px;
+  border-radius: var(--md-sys-shape-corner-small);
+  color: inherit;
+  text-decoration: none;
+}
+/* Inset ring: never clipped by the bar, and stays inside the 48px target. */
+.app-title:focus-visible { outline-offset: -3px; }
+.app-title__text,
+.app-title__role {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.app-title__text { flex: 0 1 auto; }
+.app-title__role {
+  flex: 0 10 auto; /* the role badge gives way before the app name */
+  color: var(--md-sys-color-on-surface-variant);
+  font-size: var(--md-sys-typescale-label-large-size);
+  line-height: var(--md-sys-typescale-label-large-line-height);
+  font-weight: var(--md-sys-typescale-label-large-weight);
+  letter-spacing: var(--md-sys-typescale-label-large-tracking);
+}
+
+/* Rail header: a plain decorative icon (no container, so it does not read as a FAB). */
+.app-brand-mark { color: var(--md-sys-color-on-surface-variant); }
+
+/* Compact: bottom bar only. */
+@media (max-width: 599.98px) {
+  html { scroll-padding-bottom: calc(96px + env(safe-area-inset-bottom, 0px)); }
+  .app-shell > .md-nav-rail { display: none; }
+}
+
+/* Medium + expanded: rail only. */
+@media (min-width: 600px) {
+  .app-shell {
+    --app-rail-width: calc(80px + env(safe-area-inset-left, 0px));
+    --app-bottom-inset: 0px;
+  }
+  .app-shell > .md-nav-bar { display: none; }
+  .app-main { padding-top: 16px; padding-bottom: 32px; }
+  .app-main:has(.app-fab) { padding-bottom: 112px; }
+}
+
+@media print {
+  .app-body { margin-left: 0; }
+  .app-main { padding: 0; }
+  .app-shell { background: #fff; }
+}

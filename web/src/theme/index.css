@@ -3,6 +3,7 @@
  * Everything is vendored locally (fonts, colors, icons). No network requests.
  */
 @import './tokens.css';
+@import './custom-colors.css';
 @import './fonts.css';
 @import './typography.css';
 @import './system.css';

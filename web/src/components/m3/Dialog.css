@@ -1,0 +1,78 @@
+/* Material 3 basic dialog (native <dialog>). */
+.md-dialog {
+  box-sizing: border-box;
+  min-width: 280px;
+  max-width: min(560px, calc(100vw - 48px));
+  max-height: calc(100dvh - 48px);
+  margin: auto;
+  padding: 0;
+  overflow: hidden;
+  border: none;
+  border-radius: var(--md-sys-shape-corner-extra-large);
+  background-color: var(--md-sys-color-surface-container-high);
+  color: var(--md-sys-color-on-surface);
+  box-shadow: var(--md-sys-elevation-level3);
+}
+.md-dialog::backdrop {
+  background-color: color-mix(in srgb, var(--md-sys-color-scrim) 32%, transparent);
+}
+.md-dialog[open] {
+  animation: md-dialog-enter var(--md-sys-motion-duration-medium2) var(--md-sys-motion-easing-emphasized-decelerate);
+}
+.md-dialog[open]::backdrop {
+  animation: md-dialog-scrim var(--md-sys-motion-duration-medium2) linear;
+}
+@keyframes md-dialog-enter {
+  from { opacity: 0; transform: translateY(-16px) scale(0.96); }
+  to { opacity: 1; transform: none; }
+}
+@keyframes md-dialog-scrim {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.md-dialog__container {
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  max-height: inherit;
+  padding: 24px;
+}
+.md-dialog__icon {
+  align-self: center;
+  margin-bottom: 16px;
+  color: var(--md-sys-color-secondary);
+}
+.md-dialog__headline {
+  margin: 0 0 16px;
+  color: var(--md-sys-color-on-surface);
+  font-size: var(--md-sys-typescale-headline-small-size);
+  line-height: var(--md-sys-typescale-headline-small-line-height);
+  font-weight: var(--md-sys-typescale-headline-small-weight);
+  letter-spacing: var(--md-sys-typescale-headline-small-tracking);
+}
+.md-dialog--with-icon .md-dialog__headline { text-align: center; }
+.md-dialog__content {
+  min-height: 0;
+  overflow: auto;
+  color: var(--md-sys-color-on-surface-variant);
+  font-size: var(--md-sys-typescale-body-medium-size);
+  line-height: var(--md-sys-typescale-body-medium-line-height);
+  font-weight: var(--md-sys-typescale-body-medium-weight);
+  letter-spacing: var(--md-sys-typescale-body-medium-tracking);
+}
+.md-dialog__content > :first-child { margin-top: 0; }
+.md-dialog__content > :last-child { margin-bottom: 0; }
+.md-dialog__actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 8px;
+  padding-top: 24px;
+}
+.md-button.md-dialog__destructive { --_content: var(--md-sys-color-error); }
+
+@media (prefers-reduced-motion: reduce) {
+  .md-dialog[open],
+  .md-dialog[open]::backdrop { animation: none; }
+}

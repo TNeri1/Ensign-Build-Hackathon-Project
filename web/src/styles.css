@@ -1,37 +1,40 @@
-:root { --bg:#f6f7f9; --fg:#1b1f24; --muted:#6b7280; --card:#fff; --accent:#2563eb; --line:#e2e5ea; --ok:#15803d; --err:#b91c1c; }
-* { box-sizing: border-box; }
-body { margin:0; font:16px/1.45 system-ui, sans-serif; background:var(--bg); color:var(--fg); }
-a { color:var(--accent); }
-.topbar { display:flex; flex-wrap:wrap; gap:.5rem 1rem; align-items:center; justify-content:space-between; padding:.6rem 1rem; background:#fff; border-bottom:1px solid var(--line); }
-.topbar nav { display:flex; flex-wrap:wrap; gap:.25rem 1rem; align-items:center; }
-.brand { font-weight:700; text-decoration:none; color:var(--fg); }
-.page { max-width:720px; margin:0 auto; padding:1rem; }
-.stack > * + * { margin-top:.9rem; }
-.row { display:flex; justify-content:space-between; align-items:center; gap:.5rem; }
-.card { background:var(--card); border:1px solid var(--line); border-radius:10px; padding:1rem; }
-.narrow { max-width:380px; margin:2rem auto; }
-.field { display:block; } .field > span { display:block; font-weight:600; margin-bottom:.25rem; }
-input, select, textarea { width:100%; padding:.7rem; font:inherit; border:1px solid #c9ced6; border-radius:8px; background:#fff; }
-button, .btn { font:inherit; padding:.7rem 1rem; border-radius:8px; border:1px solid #c9ced6; background:#fff; cursor:pointer; text-decoration:none; color:var(--fg); display:inline-block; text-align:center; }
-button.primary, .btn.primary { background:var(--accent); border-color:var(--accent); color:#fff; }
-button.big { width:100%; padding:1rem; font-size:1.1rem; }
-button:disabled { opacity:.5; }
-button.link { border:0; background:none; color:var(--accent); padding:0; }
-.chips { display:flex; flex-wrap:wrap; gap:.5rem; }
-.chip { padding:.6rem 1rem; border-radius:999px; }
-.chip.on { background:var(--accent); color:#fff; border-color:var(--accent); }
-.list { list-style:none; padding:0; margin:0; } .list li { background:#fff; border:1px solid var(--line); border-radius:8px; padding:.7rem; margin-bottom:.5rem; }
-.list a { text-decoration:none; color:inherit; }
-.muted { color:var(--muted); font-weight:400; } .error { color:var(--err); } .ok { color:var(--ok); }
-.badge { margin-left:.5rem; padding:.1rem .5rem; border-radius:999px; font-size:.8rem; background:#e5e7eb; }
-.badge.stored { background:#dbeafe; } .badge.claim_pending { background:#fef3c7; } .badge.verified { background:#dcfce7; } .badge.released { background:#e5e7eb; } .badge.disposed { background:#fee2e2; }
-.photo { max-width:100%; border-radius:10px; } .photo.blurred { filter:blur(18px); transition:filter .2s; } .photo.blurred:hover { filter:none; }
-.label-sheet { text-align:center; } .label-code { font-size:4rem; margin:.2rem 0; } .label svg { width:240px; height:240px; }
-@media print { .topbar, .no-print { display:none; } body { background:#fff; } }
-.msg { white-space:pre-wrap; word-break:break-word; font:inherit; margin:.6rem 0 0; }
-.compare { width:100%; border-collapse:collapse; background:#fff; font-size:.95rem; } .compare th, .compare td { border:1px solid var(--line); padding:.5rem; text-align:left; vertical-align:top; }
-.qr svg { width:100%; height:100%; }
-.thumb { width:56px; height:56px; object-fit:cover; border-radius:6px; vertical-align:middle; margin-right:.6rem; } .thumb.blurred { filter:blur(10px); }
-.photo-wrap { display:inline-block; }
-.tiles { display:grid; grid-template-columns:repeat(2,1fr); gap:.6rem; } .tile { background:#fff; border:1px solid var(--line); border-radius:10px; padding:.8rem; } .tile b { display:block; font-size:1.6rem; } .tile span { color:var(--muted); font-size:.85rem; }
-.bar-row { display:grid; grid-template-columns:7.5rem 1fr 2.2rem; gap:.5rem; align-items:center; margin:.3rem 0; font-size:.9rem; } .bar-track { background:#e5e7eb; border-radius:4px; height:14px; } .bar-fill { display:block; height:100%; background:var(--accent); border-radius:4px; } .bar-value { text-align:right; } .bar-label { overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+/*
+ * App-level styles. Theme tokens/typography/base come from ./theme/index.css (imported first in main.tsx).
+ * The shell layout lives in components/Layout.css.
+ */
+@import './legacy.css';
+
+/*
+ * Page width. Every direct child of <main> is centred and capped at the reading width (840px).
+ * Wrap a page in <div className="app-page app-page--wide"> for lists / dashboards (1280px).
+ */
+.app-main > * {
+  max-width: var(--md-sys-layout-content-narrow);
+  margin-inline: auto;
+}
+.app-main > .app-page--wide { max-width: var(--md-sys-layout-content-wide); }
+.app-page { width: 100%; }
+
+/*
+ * Screen FAB: <Fab className="app-fab" ... />. Bottom-right, above the navigation bar on compact.
+ * <main> automatically gets extra bottom padding when it contains an .app-fab.
+ */
+.app-fab {
+  position: fixed;
+  right: calc(16px + env(safe-area-inset-right, 0px));
+  bottom: calc(var(--app-bottom-inset, 0px) + 16px);
+  z-index: 25;
+}
+@media (min-width: 600px) {
+  .app-fab { right: 24px; bottom: 24px; }
+}
+/* M3: snackbars appear above FABs. Compact: 80px nav + 16px + 56px FAB + 16px = 168px.
+   Set on :root because the snackbar host lives outside .app-shell. */
+:root:has(.app-fab) { --md-snackbar-bottom: 168px; --md-snackbar-bottom-wide: 96px; }
+
+/* Print (bin labels): only the page content. */
+@media print {
+  .no-print, .app-fab, .md-snackbar-host, .md-skip-link { display: none !important; }
+  body { background: white; color: black; }
+  .app-main > * { max-width: none; }
+}

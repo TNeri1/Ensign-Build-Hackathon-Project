@@ -1,0 +1,17 @@
+/* Material 3 outlined select. The field shell (outline, notch, label) comes from TextField.css. */
+.md-select__control {
+  cursor: pointer;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.md-field--disabled .md-select__control { cursor: default; }
+
+/* Native popup rows follow the theme (color-scheme on :root handles the popup chrome). */
+.md-select__control option {
+  background-color: var(--md-sys-color-surface-container);
+  color: var(--md-sys-color-on-surface);
+}
+
+/* The trailing icon reflects focus like the label does. */
+.md-select .md-field__container:focus-within .md-select__arrow { color: var(--md-sys-color-primary); }
+.md-select.md-field--error .md-field__container:focus-within .md-select__arrow { color: var(--md-sys-color-error); }
