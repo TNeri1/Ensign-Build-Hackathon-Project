@@ -1,0 +1,7 @@
+node_modules
+dist
+data/*
+!data/photos/.gitkeep
+*.db
+*.db-*
+.env
