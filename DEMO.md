@@ -89,6 +89,10 @@ Tap **Submit answers** → "Staff are reviewing". **Say:** "The questions never 
 
 **Bonus (5 s, if time):** tap the moon icon in the top bar to switch to dark theme. The whole app is Material 3 and works offline (no fonts, icons or scripts load from the internet).
 
+**Alternative claim path (if asked "what if they never filed a report?"):** on the public **Search** page any shelved item has a
+**This is mine** button. Enter an email and the same verification questions open immediately; the claim then goes through the
+same staff review.
+
 ## Fallbacks
 
 | Problem | Fix |

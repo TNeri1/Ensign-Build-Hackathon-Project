@@ -6,6 +6,10 @@ export const claimAnswersSchema = z.object({
 });
 export type ClaimAnswersInput = z.infer<typeof claimAnswersSchema>;
 
+/** A visitor starts a claim from the public listing. */
+export const startClaimSchema = z.object({ contactEmail: z.string().trim().email() });
+export type StartClaimInput = z.infer<typeof startClaimSchema>;
+
 export const claimDecisionSchema = z
   .object({
     decision: z.enum(['approve', 'deny']),

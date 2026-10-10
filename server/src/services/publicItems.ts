@@ -10,6 +10,8 @@ export interface PublicItem {
   area: string;
   foundDate: string;
   details: { label: string; value: string }[];
+  /** True when a visitor can start a claim from the listing (item is shelved: state 'stored'). */
+  claimable: boolean;
 }
 
 interface Row {
@@ -18,6 +20,7 @@ interface Row {
   color: string;
   found_area: string;
   found_at: string;
+  state: string;
 }
 
 export interface PublicSearchParams {
@@ -41,14 +44,14 @@ export function searchPublicItems(db: Db, venueId: string, reg: CategoryRegistry
     args.push(`%${p.q}%`);
   }
   const rows = db
-    .prepare(`SELECT id, category, color, found_area, found_at FROM items WHERE ${where.join(' AND ')} ORDER BY found_at DESC LIMIT 50`)
+    .prepare(`SELECT id, category, color, found_area, found_at, state FROM items WHERE ${where.join(' AND ')} ORDER BY found_at DESC LIMIT 50`)
     .all(...args) as Row[];
   return rows.map((r) => toPublicItem(db, reg, r));
 }
 
 export function getPublicItem(db: Db, venueId: string, reg: CategoryRegistry, id: string): PublicItem | null {
   const row = db
-    .prepare(`SELECT id, category, color, found_area, found_at FROM items WHERE id = ? AND venue_id = ? AND state IN ${LISTED}`)
+    .prepare(`SELECT id, category, color, found_area, found_at, state FROM items WHERE id = ? AND venue_id = ? AND state IN ${LISTED}`)
     .get(id, venueId) as Row | undefined;
   return row ? toPublicItem(db, reg, row) : null;
 }
@@ -67,5 +70,6 @@ export function toPublicItem(db: Db, reg: CategoryRegistry, r: Row): PublicItem 
     area: r.found_area,
     foundDate: r.found_at.slice(0, 10),
     details: attrs.map((a) => ({ label: labels.get(a.key) ?? a.key, value: a.value })),
+    claimable: r.state === 'stored',
   };
 }

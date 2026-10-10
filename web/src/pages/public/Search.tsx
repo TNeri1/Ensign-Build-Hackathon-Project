@@ -11,12 +11,14 @@ import { Select } from '../../components/m3/Select';
 import { TextField } from '../../components/m3/TextField';
 import { colorLabel, colorSwatch } from '../../lib/itemColor';
 import { FoundItemCard, type PublicItem } from './FoundItemCard';
+import { ClaimDialog } from './ClaimDialog';
 import './Search.css';
 
 const COLOR_OPTIONS = [{ value: '', label: 'Any color' }, ...COLORS.map((c) => ({ value: c as string, label: colorLabel(c) }))];
 
 export function Search() {
   const cats = useGet<{ id: string; label: string }[]>('/public/categories').data ?? [];
+  const [claiming, setClaiming] = useState<PublicItem | null>(null);
   const [category, setCategory] = useState('');
   const [color, setColor] = useState('');
   const [area, setArea] = useState('');
@@ -42,7 +44,7 @@ export function Search() {
       </section>
 
       <Alert kind="info">
-        For security, photos and identifying details are not shown. File a lost report and we will contact you if we find a match.
+        For security, photos and identifying details are not shown. See yours? Tap <strong>This is mine</strong> and answer a few questions only the owner would know. Not listed yet? File a lost report and we will email you if it turns up.
       </Alert>
 
       <section className="search-results" aria-label="Results" aria-busy={loading}>
@@ -60,10 +62,11 @@ export function Search() {
         )}
         {data && data.length > 0 && (
           <ul className="search-grid" role="list">
-            {data.map((i) => <li key={i.id}><FoundItemCard item={i} /></li>)}
+            {data.map((i) => <li key={i.id}><FoundItemCard item={i} onClaim={setClaiming} /></li>)}
           </ul>
         )}
       </section>
+      <ClaimDialog item={claiming} onClose={() => setClaiming(null)} />
     </div>
   );
 }

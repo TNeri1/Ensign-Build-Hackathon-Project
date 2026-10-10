@@ -1,14 +1,18 @@
+import { Button } from '../../components/m3/Button';
 import { Card } from '../../components/m3/Card';
+import { Icon } from '../../components/m3/Icon';
 import { CategoryAvatar, ColorTag, MetaLine } from '../../components/public/ItemMeta';
 import { formatDate } from '../../lib/format';
 
 export interface PublicItem {
   id: string; category: string; categoryLabel: string; color: string; area: string; foundDate: string;
   details: { label: string; value: string }[];
+  /** Shelved items can be claimed straight from the listing. */
+  claimable: boolean;
 }
 
 /** One public search result: category, color, where/when found and public details only. */
-export function FoundItemCard({ item }: { item: PublicItem }) {
+export function FoundItemCard({ item, onClaim }: { item: PublicItem; onClaim: (item: PublicItem) => void }) {
   // foundDate is a plain YYYY-MM-DD; anchor at noon so no timezone shifts it a day.
   const date = formatDate(`${item.foundDate}T12:00:00`) || item.foundDate;
   return (
@@ -31,6 +35,13 @@ export function FoundItemCard({ item }: { item: PublicItem }) {
           ))}
         </dl>
       )}
+      <div className="search-card__action">
+        {item.claimable ? (
+          <Button variant="tonal" icon="verified" onClick={() => onClaim(item)}>This is mine</Button>
+        ) : (
+          <p className="search-card__note"><Icon name="hourglass_empty" size={18} /> Still being logged. File a lost report to be notified.</p>
+        )}
+      </div>
     </Card>
   );
 }
