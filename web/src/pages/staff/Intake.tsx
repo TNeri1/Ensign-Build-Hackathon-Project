@@ -101,7 +101,7 @@ export function Intake() {
       <div className="intake__layout">
         <FormSection icon="photo_camera" title="Photo" className="intake__section intake__photo">
           <PhotoPicker file={photo} onChange={choosePhoto} />
-          <PhotoAssistNote state={assist.state} model={assist.model} canRun={!!photo && assist.available && assist.state.kind !== 'reading'}
+          <PhotoAssistNote state={assist.state} canRun={!!photo && assist.available && assist.state.kind !== 'reading'}
             onRun={() => photo && void assist.run(photo)} />
         </FormSection>
 

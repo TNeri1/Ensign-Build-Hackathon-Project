@@ -5,18 +5,17 @@ import { LinearProgress } from '../m3/LinearProgress';
 
 interface Props {
   state: AssistState;
-  model?: string;
   canRun: boolean;
   onRun: () => void;
 }
 
 /** Status of "fill from photo" under the photo card: progress, what was filled, or why it failed. */
-export function PhotoAssistNote({ state, model, canRun, onRun }: Props) {
+export function PhotoAssistNote({ state, canRun, onRun }: Props) {
   if (state.kind === 'reading') {
     return (
       <div className="photo-assist" aria-live="polite">
-        <LinearProgress label="Reading photo" />
-        <p className="photo-assist__text md-typescale-body-medium">Reading the photo{model ? ` with ${model}` : ''}…</p>
+        <LinearProgress label="Analyzing photo" />
+        <p className="photo-assist__text md-typescale-body-medium">Analyzing photo</p>
       </div>
     );
   }
