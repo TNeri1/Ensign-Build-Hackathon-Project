@@ -10,7 +10,7 @@ export function ItemList() {
         <h1>Inventory</h1>
         <Link className="primary btn" to="/staff/intake">+ Log item</Link>
       </div>
-      <p><Link to="/staff/bins">Manage bins &amp; labels</Link></p>
+      <p className="row"><Link to="/staff/claims">Claims</Link><Link to="/staff/pickup">Pickup scan</Link><Link to="/staff/bins">Bins &amp; labels</Link></p>
       {loading && <p className="muted">Loading…</p>}
       {error && <p className="error">{error}</p>}
       <ul className="list">

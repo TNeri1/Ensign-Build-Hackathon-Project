@@ -5,3 +5,4 @@ export * from './categories/registry';
 export * from './schemas/auth';
 export * from './schemas/item';
 export * from './schemas/report';
+export * from './schemas/claim';
