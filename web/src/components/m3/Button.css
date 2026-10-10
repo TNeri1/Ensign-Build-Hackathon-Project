@@ -1,0 +1,140 @@
+/* Material 3 common buttons: filled, tonal, outlined, text, elevated. Shared by Button and LinkButton. */
+.md-button {
+  --_container: transparent;
+  --_content: var(--md-sys-color-primary);
+  --_shadow: var(--md-sys-elevation-level0);
+  --_shadow-hover: var(--md-sys-elevation-level0);
+  --_pad-start: 24px;
+  --_pad-end: 24px;
+  position: relative;
+  isolation: isolate;
+  box-sizing: border-box;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-width: 48px;
+  height: 40px;
+  margin: 0;
+  padding: 0 var(--_pad-end) 0 var(--_pad-start);
+  border: none;
+  border-radius: var(--md-sys-shape-corner-full);
+  background-color: var(--_container);
+  color: var(--_content);
+  box-shadow: var(--_shadow);
+  font-family: inherit;
+  font-size: var(--md-sys-typescale-label-large-size);
+  line-height: var(--md-sys-typescale-label-large-line-height);
+  font-weight: var(--md-sys-typescale-label-large-weight);
+  letter-spacing: var(--md-sys-typescale-label-large-tracking);
+  text-decoration: none;
+  white-space: nowrap;
+  vertical-align: middle;
+  cursor: pointer;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+  transition: box-shadow var(--md-sys-motion-duration-short4) var(--md-sys-motion-easing-standard);
+}
+
+/* State layer: content color overlay. */
+.md-button::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  border-radius: inherit;
+  background-color: currentColor;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity var(--md-sys-motion-duration-short2) var(--md-sys-motion-easing-standard);
+}
+@media (hover: hover) {
+  .md-button:hover::before { opacity: 0.08; }
+  .md-button:hover { box-shadow: var(--_shadow-hover); }
+}
+.md-button:focus-visible::before,
+.md-button:active::before { opacity: 0.1; }
+
+/* 48px touch target around the 40px visual. */
+.md-button::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 50%;
+  height: max(100%, 48px);
+  transform: translateY(-50%);
+}
+
+.md-button:focus-visible {
+  outline: 3px solid var(--md-sys-color-secondary);
+  outline-offset: 2px;
+}
+
+.md-button__label { overflow: hidden; text-overflow: ellipsis; }
+.md-button__icon { flex: none; }
+
+.md-button--has-icon { --_pad-start: 16px; }
+.md-button--has-trailing-icon { --_pad-end: 16px; }
+
+/* Variants */
+.md-button--filled {
+  --_container: var(--md-sys-color-primary);
+  --_content: var(--md-sys-color-on-primary);
+  --_shadow-hover: var(--md-sys-elevation-level1);
+}
+.md-button--tonal {
+  --_container: var(--md-sys-color-secondary-container);
+  --_content: var(--md-sys-color-on-secondary-container);
+  --_shadow-hover: var(--md-sys-elevation-level1);
+}
+.md-button--elevated {
+  --_container: var(--md-sys-color-surface-container-low);
+  --_content: var(--md-sys-color-primary);
+  --_shadow: var(--md-sys-elevation-level1);
+  --_shadow-hover: var(--md-sys-elevation-level2);
+}
+.md-button--outlined {
+  border: 1px solid var(--md-sys-color-outline-variant);
+}
+.md-button--outlined::before { inset: -1px; }
+.md-button--text {
+  --_pad-start: 12px;
+  --_pad-end: 12px;
+}
+.md-button--text.md-button--has-trailing-icon { --_pad-end: 16px; }
+
+/* Sizes */
+.md-button--large {
+  height: 56px;
+  gap: 8px;
+  --_pad-start: 28px;
+  --_pad-end: 28px;
+  font-size: var(--md-sys-typescale-title-medium-size);
+  line-height: var(--md-sys-typescale-title-medium-line-height);
+  letter-spacing: var(--md-sys-typescale-title-medium-tracking);
+}
+.md-button--large.md-button--has-icon { --_pad-start: 24px; }
+.md-button--large.md-button--has-trailing-icon { --_pad-end: 24px; }
+.md-button--full { display: flex; width: 100%; }
+
+/* Disabled: content 38% on-surface, container 12% on-surface, no elevation or state layer. */
+.md-button:disabled,
+.md-button[aria-disabled='true'] {
+  cursor: default;
+  pointer-events: none;
+  box-shadow: none;
+  color: color-mix(in srgb, var(--md-sys-color-on-surface) 38%, transparent);
+}
+.md-button:is(.md-button--filled, .md-button--tonal, .md-button--elevated):is(:disabled, [aria-disabled='true']) {
+  background-color: color-mix(in srgb, var(--md-sys-color-on-surface) 12%, transparent);
+}
+.md-button--outlined:is(:disabled, [aria-disabled='true']) {
+  border-color: color-mix(in srgb, var(--md-sys-color-on-surface) 12%, transparent);
+}
+.md-button:is(:disabled, [aria-disabled='true'])::before { opacity: 0; }
+
+@media (prefers-reduced-motion: reduce) {
+  .md-button,
+  .md-button::before { transition: none; }
+}

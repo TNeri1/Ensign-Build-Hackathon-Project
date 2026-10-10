@@ -1,0 +1,179 @@
+/*
+ * Material 3 system tokens beyond color and type: shape, elevation, motion, state layers, focus.
+ *
+ * Shape     --md-sys-shape-corner-{none,extra-small,small,medium,large,extra-large,full}
+ * Elevation --md-sys-elevation-level{0..5}   (box-shadow values: key + ambient shadow)
+ * Motion    --md-sys-motion-easing-{standard,standard-accelerate,standard-decelerate,
+ *                                    emphasized,emphasized-decelerate,emphasized-accelerate}
+ *           --md-sys-motion-duration-{short1..4,medium1..4,long1..4}
+ * State     --md-sys-state-{hover,focus,pressed,dragged}-state-layer-opacity
+ *           --md-sys-state-disabled-content-opacity / -container-opacity
+ * Focus     --md-sys-focus-ring-{color,width,offset}
+ */
+:root {
+  /* Shape */
+  --md-sys-shape-corner-none: 0;
+  --md-sys-shape-corner-extra-small: 4px;
+  --md-sys-shape-corner-small: 8px;
+  --md-sys-shape-corner-medium: 12px;
+  --md-sys-shape-corner-large: 16px;
+  --md-sys-shape-corner-extra-large: 28px;
+  --md-sys-shape-corner-full: 9999px;
+
+  /* Elevation (shadow color comes from the shadow role so dark mode stays consistent) */
+  --md-sys-elevation-level0: none;
+  --md-sys-elevation-level1: 0 1px 2px rgb(0 0 0 / 0.3), 0 1px 3px 1px rgb(0 0 0 / 0.15);
+  --md-sys-elevation-level2: 0 1px 2px rgb(0 0 0 / 0.3), 0 2px 6px 2px rgb(0 0 0 / 0.15);
+  --md-sys-elevation-level3: 0 1px 3px rgb(0 0 0 / 0.3), 0 4px 8px 3px rgb(0 0 0 / 0.15);
+  --md-sys-elevation-level4: 0 2px 3px rgb(0 0 0 / 0.3), 0 6px 10px 4px rgb(0 0 0 / 0.15);
+  --md-sys-elevation-level5: 0 4px 4px rgb(0 0 0 / 0.3), 0 8px 12px 6px rgb(0 0 0 / 0.15);
+
+  /* Motion: easing */
+  --md-sys-motion-easing-linear: cubic-bezier(0, 0, 1, 1);
+  --md-sys-motion-easing-standard: cubic-bezier(0.2, 0, 0, 1);
+  --md-sys-motion-easing-standard-accelerate: cubic-bezier(0.3, 0, 1, 1);
+  --md-sys-motion-easing-standard-decelerate: cubic-bezier(0, 0, 0, 1);
+  --md-sys-motion-easing-emphasized: cubic-bezier(0.2, 0, 0, 1);
+  --md-sys-motion-easing-emphasized-decelerate: cubic-bezier(0.05, 0.7, 0.1, 1);
+  --md-sys-motion-easing-emphasized-accelerate: cubic-bezier(0.3, 0, 0.8, 0.15);
+
+  /* Motion: duration */
+  --md-sys-motion-duration-short1: 50ms;
+  --md-sys-motion-duration-short2: 100ms;
+  --md-sys-motion-duration-short3: 150ms;
+  --md-sys-motion-duration-short4: 200ms;
+  --md-sys-motion-duration-medium1: 250ms;
+  --md-sys-motion-duration-medium2: 300ms;
+  --md-sys-motion-duration-medium3: 350ms;
+  --md-sys-motion-duration-medium4: 400ms;
+  --md-sys-motion-duration-long1: 450ms;
+  --md-sys-motion-duration-long2: 500ms;
+  --md-sys-motion-duration-long3: 550ms;
+  --md-sys-motion-duration-long4: 600ms;
+
+  /* State layers */
+  --md-sys-state-hover-state-layer-opacity: 0.08;
+  --md-sys-state-focus-state-layer-opacity: 0.1;
+  --md-sys-state-pressed-state-layer-opacity: 0.1;
+  --md-sys-state-dragged-state-layer-opacity: 0.16;
+  --md-sys-state-disabled-content-opacity: 0.38;
+  --md-sys-state-disabled-container-opacity: 0.12;
+
+  /* Focus indicator */
+  --md-sys-focus-ring-color: var(--md-sys-color-secondary);
+  --md-sys-focus-ring-width: 3px;
+  --md-sys-focus-ring-offset: 2px;
+
+  /* Touch target */
+  --md-sys-target-min: 48px;
+
+  /* Layout (window size classes: compact < 600, medium 600-839, expanded >= 840) */
+  --md-sys-layout-margin: 16px; /* compact */
+  --md-sys-layout-gutter: 16px;
+  --md-sys-layout-content-narrow: 840px; /* forms, reading */
+  --md-sys-layout-content-wide: 1280px; /* lists, dashboards */
+}
+@media (min-width: 600px) {
+  :root { --md-sys-layout-margin: 24px; --md-sys-layout-gutter: 24px; }
+}
+
+/* Elevation utilities */
+.md-elevation-0 { box-shadow: var(--md-sys-elevation-level0); }
+.md-elevation-1 { box-shadow: var(--md-sys-elevation-level1); }
+.md-elevation-2 { box-shadow: var(--md-sys-elevation-level2); }
+.md-elevation-3 { box-shadow: var(--md-sys-elevation-level3); }
+.md-elevation-4 { box-shadow: var(--md-sys-elevation-level4); }
+.md-elevation-5 { box-shadow: var(--md-sys-elevation-level5); }
+
+/*
+ * STATE LAYER PATTERN
+ * Add class "md-state-layer" to any interactive element (button, link, list row, chip...).
+ * A ::before overlay filled with currentColor (the element's content color) fades to
+ *   hover 8%, focus-visible 10%, pressed (:active) 10%.
+ * The overlay inherits the element's border-radius and never captures pointer events.
+ * Example:
+ *   <button class="md-btn md-state-layer">Save</button>
+ * Override the overlay color with --md-state-layer-color (defaults to currentColor), e.g.
+ *   .md-chip--selected { --md-state-layer-color: var(--md-sys-color-on-secondary-container); }
+ * Disabled elements (:disabled, [aria-disabled="true"]) show no state layer.
+ * Components that need ::before for something else can reuse the same tokens directly
+ * (opacity: var(--md-sys-state-hover-state-layer-opacity)) on a different pseudo/element.
+ */
+.md-state-layer {
+  position: relative;
+  isolation: isolate;
+}
+.md-state-layer::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  border-radius: inherit;
+  background-color: var(--md-state-layer-color, currentColor);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity var(--md-sys-motion-duration-short2) var(--md-sys-motion-easing-standard);
+}
+@media (hover: hover) {
+  .md-state-layer:hover::before { opacity: var(--md-sys-state-hover-state-layer-opacity); }
+}
+.md-state-layer:focus-visible::before,
+.md-state-layer:has(:focus-visible)::before {
+  opacity: var(--md-sys-state-focus-state-layer-opacity);
+}
+.md-state-layer:active::before { opacity: var(--md-sys-state-pressed-state-layer-opacity); }
+.md-state-layer:is(:disabled, [aria-disabled='true'])::before { opacity: 0; }
+
+/* Disabled helpers: 38% content, 12% on-surface container. */
+.md-disabled-content { opacity: var(--md-sys-state-disabled-content-opacity); }
+.md-disabled-container {
+  background-color: color-mix(in srgb, var(--md-sys-color-on-surface) 12%, transparent);
+  color: color-mix(in srgb, var(--md-sys-color-on-surface) 38%, transparent);
+}
+
+/* Focus indicator: visible only for keyboard focus. */
+:focus { outline: none; }
+:focus-visible {
+  outline: var(--md-sys-focus-ring-width) solid var(--md-sys-focus-ring-color);
+  outline-offset: var(--md-sys-focus-ring-offset);
+}
+/* Inset ring for elements flush against an edge (list rows, nav items). */
+.md-focus-inset:focus-visible { outline-offset: calc(-1 * var(--md-sys-focus-ring-width)); }
+
+/* Touch target helper: guarantees a 48x48 hit area around a smaller visual. */
+.md-touch-target { position: relative; }
+.md-touch-target::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: max(100%, var(--md-sys-target-min));
+  height: max(100%, var(--md-sys-target-min));
+  transform: translate(-50%, -50%);
+}
+
+/* Reduced motion: collapse durations and disable animations everywhere. */
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --md-sys-motion-duration-short1: 0ms;
+    --md-sys-motion-duration-short2: 0ms;
+    --md-sys-motion-duration-short3: 0ms;
+    --md-sys-motion-duration-short4: 0ms;
+    --md-sys-motion-duration-medium1: 0ms;
+    --md-sys-motion-duration-medium2: 0ms;
+    --md-sys-motion-duration-medium3: 0ms;
+    --md-sys-motion-duration-medium4: 0ms;
+    --md-sys-motion-duration-long1: 0ms;
+    --md-sys-motion-duration-long2: 0ms;
+    --md-sys-motion-duration-long3: 0ms;
+    --md-sys-motion-duration-long4: 0ms;
+  }
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}

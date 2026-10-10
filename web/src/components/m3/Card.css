@@ -1,0 +1,61 @@
+/* Material 3 cards. */
+.md-card {
+  position: relative;
+  isolation: isolate;
+  box-sizing: border-box;
+  display: block;
+  min-width: 0;
+  padding: 16px;
+  border-radius: var(--md-sys-shape-corner-medium);
+  color: var(--md-sys-color-on-surface);
+  transition: box-shadow var(--md-sys-motion-duration-short4) var(--md-sys-motion-easing-standard);
+}
+.md-card--flush { padding: 0; overflow: hidden; }
+
+.md-card--elevated {
+  background-color: var(--md-sys-color-surface-container-low);
+  box-shadow: var(--md-sys-elevation-level1);
+}
+.md-card--filled {
+  background-color: var(--md-sys-color-surface-container-highest);
+  box-shadow: var(--md-sys-elevation-level0);
+}
+.md-card--outlined {
+  background-color: var(--md-sys-color-surface);
+  border: 1px solid var(--md-sys-color-outline-variant);
+}
+
+/* Interactive cards: state layer (on-surface) + elevation change on hover. */
+.md-card--interactive {
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+.md-card--interactive::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  border-radius: inherit;
+  background-color: var(--md-sys-color-on-surface);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity var(--md-sys-motion-duration-short2) var(--md-sys-motion-easing-standard);
+}
+.md-card--outlined.md-card--interactive::before { inset: -1px; }
+@media (hover: hover) {
+  .md-card--interactive:hover::before { opacity: 0.08; }
+  .md-card--elevated.md-card--interactive:hover { box-shadow: var(--md-sys-elevation-level2); }
+  .md-card--filled.md-card--interactive:hover,
+  .md-card--outlined.md-card--interactive:hover { box-shadow: var(--md-sys-elevation-level1); }
+}
+.md-card--interactive:focus-visible::before,
+.md-card--interactive:active::before { opacity: 0.1; }
+.md-card--interactive:focus-visible {
+  outline: 3px solid var(--md-sys-color-secondary);
+  outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .md-card,
+  .md-card::before { transition: none; }
+}

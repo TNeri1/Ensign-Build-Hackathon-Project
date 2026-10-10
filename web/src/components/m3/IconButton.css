@@ -1,0 +1,94 @@
+/* Material 3 icon buttons: standard, filled, tonal, outlined (+ toggle selected states). */
+.md-icon-button {
+  --_container: transparent;
+  --_content: var(--md-sys-color-on-surface-variant);
+  position: relative;
+  isolation: isolate;
+  box-sizing: border-box;
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  margin: 0;
+  padding: 0;
+  border: none;
+  border-radius: var(--md-sys-shape-corner-full);
+  background-color: var(--_container);
+  color: var(--_content);
+  text-decoration: none;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+.md-icon-button::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  border-radius: inherit;
+  background-color: currentColor;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity var(--md-sys-motion-duration-short2) var(--md-sys-motion-easing-standard);
+}
+@media (hover: hover) {
+  .md-icon-button:hover::before { opacity: 0.08; }
+}
+.md-icon-button:focus-visible::before,
+.md-icon-button:active::before { opacity: 0.1; }
+/* 48x48 touch target. */
+.md-icon-button::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 48px;
+  height: 48px;
+  transform: translate(-50%, -50%);
+}
+.md-icon-button:focus-visible {
+  outline: 3px solid var(--md-sys-color-secondary);
+  outline-offset: 2px;
+}
+
+.md-icon-button--standard.md-icon-button--selected { --_content: var(--md-sys-color-primary); }
+
+.md-icon-button--filled {
+  --_container: var(--md-sys-color-primary);
+  --_content: var(--md-sys-color-on-primary);
+}
+.md-icon-button--filled.md-icon-button--unselected {
+  --_container: var(--md-sys-color-surface-container-highest);
+  --_content: var(--md-sys-color-primary);
+}
+
+.md-icon-button--tonal {
+  --_container: var(--md-sys-color-secondary-container);
+  --_content: var(--md-sys-color-on-secondary-container);
+}
+.md-icon-button--tonal.md-icon-button--unselected {
+  --_container: var(--md-sys-color-surface-container-highest);
+  --_content: var(--md-sys-color-on-surface-variant);
+}
+
+.md-icon-button--outlined { border: 1px solid var(--md-sys-color-outline-variant); }
+.md-icon-button--outlined::before { inset: -1px; }
+.md-icon-button--outlined.md-icon-button--selected {
+  border-color: transparent;
+  --_container: var(--md-sys-color-inverse-surface);
+  --_content: var(--md-sys-color-inverse-on-surface);
+}
+
+.md-icon-button:disabled {
+  cursor: default;
+  pointer-events: none;
+  color: color-mix(in srgb, var(--md-sys-color-on-surface) 38%, transparent);
+}
+.md-icon-button:is(.md-icon-button--filled, .md-icon-button--tonal):disabled {
+  background-color: color-mix(in srgb, var(--md-sys-color-on-surface) 12%, transparent);
+}
+.md-icon-button--outlined:disabled {
+  border-color: color-mix(in srgb, var(--md-sys-color-on-surface) 12%, transparent);
+}
+.md-icon-button:disabled::before { opacity: 0; }
