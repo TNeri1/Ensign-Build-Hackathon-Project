@@ -57,25 +57,5 @@ export function buildChallenges(def: CategoryDefinition, privateValues: Record<s
     .map((t) => ({ field: t.field, question: t.question, match: t.match }));
 }
 
-const STOP = new Set(['a', 'an', 'the', 'with', 'on', 'in', 'of', 'and', 'at', 'is', 'it', 'has', 'to', 'my', 'its']);
-const normalize = (s: string) => s.toLowerCase().replace(/[^a-z0-9]+/g, ' ').trim();
-const tokens = (s: string) => normalize(s).split(' ').filter((t) => t && !STOP.has(t));
-
-/**
- * exact: normalized equality.
- * contains: token coverage. Short expected values (<=2 tokens) need every token; longer ones need 60%.
- * Numbers must always be present, so "iPhone 13" never satisfies "iPhone 14".
- */
-export function checkAnswer(match: Challenge['match'], expected: string, given: string): boolean {
-  const e = normalize(expected);
-  const g = normalize(given);
-  if (!e || !g) return false;
-  if (match === 'exact') return e === g;
-  const et = tokens(expected);
-  const gt = new Set(tokens(given));
-  if (et.length === 0) return g.includes(e);
-  const hits = et.filter((t) => gt.has(t));
-  if (et.some((t) => /^\d+$/.test(t) && !gt.has(t))) return false;
-  const need = et.length <= 2 ? et.length : Math.ceil(et.length * 0.6);
-  return hits.length >= need;
-}
+// Answer matching lives in answerMatch.ts (typo-tolerant, three-level verdict).
+export { checkAnswer, scoreAnswer, type AnswerScore, type AnswerVerdict } from './answerMatch';

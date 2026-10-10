@@ -1,4 +1,4 @@
-import { checkAnswer, type SessionUser } from '@vlf/shared';
+import { scoreAnswer, type AnswerVerdict, type SessionUser } from '@vlf/shared';
 import type { AppContext } from '../../context';
 import { AppError, notFound } from '../../errors';
 import { nowIso } from '../../ids';
@@ -12,6 +12,9 @@ export interface Comparison {
   question: string;
   expected: string;
   given: string;
+  /** match / close / differs (advisory; staff decide). */
+  verdict: AnswerVerdict;
+  /** verdict === 'match' (kept for older clients). */
   autoMatch: boolean;
 }
 
@@ -25,7 +28,8 @@ export function compareClaim(ctx: AppContext, claimId: string, venueId: string) 
   const comparisons: Comparison[] = challengesOf(claim).map((c) => {
     const expected = priv.get(c.field) ?? '';
     const given = answers[c.field] ?? '';
-    return { field: c.field, question: c.question, expected, given, autoMatch: checkAnswer(c.match, expected, given) };
+    const { verdict } = scoreAnswer(c.match, expected, given);
+    return { field: c.field, question: c.question, expected, given, verdict, autoMatch: verdict === 'match' };
   });
   return {
     claim: { id: claim.id, status: claim.status, claimantEmail: claim.claimant_email, submittedAt: claim.submitted_at, decisionReason: claim.decision_reason },

@@ -75,7 +75,8 @@ data/photos/                uploaded photos (gitignored)
    Or a visitor taps **This is mine** on a search result: `POST /api/public/items/:id/claims` (`services/claims/start.ts`) opens a claim
    on a stored item, emails the link and returns the token, so the questions show at once (claim creation is capped per item per hour).
 3. Claimant `POST /api/public/claims/:token/answers` → item `claim_pending` (rate-limited per item).
-4. Staff `GET /api/claims/:id` (answers beside the private record) → `POST /api/claims/:id/decision`.
+4. Staff `GET /api/claims/:id` (answers beside the private record, each with an advisory match / close / differs verdict from
+   `shared/src/categories/answerMatch.ts`: typo-tolerant, plural-aware, ignores filler words, numbers exact) → `POST /api/claims/:id/decision`.
 5. Approved claim page shows a QR of `vlf:pickup:<claimToken>`. Staff `POST /api/pickup/lookup` then `/pickup/release` (`idChecked: true` required) → `released`. Single use.
 6. Photo intake (optional): Intake downscales the photo and calls `POST /api/vision/describe` (staff). `services/vision/` sends it to a
    LOCAL OpenAI-compatible vision model (`client.ts`), with a prompt generated from the category plugins (`prompt.ts`), and validates

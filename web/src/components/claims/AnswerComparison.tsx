@@ -1,15 +1,23 @@
+import type { AnswerVerdict } from '@vlf/shared';
 import { Icon } from '../m3/Icon';
 import { LinearProgress } from '../m3/LinearProgress';
 import './AnswerComparison.css';
 
-export interface Comparison { field: string; question: string; expected: string; given: string; autoMatch: boolean }
+export interface Comparison { field: string; question: string; expected: string; given: string; verdict: AnswerVerdict; autoMatch: boolean }
 
-/** "Match" (success-container, check_circle) or "Differs" (error-container, cancel). */
-export function MatchChip({ match }: { match: boolean }) {
+const CHIP: Record<AnswerVerdict, { cls: string; icon: 'check_circle' | 'help' | 'cancel'; label: string }> = {
+  match: { cls: 'yes', icon: 'check_circle', label: 'Match' },
+  close: { cls: 'close', icon: 'help', label: 'Close match' },
+  differs: { cls: 'no', icon: 'cancel', label: 'Differs' },
+};
+
+/** "Match" (success), "Close match" (warning: partly right or worded differently, look carefully) or "Differs" (error). */
+export function MatchChip({ verdict }: { verdict: AnswerVerdict }) {
+  const c = CHIP[verdict];
   return (
-    <span className={`answer-match answer-match--${match ? 'yes' : 'no'}`}>
-      <Icon name={match ? 'check_circle' : 'cancel'} size={16} />
-      {match ? 'Match' : 'Differs'}
+    <span className={`answer-match answer-match--${c.cls}`}>
+      <Icon name={c.icon} size={16} />
+      {c.label}
     </span>
   );
 }
@@ -18,15 +26,16 @@ function Answer({ text }: { text: string }) {
   return text ? <>{text}</> : <span className="answer-empty">No answer</span>;
 }
 
-/** "3 of 4 answers match" with a determinate progress bar. */
+/** "3 of 4 answers match · 1 close" with a determinate progress bar. */
 function Summary({ rows }: { rows: Comparison[] }) {
-  const matched = rows.filter((r) => r.autoMatch).length;
+  const matched = rows.filter((r) => r.verdict === 'match').length;
+  const close = rows.filter((r) => r.verdict === 'close').length;
   const all = matched === rows.length;
   return (
     <div className="answer-summary">
       <div className="answer-summary__text">
         <Icon name={all ? 'verified' : 'help'} size={20} className={all ? 'answer-summary__icon--ok' : 'answer-summary__icon'} />
-        <span><strong>{matched} of {rows.length}</strong> answers match</span>
+        <span><strong>{matched} of {rows.length}</strong> answers match{close > 0 && <> · {close} close</>}</span>
       </div>
       <LinearProgress value={rows.length ? matched / rows.length : 0} label={`${matched} of ${rows.length} answers match`} />
     </div>
@@ -44,10 +53,10 @@ export function AnswerComparison({ rows }: { rows: Comparison[] }) {
       <Summary rows={rows} />
       <ol className="answer-cards" role="list">
         {rows.map((c) => (
-          <li key={c.field} className={`answer-card answer-card--${c.autoMatch ? 'yes' : 'no'}`}>
+          <li key={c.field} className={`answer-card answer-card--${CHIP[c.verdict].cls}`}>
             <div className="answer-card__head">
               <h3 className="answer-card__question">{c.question}</h3>
-              <MatchChip match={c.autoMatch} />
+              <MatchChip verdict={c.verdict} />
             </div>
             <div className="answer-card__pair">
               <div className="answer-block">
@@ -68,11 +77,11 @@ export function AnswerComparison({ rows }: { rows: Comparison[] }) {
         </thead>
         <tbody>
           {rows.map((c) => (
-            <tr key={c.field} className={c.autoMatch ? undefined : 'answer-table__row--no'}>
+            <tr key={c.field} className={c.verdict === 'match' ? undefined : `answer-table__row--${CHIP[c.verdict].cls}`}>
               <th scope="row">{c.question}</th>
               <td><Answer text={c.given} /></td>
               <td className="answer-table__record"><Answer text={c.expected} /></td>
-              <td><MatchChip match={c.autoMatch} /></td>
+              <td><MatchChip verdict={c.verdict} /></td>
             </tr>
           ))}
         </tbody>

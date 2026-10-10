@@ -53,6 +53,7 @@ describe('claim flow', () => {
     const cmp = (await s.app.inject({ method: 'GET', url: `/api/claims/${list[0].id}`, headers: { cookie: s.cookie } })).json();
     expect(cmp.comparisons.every((c: { autoMatch: boolean }) => c.autoMatch)).toBe(true);
     expect(cmp.comparisons[0]).toHaveProperty('expected');
+    expect(cmp.comparisons.map((c: { verdict: string }) => c.verdict)).toEqual(['match', 'match']);
 
     const dec = await s.app.inject({ method: 'POST', url: `/api/claims/${list[0].id}/decision`, payload: { decision: 'approve' }, headers: { cookie: s.cookie } });
     expect(dec.statusCode).toBe(200);
