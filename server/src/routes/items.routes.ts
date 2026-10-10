@@ -64,7 +64,7 @@ const routes: FastifyPluginAsync = async (app) => {
     if (!item || item.venue_id !== user.venueId || !item.photo_path) throw notFound('No photo');
     const photo = readPhoto(ctx.config.photoDir, item.photo_path);
     if (!photo) throw notFound('No photo');
-    return reply.header('Cache-Control', 'private, max-age=300').type(photo.mimetype).send(photo.data);
+    return reply.header('Cache-Control', item.sensitive ? 'no-store' : 'private, max-age=300').type(photo.mimetype).send(photo.data);
   });
 };
 export default routes;

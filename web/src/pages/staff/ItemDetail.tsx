@@ -1,5 +1,6 @@
 import { useParams } from 'react-router-dom';
 import { useGet } from '../../api/useApi';
+import { ItemPhoto } from '../../components/ItemPhoto';
 
 interface Detail {
   id: string; category: string; color: string; state: string; found_area: string; found_at: string;
@@ -17,7 +18,7 @@ export function ItemDetail() {
     <div className="stack">
       <h1>{data.category} · {data.color}</h1>
       <span className={`badge ${data.state}`}>{data.state.replace('_', ' ')}</span>
-      {data.photo_path && <img className={data.sensitive ? 'photo blurred' : 'photo'} src={`/api/items/${data.id}/photo`} alt="Found item" />}
+      {data.photo_path && <ItemPhoto itemId={data.id} sensitive={!!data.sensitive} />}
       <p>Found at {data.found_area}, {new Date(data.found_at).toLocaleString()}</p>
       <h2>Details</h2>
       <ul className="list">
