@@ -56,7 +56,7 @@
 .item-detail__dl { margin: 0; }
 .item-detail__row {
   display: grid;
-  grid-template-columns: minmax(112px, 40%) minmax(0, 1fr);
+  grid-template-columns: minmax(112px, 2fr) minmax(0, 3fr);
   gap: 12px;
   align-items: baseline;
   padding: 10px 0;

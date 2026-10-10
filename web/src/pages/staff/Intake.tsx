@@ -64,7 +64,7 @@ export function Intake() {
   }
 
   return (
-    <form onSubmit={submit} className="app-page app-page--wide intake">
+    <form onSubmit={submit} className="app-page intake">
       <PageHeader title="Log found item" subtitle="Photo, category, color, where. About 20 seconds." back="/staff" />
       <div className="intake__layout">
         <FormSection icon="photo_camera" title="Photo" className="intake__section intake__photo">

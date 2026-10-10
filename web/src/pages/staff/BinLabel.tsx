@@ -20,7 +20,7 @@ export function BinLabel() {
   }, [code]);
 
   return (
-    <div className="staff-label">
+    <div className="app-page staff-label">
       <Card variant="elevated" className="staff-label__card">
         <div className="staff-label__bar">
           <IconButton icon="arrow_back" label="Back to bins" onClick={() => navigate('/staff/bins')} />

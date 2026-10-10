@@ -14,7 +14,7 @@ const STEPS: { icon: IconName; title: string; body: string }[] = [
 /** Public landing page for venue visitors. */
 export function Home() {
   return (
-    <div className="app-page home">
+    <div className="app-page app-page--wide home">
       <section className="home-hero" aria-labelledby="home-title">
         <Icon name="travel_explore" size={160} className="home-hero__art" />
         <div className="home-hero__text">

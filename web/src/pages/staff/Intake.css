@@ -1,5 +1,4 @@
-/* Staff intake: the 20-second mobile flow. */
-.app-main > .intake { max-width: 1120px; }
+/* Staff intake: the 20-second mobile flow. Narrow (840px) single column on every size. */
 
 .intake__layout {
   display: flex;
@@ -65,19 +64,5 @@
     margin: 0;
     padding: 16px 0;
     border-top: none;
-  }
-}
-
-/* Expanded: photo column on the left (sticky), form on the right. */
-@media (min-width: 840px) {
-  .intake__layout {
-    display: grid;
-    grid-template-columns: minmax(280px, 360px) minmax(0, 1fr);
-    align-items: start;
-    gap: 24px;
-  }
-  .intake__photo {
-    position: sticky;
-    top: calc(64px + 16px);
   }
 }
