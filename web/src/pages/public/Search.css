@@ -49,6 +49,14 @@
   font-size: var(--md-sys-typescale-body-medium-size);
   line-height: var(--md-sys-typescale-body-medium-line-height);
 }
+/* Under the title: category (only when the title is the item's own name) · color. */
+.search-card__sub { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 8px; }
+.search-card__category {
+  color: var(--md-sys-color-on-surface-variant);
+  font-size: var(--md-sys-typescale-body-medium-size);
+  line-height: var(--md-sys-typescale-body-medium-line-height);
+}
+.search-card__category::after { content: '·'; margin-left: 8px; }
 .search-card__meta { display: flex; flex-direction: column; gap: 4px; }
 .search-card__details {
   display: flex;

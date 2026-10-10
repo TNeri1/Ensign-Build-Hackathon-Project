@@ -43,7 +43,7 @@ export function ClaimDialog({ item, onClose }: { item: PublicItem | null; onClos
       onClose={onClose}
     >
       <p>
-        To prove this {item?.categoryLabel.toLowerCase()} is yours, you will answer a few questions about details only the owner
+        To prove this {item ? (item.name ?? item.categoryLabel.toLowerCase()) : 'item'} is yours, you will answer a few questions about details only the owner
         would know. Staff then check your answers.
       </p>
       <TextField label="Your email" type="email" value={email} onChange={(v) => { setEmail(v); setError(''); }} required leadingIcon="mail"
