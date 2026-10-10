@@ -22,6 +22,13 @@
   color: var(--md-sys-color-on-surface);
 }
 .md-nav-rail__fab { margin: 4px 0 8px; }
+/* M3 "lowered" FAB in the rail: it sits on the rail's own surface, so it is flat at rest and only
+   lifts slightly on hover instead of floating at level3/4. */
+.md-nav-rail__fab .md-fab { box-shadow: var(--md-sys-elevation-level0, none); }
+@media (hover: hover) {
+  .md-nav-rail__fab .md-fab:hover { box-shadow: var(--md-sys-elevation-level1); }
+}
+.md-nav-rail__fab .md-fab:active { box-shadow: var(--md-sys-elevation-level0, none); }
 .md-nav-rail__items {
   display: flex;
   flex-direction: column;

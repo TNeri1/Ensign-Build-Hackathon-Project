@@ -1,0 +1,83 @@
+/* Staff intake: the 20-second mobile flow. */
+.app-main > .intake { max-width: 1120px; }
+
+.intake__layout {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+.intake__main {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  min-width: 0;
+}
+
+.intake__section {
+  padding: 16px;
+  border-radius: var(--md-sys-shape-corner-large);
+  background-color: var(--md-sys-color-surface-container-low);
+}
+
+.intake__group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.intake__label {
+  color: var(--md-sys-color-on-surface-variant);
+  font-size: var(--md-sys-typescale-label-large-size);
+  line-height: var(--md-sys-typescale-label-large-line-height);
+  font-weight: var(--md-sys-typescale-label-large-weight);
+  letter-spacing: var(--md-sys-typescale-label-large-tracking);
+}
+.intake__error {
+  color: var(--md-sys-color-error);
+  font-size: var(--md-sys-typescale-body-small-size);
+  line-height: var(--md-sys-typescale-body-small-line-height);
+}
+.intake__placeholder { color: var(--md-sys-color-on-surface-variant); }
+
+.intake__pair {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 16px;
+}
+
+/* Compact: the save button sticks above the bottom navigation bar. */
+.intake__savebar {
+  position: sticky;
+  bottom: var(--app-bottom-inset, 0px);
+  z-index: 5;
+  margin: 0 calc(-1 * var(--md-sys-layout-margin));
+  padding: 12px var(--md-sys-layout-margin);
+  background-color: var(--md-sys-color-surface);
+  border-top: 1px solid var(--md-sys-color-outline-variant);
+}
+/* Keep snackbars above the sticky save bar (80px nav + 80px bar + gap). */
+:root:has(.intake__savebar) { --md-snackbar-bottom: 176px; }
+
+@media (min-width: 600px) {
+  .intake__section { padding: 20px 24px; }
+  .intake__pair { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .intake__savebar {
+    bottom: 0;
+    margin: 0;
+    padding: 16px 0;
+    border-top: none;
+  }
+}
+
+/* Expanded: photo column on the left (sticky), form on the right. */
+@media (min-width: 840px) {
+  .intake__layout {
+    display: grid;
+    grid-template-columns: minmax(280px, 360px) minmax(0, 1fr);
+    align-items: start;
+    gap: 24px;
+  }
+  .intake__photo {
+    position: sticky;
+    top: calc(64px + 16px);
+  }
+}

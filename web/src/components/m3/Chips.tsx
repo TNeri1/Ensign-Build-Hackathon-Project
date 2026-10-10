@@ -82,10 +82,12 @@ export interface AssistChipProps {
   icon?: IconName;
   onClick?: () => void;
   to?: string;
+  /** Plain <a href> (in-page #anchors, downloads); `to` is for app routes. */
+  href?: string;
 }
 
-/** M3 assist chip: a smart shortcut action. Renders a router <Link> when `to` is given. */
-export function AssistChip({ label, icon, onClick, to }: AssistChipProps) {
+/** M3 assist chip: a smart shortcut action. Renders a router <Link> for `to`, an <a> for `href`. */
+export function AssistChip({ label, icon, onClick, to, href }: AssistChipProps) {
   const cls = `md-chip md-chip--assist${icon ? ' md-chip--with-icon' : ''}`;
   const content = (
     <>
@@ -98,6 +100,13 @@ export function AssistChip({ label, icon, onClick, to }: AssistChipProps) {
       <Link to={to} className={cls} onClick={onClick}>
         {content}
       </Link>
+    );
+  }
+  if (href) {
+    return (
+      <a href={href} className={cls} onClick={onClick}>
+        {content}
+      </a>
     );
   }
   return (

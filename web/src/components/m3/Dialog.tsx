@@ -1,4 +1,4 @@
-import { useEffect, useId, useRef, type MouseEvent, type SyntheticEvent } from 'react';
+import { useEffect, useId, useRef, type FormEvent, type MouseEvent, type SyntheticEvent } from 'react';
 import { Button } from './Button';
 import { Icon } from './Icon';
 import type { IconName } from './icons';
@@ -22,7 +22,8 @@ const FIELD = 'input:not([type="hidden"]):not([disabled]), select:not([disabled]
 
 /**
  * Material 3 basic dialog on the native <dialog> + showModal() (top layer, inert background,
- * focus trap). Focus moves into the dialog on open and back to the opener on close.
+ * focus trap). Focus moves into the dialog on open and back to the opener on close. Body + actions
+ * are a <form>: Enter in a text input submits it, which calls onConfirm (confirm is type="submit").
  */
 export function Dialog({
   open,
@@ -70,6 +71,11 @@ export function Dialog({
     e.preventDefault(); // Escape: let the parent own the open state
     onClose();
   };
+  const onSubmit = (e: FormEvent<HTMLFormElement>) => {
+    e.preventDefault(); // no native dialog close / navigation: the parent owns open state
+    e.stopPropagation(); // never also submit a page form the <Dialog> happens to be rendered inside
+    onConfirm();
+  };
   const onMouseDown = (e: MouseEvent<HTMLDialogElement>) => {
     downOnScrim.current = e.target === e.currentTarget;
   };
@@ -88,7 +94,7 @@ export function Dialog({
       onMouseDown={onMouseDown}
       onClick={onClick}
     >
-      <div className="md-dialog__container">
+      <form className="md-dialog__container" onSubmit={onSubmit} noValidate>
         {icon && <Icon name={icon} size={24} className="md-dialog__icon" />}
         <h2 id={titleId} className="md-dialog__headline">
           {title}
@@ -97,19 +103,19 @@ export function Dialog({
           {children}
         </div>
         <div className="md-dialog__actions">
-          <Button variant="text" onClick={onClose} data-autofocus={destructive ? '' : undefined}>
+          <Button type="button" variant="text" onClick={onClose} data-autofocus={destructive ? '' : undefined}>
             {cancelLabel}
           </Button>
           <Button
+            type="submit"
             variant="text"
             className={destructive ? 'md-dialog__destructive' : undefined}
-            onClick={onConfirm}
             data-autofocus={destructive ? undefined : ''}
           >
             {confirmLabel}
           </Button>
         </div>
-      </div>
+      </form>
     </dialog>
   );
 }

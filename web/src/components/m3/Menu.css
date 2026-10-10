@@ -69,7 +69,9 @@
 @media (hover: hover) {
   .md-menu__item:hover::before { opacity: 0.08; }
 }
-.md-menu__item:focus::before,
+/* Focus always moves into the menu, but the focus layer only shows for keyboard (:focus-visible), so a
+   mouse-opened menu doesn't look like its first item is pre-selected. */
+.md-menu__item:focus-visible::before,
 .md-menu__item:active::before { opacity: 0.1; }
 .md-menu__item:focus-visible {
   outline: 3px solid var(--md-sys-color-secondary);

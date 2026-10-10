@@ -1,0 +1,82 @@
+/* Shared pieces for the staff claims / pickup / reports pages. Tokens only. */
+/* A list sitting on a rounded container surface. */
+.claims-list-card {
+  overflow: hidden;
+  padding: 0;
+  border-radius: var(--md-sys-shape-corner-large);
+}
+.claims-list-card .md-list { padding: 4px 0; }
+.claims-list-card .md-list__row + .md-list__row {
+  border-top: 1px solid var(--md-sys-color-outline-variant);
+}
+
+.claims-avatar {
+  position: relative;
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border-radius: var(--md-sys-shape-corner-full);
+  background-color: var(--md-sys-color-secondary-container);
+  color: var(--md-sys-color-on-secondary-container);
+}
+.claims-avatar--large { width: 56px; height: 56px; }
+.claims-avatar__swatch {
+  position: absolute;
+  right: -2px;
+  bottom: -2px;
+  width: 16px;
+  height: 16px;
+  border-radius: var(--md-sys-shape-corner-full);
+  box-shadow:
+    0 0 0 2px var(--md-sys-color-surface),
+    inset 0 0 0 1px var(--md-sys-color-outline);
+}
+.claims-avatar--large .claims-avatar__swatch { width: 20px; height: 20px; }
+
+.claims-dot {
+  display: inline-block;
+  flex: none;
+  width: 12px;
+  height: 12px;
+  border-radius: var(--md-sys-shape-corner-full);
+  box-shadow: inset 0 0 0 1px var(--md-sys-color-outline);
+  vertical-align: baseline;
+}
+
+/* Title-medium heading inside a card, with an optional leading icon. */
+.claims-card-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0;
+  color: var(--md-sys-color-on-surface);
+  font-size: var(--md-sys-typescale-title-medium-size);
+  line-height: var(--md-sys-typescale-title-medium-line-height);
+  font-weight: var(--md-sys-typescale-title-medium-weight);
+  letter-spacing: var(--md-sys-typescale-title-medium-tracking);
+}
+.claims-card-title .md-icon { color: var(--md-sys-color-primary); }
+
+/* Label + value pair (label-medium over body-large). */
+.claims-field { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+.claims-field__label {
+  color: var(--md-sys-color-on-surface-variant);
+  font-size: var(--md-sys-typescale-label-medium-size);
+  line-height: var(--md-sys-typescale-label-medium-line-height);
+  font-weight: var(--md-sys-typescale-label-medium-weight);
+  letter-spacing: var(--md-sys-typescale-label-medium-tracking);
+}
+.claims-field__value { overflow-wrap: anywhere; }
+
+/* Claims list supporting line: email (ellipsized) over the time on compact, "email · time" from medium up. */
+.claims-rows .md-list-item__supporting { display: block; }
+.claims-row__meta { display: flex; flex-direction: column; min-width: 0; }
+.claims-row__email { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+@media (min-width: 600px) {
+  .claims-row__meta { flex-direction: row; gap: 4px; }
+  .claims-row__time { flex: none; }
+  .claims-row__time::before { content: '· '; }
+}

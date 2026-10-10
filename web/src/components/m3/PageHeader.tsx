@@ -1,3 +1,4 @@
+import { useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { Icon } from './Icon';
 import { iconButtonClassName } from './IconButton';
@@ -9,10 +10,17 @@ export interface PageHeaderProps {
   actions?: React.ReactNode;
   /** Route for a leading arrow_back icon button. */
   back?: string;
+  /** Sets document.title to "<title> · Lost & Found" (WCAG 2.4.2). Default true; pass false for demos/previews. */
+  documentTitle?: boolean;
 }
 
+const APP_NAME = 'Lost & Found';
+
 /** Page title block: headline-small (headline-medium on expanded) + body-medium subtitle. */
-export function PageHeader({ title, subtitle, actions, back }: PageHeaderProps) {
+export function PageHeader({ title, subtitle, actions, back, documentTitle = true }: PageHeaderProps) {
+  useEffect(() => {
+    if (documentTitle) document.title = `${title} · ${APP_NAME}`;
+  }, [title, documentTitle]);
   return (
     <header className={`md-page-header${back ? ' md-page-header--with-back' : ''}`}>
       {back && (

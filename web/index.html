@@ -12,7 +12,15 @@
       // Apply the saved theme before first paint (key matches THEME_STORAGE_KEY in src/components/ThemeToggle.tsx).
       try {
         var t = localStorage.getItem('vlf-theme');
-        if (t === 'light' || t === 'dark') document.documentElement.dataset.theme = t;
+        if (t === 'light' || t === 'dark') {
+          document.documentElement.dataset.theme = t;
+          // Explicit theme: an unscoped theme-color ahead of the media ones (ThemeToggle keeps it in sync).
+          var m = document.createElement('meta');
+          m.name = 'theme-color';
+          m.content = t === 'dark' ? '#121318' : '#faf8ff';
+          m.setAttribute('data-explicit', '');
+          document.head.insertBefore(m, document.head.querySelector('meta[name="theme-color"]'));
+        }
       } catch (e) {}
     </script>
   </head>

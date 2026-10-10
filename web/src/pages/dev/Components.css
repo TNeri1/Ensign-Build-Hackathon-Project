@@ -1,11 +1,9 @@
 /* Component gallery (/dev/components). */
+/* Section jump links are assist chips: 32px chips, 48px targets. 16px row gap keeps the targets
+   of wrapped rows from overlapping (32 + 16 = 48). */
 .gallery-toc {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 4px 16px;
-  margin-bottom: 8px;
-  font-size: var(--md-sys-typescale-label-large-size);
-  line-height: 32px;
+  gap: 16px 8px;
+  margin: 8px 0 24px;
 }
 .gallery-section {
   padding: 24px 0;

@@ -33,6 +33,7 @@
 
 .md-dialog__container {
   box-sizing: border-box;
+  margin: 0; /* it is a <form> */
   display: flex;
   flex-direction: column;
   max-height: inherit;

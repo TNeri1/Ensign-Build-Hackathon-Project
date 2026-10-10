@@ -95,7 +95,7 @@ export function PageHeaderGallery() {
   return (
     <GallerySection id="page-header" title="Page header" note="headline-small (headline-medium ≥ 840px); title is the page h1.">
       <div className="gallery-frame">
-        <PageHeader title="Claim #1042" subtitle="Submitted 2 hours ago" back="/staff/claims" actions={<Button variant="tonal" icon="print">Print</Button>} />
+        <PageHeader documentTitle={false} title="Claim #1042" subtitle="Submitted 2 hours ago" back="/staff/claims" actions={<Button variant="tonal" icon="print">Print</Button>} />
       </div>
     </GallerySection>
   );

@@ -22,7 +22,8 @@ export interface MenuProps {
 
 /**
  * Material 3 menu anchored to an icon button. Keyboard: Enter/Space/ArrowDown open on the first item,
- * ArrowUp on the last; Arrow keys / Home / End move; Escape closes and returns focus; Tab closes.
+ * ArrowUp on the last; Arrow keys / Home / End move; Enter/Space activate; Escape closes and returns
+ * focus; Tab closes.
  * Outside click closes.
  */
 export function Menu({ anchorLabel, icon = 'more_vert', items }: MenuProps) {
@@ -103,6 +104,14 @@ export function Menu({ anchorLabel, icon = 'more_vert', items }: MenuProps) {
         e.preventDefault();
         e.stopPropagation();
         close(true);
+        break;
+      case ' ':
+        // Links (router <Link role="menuitem">) don't activate on Space natively; buttons would
+        // only on keyup. Activate every item the same way, on keydown.
+        if (cur >= 0) {
+          e.preventDefault();
+          els[cur].click();
+        }
         break;
       case 'Tab':
         close(false);

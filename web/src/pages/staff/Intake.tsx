@@ -1,27 +1,44 @@
 import { useEffect, useMemo, useState, type FormEvent } from 'react';
-import { Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { COLORS } from '@vlf/shared';
 import { api } from '../../api/client';
 import { useGet } from '../../api/useApi';
 import type { Bin, CategoryInfo } from '../../api/types';
-import { ChipPicker } from '../../components/ChipPicker';
 import { CategoryFields } from '../../components/CategoryFields';
+import { FormSection } from '../../components/staff/FormSection';
+import { PhotoPicker } from '../../components/staff/PhotoPicker';
+import { Alert } from '../../components/m3/Alert';
+import { Button } from '../../components/m3/Button';
+import { ChoiceChips } from '../../components/m3/Chips';
+import { PageHeader } from '../../components/m3/PageHeader';
+import { Select } from '../../components/m3/Select';
+import { useSnackbar } from '../../components/m3/Snackbar';
+import { TextField } from '../../components/m3/TextField';
+import { categoryIcon } from '../../lib/categoryIcon';
+import { colorLabel, colorSwatch } from '../../lib/itemColor';
+import './Intake.css';
 
 const BIN_KEY = 'vlf:lastBin';
 const toLocalInput = (d: Date) => new Date(d.getTime() - d.getTimezoneOffset() * 60000).toISOString().slice(0, 16);
+const COLOR_OPTIONS = COLORS.map((c) => ({ value: c as string, label: colorLabel(c) }));
+
+function readLastBin(): string {
+  try { return localStorage.getItem(BIN_KEY) ?? ''; } catch { return ''; }
+}
 
 export function Intake() {
   const cats = useGet<CategoryInfo[]>('/categories').data ?? [];
   const bins = useGet<Bin[]>('/bins').data ?? [];
+  const navigate = useNavigate();
+  const snackbar = useSnackbar();
   const [category, setCategory] = useState('');
   const [color, setColor] = useState('');
   const [area, setArea] = useState('');
   const [foundAt, setFoundAt] = useState(toLocalInput(new Date()));
-  const [binId, setBinId] = useState(localStorage.getItem(BIN_KEY) ?? '');
+  const [binId, setBinId] = useState(readLastBin);
   const [fields, setFields] = useState<Record<string, string>>({});
   const [photo, setPhoto] = useState<File | null>(null);
   const [error, setError] = useState('');
-  const [savedId, setSavedId] = useState('');
   const [busy, setBusy] = useState(false);
 
   const def = useMemo(() => cats.find((c) => c.id === category), [cats, category]);
@@ -38,41 +55,94 @@ export function Intake() {
     if (photo) fd.append('photo', photo);
     try {
       const { id } = await api.post<{ id: string }>('/items', fd);
-      if (binId) localStorage.setItem(BIN_KEY, binId);
-      setSavedId(id);
+      if (binId) { try { localStorage.setItem(BIN_KEY, binId); } catch { /* storage unavailable */ } }
       setCategory(''); setColor(''); setFields({}); setPhoto(null);
       setFoundAt(toLocalInput(new Date()));
+      snackbar.show('Item saved', { actionLabel: 'View', onAction: () => navigate(`/staff/items/${id}`) });
+      window.scrollTo({ top: 0 });
     } catch (err) { setError((err as Error).message); } finally { setBusy(false); }
   }
 
   return (
-    <form onSubmit={submit} className="stack">
-      <h1>Log found item</h1>
-      {savedId && <p className="ok">Saved. <Link to={`/staff/items/${savedId}`}>View</Link> — ready for the next one.</p>}
-      <label className="field"><span>Photo</span>
-        <input type="file" accept="image/*" capture="environment" onChange={(e) => setPhoto(e.target.files?.[0] ?? null)} />
-      </label>
-      <div className="field"><span>Category</span>
-        <ChipPicker options={cats.map((c) => ({ value: c.id, label: c.label }))} value={category} onChange={setCategory} />
+    <form onSubmit={submit} className="app-page app-page--wide intake">
+      <PageHeader title="Log found item" subtitle="Photo, category, color, where. About 20 seconds." back="/staff" />
+      <div className="intake__layout">
+        <FormSection icon="photo_camera" title="Photo" className="intake__section intake__photo">
+          <PhotoPicker file={photo} onChange={setPhoto} />
+        </FormSection>
+
+        <div className="intake__main">
+          <FormSection icon="category" title="What is it" className="intake__section">
+            <div className="intake__group">
+              <span className="intake__label">Category *</span>
+              <ChoiceChips
+                options={cats.map((c) => ({ value: c.id, label: c.label, icon: categoryIcon(c.id) }))}
+                value={category}
+                onChange={setCategory}
+                ariaLabel="Category"
+              />
+            </div>
+            <div className="intake__group">
+              <span className="intake__label">Color *</span>
+              <ChoiceChips
+                options={COLOR_OPTIONS}
+                value={color}
+                onChange={(c) => { setColor(c); if (error === 'Pick a color') setError(''); }}
+                ariaLabel="Color"
+                swatch={colorSwatch}
+              />
+              {error === 'Pick a color' && <span className="intake__error" role="alert">Pick a color</span>}
+            </div>
+          </FormSection>
+
+          <FormSection icon="location_on" title="Where & when" className="intake__section">
+            <div className="intake__pair">
+              <TextField
+                label="Found where (area / zone)"
+                value={area}
+                onChange={setArea}
+                required
+                leadingIcon="location_on"
+                supportingText="e.g. Gate 3, Section 112"
+              />
+              <TextField label="Found at" type="datetime-local" value={foundAt} onChange={setFoundAt} required leadingIcon="schedule" />
+            </div>
+          </FormSection>
+
+          <FormSection
+            icon="edit"
+            title="Details"
+            hint={def ? 'Public details appear in the listing. Private ones become claim questions.' : undefined}
+            className="intake__section"
+          >
+            {def ? (
+              <CategoryFields fields={def.fields} values={fields} onChange={(n, v) => setFields((f) => ({ ...f, [n]: v }))} />
+            ) : (
+              <p className="intake__placeholder md-typescale-body-medium">Pick a category to see its fields.</p>
+            )}
+          </FormSection>
+
+          <FormSection icon="warehouse" title="Storage" className="intake__section">
+            <Select
+              label="Storage bin"
+              value={binId}
+              onChange={setBinId}
+              placeholder="Not stored yet"
+              leadingIcon="warehouse"
+              options={bins.map((b) => ({ value: b.id, label: `${b.code} — ${b.label}` }))}
+              supportingText="Remembered for your next item"
+            />
+          </FormSection>
+
+          {error && error !== 'Pick a color' && <Alert kind="error" title="Couldn't save">{error}</Alert>}
+
+          <div className="intake__savebar">
+            <Button type="submit" size="large" full icon="check" disabled={busy || !category}>
+              {busy ? 'Saving…' : 'Save item'}
+            </Button>
+          </div>
+        </div>
       </div>
-      <div className="field"><span>Color</span>
-        <ChipPicker options={COLORS.map((c) => ({ value: c, label: c }))} value={color as never} onChange={setColor} />
-      </div>
-      <label className="field"><span>Found where (area / zone)</span>
-        <input value={area} onChange={(e) => setArea(e.target.value)} required placeholder="e.g. Gate 3, Section 112" />
-      </label>
-      <label className="field"><span>Found at</span>
-        <input type="datetime-local" value={foundAt} onChange={(e) => setFoundAt(e.target.value)} required />
-      </label>
-      {def && <CategoryFields fields={def.fields} values={fields} onChange={(n, v) => setFields((f) => ({ ...f, [n]: v }))} />}
-      <label className="field"><span>Storage bin</span>
-        <select value={binId} onChange={(e) => setBinId(e.target.value)}>
-          <option value="">Not stored yet</option>
-          {bins.map((b) => <option key={b.id} value={b.id}>{b.code} — {b.label}</option>)}
-        </select>
-      </label>
-      {error && <p className="error">{error}</p>}
-      <button className="primary big" disabled={busy || !category}>{busy ? 'Saving…' : 'Save item'}</button>
     </form>
   );
 }

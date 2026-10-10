@@ -1,3 +1,4 @@
+import { AssistChip } from '../../components/m3/Chips';
 import { PageHeader } from '../../components/m3/PageHeader';
 import { ButtonsGallery, CardsGallery, ListsGallery, MenuGallery } from './GalleryActions';
 import { AlertsGallery, EmptyProgressGallery, OverlaysGallery, PageHeaderGallery, StatusGallery } from './GalleryFeedback';
@@ -17,9 +18,9 @@ export function Components() {
   return (
     <div className="app-page app-page--wide gallery">
       <PageHeader title="Component gallery" subtitle="Material 3 components in components/m3 and the theme tokens. Import each from its own file." />
-      <nav className="gallery-toc" aria-label="Gallery sections">
+      <nav className="gallery-toc md-chip-set" aria-label="Gallery sections">
         {TOC.map(([id, label]) => (
-          <a key={id} href={`#${id}`}>{label}</a>
+          <AssistChip key={id} href={`#${id}`} label={label} />
         ))}
       </nav>
       <ButtonsGallery />

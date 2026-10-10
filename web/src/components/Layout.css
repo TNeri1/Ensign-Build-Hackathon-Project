@@ -4,12 +4,21 @@
  *   medium   600-839px navigation rail (80px) on the left
  *   expanded >= 840px  navigation rail on the left
  * Shell CSS vars (read them in page CSS instead of hard-coding):
- *   --app-bottom-inset   space the fixed bottom UI takes (nav bar on compact, 0 otherwise)
- *   --app-rail-width     width of the rail (0 on compact)
+ *   --app-content-bottom-inset  PAGES USE THIS. Bottom space that clears ALL fixed bottom UI: the
+ *                               navigation bar (compact) plus a page FAB (<Fab className="app-fab">)
+ *                               when the page has one. <main> already pads by it; use it for your own
+ *                               sticky/fixed bottom bars or full-height scroll areas.
+ *   --app-bottom-inset          the navigation bar alone (0 on medium+). Use it to position fixed
+ *                               UI just above the bar (styles.css places .app-fab with it).
+ *   --app-rail-width            width of the rail (0 on compact)
+ * Gutter: <main> pads by --md-sys-layout-margin (16px compact, 24px medium+). Max width is the
+ * page's job (.app-page / .app-page--wide), not the shell's.
  */
 .app-shell {
   --app-rail-width: 0px;
   --app-bottom-inset: calc(80px + env(safe-area-inset-bottom, 0px));
+  --app-fab-inset: 0px;
+  --app-content-bottom-inset: calc(var(--app-bottom-inset) + var(--app-fab-inset));
   min-height: 100vh;
   min-height: 100dvh;
   background-color: var(--md-sys-color-surface);
@@ -28,13 +37,13 @@ html { scroll-padding-top: calc(64px + env(safe-area-inset-top, 0px)); }
 
 .app-main {
   display: block;
-  padding: 8px var(--md-sys-layout-margin) calc(var(--app-bottom-inset) + 24px);
+  padding: 8px var(--md-sys-layout-margin) calc(var(--app-content-bottom-inset) + 24px);
 }
 .app-main:focus { outline: none; }
 /* "Skip to content" and in-page jumps land below the sticky top app bar, not under it. */
 .app-main { scroll-margin-top: calc(64px + env(safe-area-inset-top, 0px)); }
-/* A page with an .app-fab gets room so the FAB never covers its last row. */
-.app-main:has(.app-fab) { padding-bottom: calc(var(--app-bottom-inset) + 96px); }
+/* A page with an .app-fab gets room so the FAB (56px + 16px offset) never covers its last row. */
+.app-shell:has(.app-fab) { --app-fab-inset: 72px; }
 
 .app-title {
   display: inline-flex;
@@ -48,6 +57,8 @@ html { scroll-padding-top: calc(64px + env(safe-area-inset-top, 0px)); }
   color: inherit;
   text-decoration: none;
 }
+/* The 4px padding hangs outside so the title TEXT lines up with the page gutter. */
+.md-top-app-bar__title .app-title { margin-inline-start: -4px; }
 /* Inset ring: never clipped by the bar, and stays inside the 48px target. */
 .app-title:focus-visible { outline-offset: -3px; }
 .app-title__text,
@@ -83,8 +94,8 @@ html { scroll-padding-top: calc(64px + env(safe-area-inset-top, 0px)); }
     --app-bottom-inset: 0px;
   }
   .app-shell > .md-nav-bar { display: none; }
-  .app-main { padding-top: 16px; padding-bottom: 32px; }
-  .app-main:has(.app-fab) { padding-bottom: 112px; }
+  .app-shell:has(.app-fab) { --app-fab-inset: 80px; } /* 56px FAB + 24px offset */
+  .app-main { padding-top: 16px; padding-bottom: calc(var(--app-content-bottom-inset) + 32px); }
 }
 
 @media print {

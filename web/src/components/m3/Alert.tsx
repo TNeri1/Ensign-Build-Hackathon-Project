@@ -19,11 +19,10 @@ export interface AlertProps {
   action?: React.ReactNode;
 }
 
-/** Inline banner in the matching container colors. Errors/warnings are announced (role="alert"). */
+/** Inline banner in the matching container colors. Errors interrupt (role="alert"); others are polite (role="status"). */
 export function Alert({ kind = 'info', title, children, action }: AlertProps) {
-  const urgent = kind === 'error' || kind === 'warning';
   return (
-    <div className={`md-alert md-alert--${kind}`} role={urgent ? 'alert' : 'status'}>
+    <div className={`md-alert md-alert--${kind}`} role={kind === 'error' ? 'alert' : 'status'}>
       <Icon name={ICON[kind]} size={24} className="md-alert__icon" />
       <div className="md-alert__content">
         {title && <div className="md-alert__title">{title}</div>}
