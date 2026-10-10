@@ -1,4 +1,5 @@
 import type { AnswerVerdict } from '@vlf/shared';
+import { ShapeIcon } from '../m3/ExpressiveShape';
 import { Icon } from '../m3/Icon';
 import { LinearProgress } from '../m3/LinearProgress';
 import './AnswerComparison.css';
@@ -26,18 +27,22 @@ function Answer({ text }: { text: string }) {
   return text ? <>{text}</> : <span className="answer-empty">No answer</span>;
 }
 
-/** "3 of 4 answers match · 1 close" with a determinate progress bar. */
+/** "3 of 4 answers match · 1 close" in a tonal banner (success / warning / error) with a determinate bar. */
 function Summary({ rows }: { rows: Comparison[] }) {
   const matched = rows.filter((r) => r.verdict === 'match').length;
   const close = rows.filter((r) => r.verdict === 'close').length;
   const all = matched === rows.length;
+  const tone = all ? 'ok' : matched + close === rows.length ? 'close' : 'no';
   return (
-    <div className="answer-summary">
-      <div className="answer-summary__text">
-        <Icon name={all ? 'verified' : 'help'} size={20} className={all ? 'answer-summary__icon--ok' : 'answer-summary__icon'} />
-        <span><strong>{matched} of {rows.length}</strong> answers match{close > 0 && <> · {close} close</>}</span>
+    <div className={`answer-summary answer-summary--${tone}`}>
+      <ShapeIcon shape={all ? 'sunny' : tone === 'close' ? 'clover' : 'puffy'} icon={all ? 'verified' : tone === 'close' ? 'help' : 'warning'}
+        size={56} spin={all} className="answer-summary__shape" />
+      <div className="answer-summary__body">
+        <p className="answer-summary__text">
+          <strong>{matched} of {rows.length}</strong> answers match{close > 0 && <> · {close} close</>}
+        </p>
+        <LinearProgress value={rows.length ? matched / rows.length : 0} label={`${matched} of ${rows.length} answers match`} />
       </div>
-      <LinearProgress value={rows.length ? matched / rows.length : 0} label={`${matched} of ${rows.length} answers match`} />
     </div>
   );
 }

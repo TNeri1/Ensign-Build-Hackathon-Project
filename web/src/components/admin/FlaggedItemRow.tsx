@@ -8,6 +8,7 @@ import './FlaggedItemRow.css';
 export interface FlaggedItem {
   id: string;
   category: string;
+  title: string;
   categoryLabel: string;
   color: string;
   foundArea: string;
@@ -37,10 +38,12 @@ export function FlaggedItemRow({ item, selected, onToggle }: Props) {
             </span>
             <span className="admin-flagged__text">
               <span className="admin-flagged__headline">
-                {item.categoryLabel}
+                {item.title}
                 {item.sensitive ? <Icon name="lock" size={16} className="admin-flagged__lock" title="Sensitive item" /> : null}
               </span>
               <span className="admin-flagged__supporting">
+                <span>{item.categoryLabel}</span>
+                <span aria-hidden="true">·</span>
                 <span className="admin-flagged__color">
                   {swatch && <span className="admin-flagged__swatch" style={{ background: swatch }} aria-hidden="true" />}
                   {colorLabel(item.color)}

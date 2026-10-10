@@ -12,6 +12,7 @@ export const DEMO_REPORT = {
 
 export const DEMO_ITEM = {
   category: 'phone',
+  name: 'iPhone',
   color: 'black',
   foundArea: 'Gate 3',
   fields: {

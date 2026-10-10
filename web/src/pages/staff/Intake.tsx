@@ -1,10 +1,11 @@
 import { useCallback, useEffect, useMemo, useRef, useState, type FormEvent } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { COLORS, type VisionSuggestion } from '@vlf/shared';
+import { COLORS, ITEM_NAME_MAX, itemTitle, type VisionSuggestion } from '@vlf/shared';
 import { api } from '../../api/client';
 import { useGet } from '../../api/useApi';
 import type { Bin, CategoryInfo } from '../../api/types';
 import { CategoryFields } from '../../components/CategoryFields';
+import { CategoryChips } from '../../components/staff/CategoryChips';
 import { FormSection } from '../../components/staff/FormSection';
 import { PhotoPicker } from '../../components/staff/PhotoPicker';
 import { PhotoAssistNote } from '../../components/staff/PhotoAssistNote';
@@ -15,10 +16,10 @@ import { PageHeader } from '../../components/m3/PageHeader';
 import { Select } from '../../components/m3/Select';
 import { useSnackbar } from '../../components/m3/Snackbar';
 import { TextField } from '../../components/m3/TextField';
-import { categoryIcon } from '../../lib/categoryIcon';
 import { colorLabel, colorSwatch } from '../../lib/itemColor';
 import { applySuggestion } from '../../lib/applySuggestion';
 import { usePhotoAssist } from './usePhotoAssist';
+import '../../components/claims/claims.css';
 import './Intake.css';
 
 const BIN_KEY = 'vlf:lastBin';
@@ -40,6 +41,7 @@ export function Intake() {
   const [foundAt, setFoundAt] = useState(toLocalInput(new Date()));
   const [binId, setBinId] = useState(readLastBin);
   const [fields, setFields] = useState<Record<string, string>>({});
+  const [name, setName] = useState('');
   const [photo, setPhoto] = useState<File | null>(null);
   const [error, setError] = useState('');
   const [busy, setBusy] = useState(false);
@@ -47,11 +49,11 @@ export function Intake() {
   const def = useMemo(() => cats.find((c) => c.id === category), [cats, category]);
 
   // Latest form values for merging a photo suggestion that arrives asynchronously.
-  const draft = useRef({ category, color, fields });
-  draft.current = { category, color, fields };
+  const draft = useRef({ category, name, color, fields });
+  draft.current = { category, name, color, fields };
   const onSuggestion = useCallback((sug: VisionSuggestion) => {
     const { draft: next, filled } = applySuggestion(draft.current, sug, cats);
-    setCategory(next.category); setColor(next.color); setFields(next.fields);
+    setCategory(next.category); setName(next.name); setColor(next.color); setFields(next.fields);
     if (next.color && error === 'Pick a color') setError('');
     return filled;
   }, [cats, error]);
@@ -82,13 +84,13 @@ export function Intake() {
     setBusy(true); setError('');
     const fd = new FormData();
     fd.append('data', JSON.stringify({
-      category, color, foundArea: area, foundAt: new Date(foundAt).toISOString(), binId: binId || undefined, fields,
+      category, name: name.trim() || undefined, color, foundArea: area, foundAt: new Date(foundAt).toISOString(), binId: binId || undefined, fields,
     }));
     if (photo) fd.append('photo', photo);
     try {
       const { id } = await api.post<{ id: string }>('/items', fd);
       if (binId) { try { localStorage.setItem(BIN_KEY, binId); } catch { /* storage unavailable */ } }
-      setCategory(''); setColor(''); setFields({}); setPhoto(null); assist.reset();
+      setCategory(''); setName(''); setColor(''); setFields({}); setPhoto(null); assist.reset();
       setFoundAt(toLocalInput(new Date()));
       snackbar.show('Item saved', { actionLabel: 'View', onAction: () => navigate(`/staff/items/${id}`) });
       window.scrollTo({ top: 0 });
@@ -99,23 +101,38 @@ export function Intake() {
     <form onSubmit={submit} className="app-page intake">
       <PageHeader title="Log found item" subtitle="Photo, category, color, where. About 20 seconds." back="/staff" />
       <div className="intake__layout">
-        <FormSection icon="photo_camera" title="Photo" className="intake__section intake__photo">
+        <FormSection icon="photo_camera" title="Photo" shape="sunny" tone="primary" className="intake__section intake__photo">
           <PhotoPicker file={photo} onChange={choosePhoto} />
           <PhotoAssistNote state={assist.state} canRun={!!photo && assist.available && assist.state.kind !== 'reading'}
             onRun={() => photo && void assist.run(photo)} />
         </FormSection>
 
         <div className="intake__main">
-          <FormSection icon="category" title="What is it" className="intake__section">
+          <FormSection icon="category" title="What is it" shape="clover" tone="tertiary" className="intake__section">
             <div className="intake__group">
               <span className="intake__label">Category *</span>
-              <ChoiceChips
-                options={cats.map((c) => ({ value: c.id, label: c.label, icon: categoryIcon(c.id) }))}
+              <CategoryChips
+                options={cats.map((c) => ({ value: c.id, label: c.label }))}
                 value={category}
                 onChange={chooseCategory}
                 ariaLabel="Category"
               />
             </div>
+            <TextField
+              label="Item name"
+              value={name}
+              onChange={(v) => setName(v.slice(0, ITEM_NAME_MAX))}
+              required={!!def?.nameRequired}
+              leadingIcon="label"
+              placeholder="e.g. iPhone, Leather wallet, AirPods case"
+              supportingText={
+                def?.nameRequired
+                  ? `Required for ${def.label}. Shown publicly as the item's heading; no owner-only details.`
+                  : `Shown publicly as the heading; no owner-only details. Empty shows "${itemTitle(null, def?.label ?? 'Category', fields.brand)}".`
+              }
+              name="itemName"
+              autoComplete="off"
+            />
             <div className="intake__group">
               <span className="intake__label">Color *</span>
               <ChoiceChips
@@ -129,7 +146,7 @@ export function Intake() {
             </div>
           </FormSection>
 
-          <FormSection icon="location_on" title="Where & when" className="intake__section">
+          <FormSection icon="location_on" title="Where & when" shape="puffy" tone="secondary" className="intake__section">
             <div className="intake__pair">
               <TextField
                 label="Found where (area / zone)"
@@ -146,6 +163,8 @@ export function Intake() {
           <FormSection
             icon="edit"
             title="Details"
+            shape="flower"
+            tone="primary"
             hint={def ? 'Public details appear in the listing. Private ones become claim questions.' : undefined}
             className="intake__section"
           >
@@ -156,7 +175,7 @@ export function Intake() {
             )}
           </FormSection>
 
-          <FormSection icon="warehouse" title="Storage" className="intake__section">
+          <FormSection icon="warehouse" title="Storage" shape="soft-square" tone="secondary" className="intake__section">
             <Select
               label="Storage bin"
               value={binId}

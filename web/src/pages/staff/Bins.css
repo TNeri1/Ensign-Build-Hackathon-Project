@@ -1,3 +1,4 @@
+/* Storage bins: expressive bin cards + the "Add bin" card (sticky beside the grid on expanded). */
 .staff-bins {
   display: grid;
   grid-template-columns: minmax(0, 1fr);
@@ -17,42 +18,75 @@
   padding: 0;
   list-style: none;
 }
-.staff-bins__form.md-card { padding: 24px; border-radius: var(--md-sys-shape-corner-large); }
+.staff-bins__form .md-stack--xs p { margin-left: 52px; }
 
+/* Bin card: tinted container per tone, code in a big shape. */
 .staff-bin.md-card {
+  --_bg: var(--md-sys-color-primary-container);
+  --_on: var(--md-sys-color-on-primary-container);
+  --_shape: var(--md-sys-color-primary);
+  --_on-shape: var(--md-sys-color-on-primary);
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 16px;
   height: 100%;
-  padding: 16px 12px 8px 16px;
+  padding: 16px;
+  border-radius: var(--md-sys-shape-corner-extra-large);
+  background-color: var(--_bg);
+  color: var(--_on);
 }
-.staff-bin__head { display: flex; align-items: flex-start; gap: 16px; }
-.staff-bin__avatar {
+.staff-bin--tertiary.md-card {
+  --_bg: var(--md-sys-color-tertiary-container);
+  --_on: var(--md-sys-color-on-tertiary-container);
+  --_shape: var(--md-sys-color-tertiary);
+  --_on-shape: var(--md-sys-color-on-tertiary);
+}
+.staff-bin--secondary.md-card {
+  --_bg: var(--md-sys-color-secondary-container);
+  --_on: var(--md-sys-color-on-secondary-container);
+  --_shape: var(--md-sys-color-secondary);
+  --_on-shape: var(--md-sys-color-on-secondary);
+}
+.staff-bin__head { display: flex; align-items: center; gap: 16px; }
+.staff-bin__badge {
+  position: relative;
+  display: inline-grid;
   flex: none;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 48px;
-  height: 48px;
-  border-radius: var(--md-sys-shape-corner-medium);
-  background-color: var(--md-sys-color-primary-container);
-  color: var(--md-sys-color-on-primary-container);
+  place-items: center;
+  width: 72px;
+  height: 72px;
+  color: var(--_on-shape);
+}
+.staff-bin__badge svg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  fill: var(--_shape);
+  transition: transform var(--md-sys-motion-spring-default-spatial-duration) var(--md-sys-motion-spring-default-spatial);
+}
+@media (hover: hover) {
+  .staff-bin:hover .staff-bin__badge svg { transform: rotate(30deg); }
+}
+.staff-bin__badge-code {
+  position: relative;
+  font-size: var(--md-sys-typescale-title-large-size);
+  line-height: 1;
+  font-weight: var(--md-sys-typescale-emphasized-weight);
 }
 .staff-bin__text { min-width: 0; }
-.staff-bin__code {
-  margin: 0;
-  color: var(--md-sys-color-on-surface);
-  font-size: var(--md-sys-typescale-title-large-size);
-  line-height: var(--md-sys-typescale-title-large-line-height);
-  font-weight: var(--md-sys-typescale-title-large-weight);
-  letter-spacing: var(--md-sys-typescale-title-large-tracking);
+.staff-bin__kicker {
+  font-size: var(--md-sys-typescale-label-large-size);
+  line-height: var(--md-sys-typescale-label-large-line-height);
+  font-weight: var(--md-sys-typescale-label-large-weight);
+  letter-spacing: var(--md-sys-typescale-label-large-tracking);
+  opacity: 0.85;
 }
 .staff-bin__label {
   margin: 0;
-  color: var(--md-sys-color-on-surface-variant);
-  font-size: var(--md-sys-typescale-body-medium-size);
-  line-height: var(--md-sys-typescale-body-medium-line-height);
-  letter-spacing: var(--md-sys-typescale-body-medium-tracking);
+  font-size: var(--md-sys-typescale-title-large-size);
+  line-height: var(--md-sys-typescale-title-large-line-height);
+  font-weight: var(--md-sys-typescale-emphasized-weight);
 }
 .staff-bin__foot {
   display: flex;
@@ -62,12 +96,17 @@
   margin-top: auto;
 }
 .staff-bin__count {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  color: var(--md-sys-color-on-surface-variant);
   font-size: var(--md-sys-typescale-label-large-size);
   line-height: var(--md-sys-typescale-label-large-line-height);
   font-weight: var(--md-sys-typescale-label-large-weight);
-  letter-spacing: var(--md-sys-typescale-label-large-tracking);
+}
+.staff-bin__count strong {
+  font-size: var(--md-sys-typescale-headline-medium-size);
+  line-height: var(--md-sys-typescale-headline-medium-line-height);
+  font-weight: var(--md-sys-typescale-emphasized-weight);
+}
+/* The tonal button sits on a tinted card: use the surface so it stands apart. */
+.staff-bin__foot .md-button { --_container: var(--md-sys-color-surface); --_content: var(--_on); height: 48px; }
+@media (prefers-reduced-motion: reduce) {
+  .staff-bin__badge svg { transition: none; }
 }

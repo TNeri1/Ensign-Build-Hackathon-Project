@@ -4,32 +4,33 @@ import { applySuggestion } from './applySuggestion';
 import { fitWithin } from './downscaleImage';
 
 const cats: CategoryInfo[] = [
-  { id: 'phone', label: 'Phone', sensitive: false, fields: [
+  { id: 'phone', label: 'Phone', sensitive: false, nameRequired: false, fields: [
     { name: 'brand', label: 'Brand', type: 'select', options: ['Apple', 'Other'], public: true, required: true },
     { name: 'model', label: 'Model', type: 'text', public: false, required: true },
   ] },
-  { id: 'wallet', label: 'Wallet', sensitive: true, fields: [{ name: 'material', label: 'Material', type: 'text', public: true, required: true }] },
+  { id: 'wallet', label: 'Wallet', sensitive: true, nameRequired: false, fields: [{ name: 'material', label: 'Material', type: 'text', public: true, required: true }] },
 ];
-const s = { category: 'phone', color: 'black' as const, fields: { brand: 'Apple', model: 'iPhone 14' }, summary: 'Black iPhone' };
+const s = { category: 'phone', name: 'iPhone', color: 'black' as const, fields: { brand: 'Apple', model: 'iPhone 14' }, summary: 'Black iPhone' };
 
 describe('applySuggestion', () => {
   it('fills an empty form completely', () => {
-    const r = applySuggestion({ category: '', color: '', fields: {} }, s, cats);
-    expect(r.draft).toEqual({ category: 'phone', color: 'black', fields: { brand: 'Apple', model: 'iPhone 14' } });
-    expect(r.filled).toEqual(['Category', 'Color', 'Brand', 'Model']);
+    const r = applySuggestion({ category: '', name: '', color: '', fields: {} }, s, cats);
+    expect(r.draft).toEqual({ category: 'phone', name: 'iPhone', color: 'black', fields: { brand: 'Apple', model: 'iPhone 14' } });
+    expect(r.filled).toEqual(['Category', 'Item name', 'Color', 'Brand', 'Model']);
   });
   it('never overwrites what staff entered', () => {
-    const r = applySuggestion({ category: 'phone', color: 'red', fields: { model: 'Pixel 8' } }, s, cats);
-    expect(r.draft).toEqual({ category: 'phone', color: 'red', fields: { model: 'Pixel 8', brand: 'Apple' } });
-    expect(r.filled).toEqual(['Brand']);
+    expect(applySuggestion({ category: 'phone', name: 'My label', color: 'red', fields: {} }, s, cats).draft.name).toBe('My label');
+    const r = applySuggestion({ category: 'phone', name: '', color: 'red', fields: { model: 'Pixel 8' } }, s, cats);
+    expect(r.draft).toEqual({ category: 'phone', name: 'iPhone', color: 'red', fields: { model: 'Pixel 8', brand: 'Apple' } });
+    expect(r.filled).toEqual(['Item name', 'Brand']);
   });
   it('keeps a different category chosen by staff and ignores the other category fields', () => {
-    const r = applySuggestion({ category: 'wallet', color: '', fields: {} }, s, cats);
-    expect(r.draft).toEqual({ category: 'wallet', color: 'black', fields: {} });
-    expect(r.filled).toEqual(['Color']);
+    const r = applySuggestion({ category: 'wallet', name: '', color: '', fields: {} }, s, cats);
+    expect(r.draft).toEqual({ category: 'wallet', name: 'iPhone', color: 'black', fields: {} });
+    expect(r.filled).toEqual(['Item name', 'Color']);
   });
   it('ignores unknown categories', () => {
-    expect(applySuggestion({ category: '', color: '', fields: {} }, { category: 'boat', fields: {} }, cats).draft.category).toBe('');
+    expect(applySuggestion({ category: '', name: '', color: '', fields: {} }, { category: 'boat', fields: {} }, cats).draft.category).toBe('');
   });
 });
 

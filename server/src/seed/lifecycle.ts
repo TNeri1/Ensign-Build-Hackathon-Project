@@ -40,7 +40,7 @@ export function seedItem(
   const actor = { userId: who.staffId, label: 'Sam Rivera (staff)' };
 
   insertItem(ctx.db, {
-    id, venue_id: who.venueId, category: spec.category, color: spec.color, found_area: spec.area, found_at: iso,
+    id, venue_id: who.venueId, category: spec.category, name: spec.name ?? null, color: spec.color, found_area: spec.area, found_at: iso,
     state: 'found', bin_id: null, photo_path: photoPath, sensitive: def.sensitive ? 1 : 0, created_by: who.staffId, created_at: iso, updated_at: iso,
   });
   insertAttributes(ctx.db, id, attributes);

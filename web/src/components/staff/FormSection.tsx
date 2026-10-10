@@ -1,5 +1,5 @@
 import { useId } from 'react';
-import { Icon } from '../m3/Icon';
+import { ShapeIcon, type ShapeName, type ShapeTone } from '../m3/ExpressiveShape';
 import type { IconName } from '../m3/icons';
 import './FormSection.css';
 
@@ -8,19 +8,20 @@ interface Props {
   title: string;
   /** Short helper text under the title. */
   hint?: string;
+  /** Expressive shape + tone behind the header icon. */
+  shape?: ShapeName;
+  tone?: ShapeTone;
   className?: string;
   children: React.ReactNode;
 }
 
-/** A titled group inside a long form (labelled region with a leading icon). */
-export function FormSection({ icon, title, hint, className, children }: Props) {
+/** A titled group inside a long form (labelled region led by an icon in an expressive shape). */
+export function FormSection({ icon, title, hint, shape = 'cookie', tone = 'secondary', className, children }: Props) {
   const id = useId();
   return (
     <section className={className ? `form-section ${className}` : 'form-section'} aria-labelledby={id}>
       <header className="form-section__header">
-        <span className="form-section__icon">
-          <Icon name={icon} size={20} />
-        </span>
+        <ShapeIcon icon={icon} shape={shape} tone={tone} size={44} className="form-section__icon" />
         <div className="form-section__titles">
           <h2 id={id} className="form-section__title">{title}</h2>
           {hint && <p className="form-section__hint">{hint}</p>}

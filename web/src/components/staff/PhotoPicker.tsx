@@ -1,5 +1,6 @@
 import { useEffect, useId, useRef, useState } from 'react';
 import { Icon } from '../m3/Icon';
+import { ShapeIcon } from '../m3/ExpressiveShape';
 import { canUseLiveCamera } from '../../lib/camera';
 import { Button } from '../m3/Button';
 import { IconButton } from '../m3/IconButton';
@@ -62,10 +63,8 @@ export function PhotoPicker({ file, onChange }: Props) {
           </>
         ) : (
           <span className="photo-picker__empty">
-            <span className="photo-picker__icon">
-              <Icon name="photo_camera" size={32} />
-            </span>
-            <span className="md-typescale-title-medium">Add photo</span>
+            <ShapeIcon shape="sunny" tone="primary" icon="photo_camera" size={88} className="photo-picker__icon" />
+            <span className="photo-picker__title">Add photo</span>
             <span className="md-typescale-body-medium md-on-surface-variant">Tap to take a picture (optional)</span>
           </span>
         )}

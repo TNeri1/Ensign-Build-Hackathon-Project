@@ -76,3 +76,13 @@
   .md-fab,
   .md-fab::before { transition: none; }
 }
+
+/* M3 Expressive: FAB rounds out while pressed (spring) and grows a touch on hover. */
+.md-fab {
+  transition:
+    box-shadow var(--md-sys-motion-duration-short4) var(--md-sys-motion-easing-standard),
+    border-radius var(--md-sys-motion-spring-fast-spatial-duration) var(--md-sys-motion-spring-fast-spatial),
+    transform var(--md-sys-motion-spring-fast-spatial-duration) var(--md-sys-motion-spring-fast-spatial);
+}
+.md-fab:active { border-radius: var(--md-sys-shape-corner-extra-large); transform: scale(0.97); }
+@media (hover: hover) { .md-fab:hover { transform: scale(1.03); } }

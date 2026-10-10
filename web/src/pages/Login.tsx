@@ -4,7 +4,7 @@ import { useAuth } from '../auth/AuthProvider';
 import { Alert } from '../components/m3/Alert';
 import { Button } from '../components/m3/Button';
 import { Card } from '../components/m3/Card';
-import { Icon } from '../components/m3/Icon';
+import { ShapeIcon, shapePath } from '../components/m3/ExpressiveShape';
 import { TextField } from '../components/m3/TextField';
 import './Login.css';
 
@@ -29,10 +29,12 @@ export function Login() {
 
   return (
     <div className="app-page login">
-      <Card variant="outlined" className="login-card">
+      <svg className="login-decor login-decor--a" viewBox="0 0 100 100" aria-hidden="true" focusable="false"><path d={shapePath('sunny')} /></svg>
+      <svg className="login-decor login-decor--b" viewBox="0 0 100 100" aria-hidden="true" focusable="false"><path d={shapePath('clover')} /></svg>
+      <Card variant="elevated" className="login-card md-rise">
         <form onSubmit={submit} className="md-stack md-stack--lg">
           <div className="login-head">
-            <span className="login-head__icon" aria-hidden="true"><Icon name="badge" size={28} /></span>
+            <ShapeIcon shape="cookie" tone="primary" icon="travel_explore" size={88} className="login-head__icon" />
             <h1 className="login-head__title">Staff login</h1>
             <p className="login-head__sub">Sign in to log found items, review claims and release pickups.</p>
           </div>

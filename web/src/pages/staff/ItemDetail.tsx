@@ -1,24 +1,30 @@
-import { useParams } from 'react-router-dom';
+import { useEffect } from 'react';
+import { Link, useParams } from 'react-router-dom';
 import { useGet } from '../../api/useApi';
 import type { Bin } from '../../api/types';
 import { ItemPhoto } from '../../components/ItemPhoto';
+import { CategoryAvatar } from '../../components/claims/CategoryAvatar';
 import { CustodyTimeline, type CustodyEvent } from '../../components/staff/CustodyTimeline';
 import { useCategories } from '../../components/staff/useCategories';
 import { Alert } from '../../components/m3/Alert';
 import { Button } from '../../components/m3/Button';
 import { Card } from '../../components/m3/Card';
+import { ShapeIcon } from '../../components/m3/ExpressiveShape';
 import { Icon } from '../../components/m3/Icon';
+import { iconButtonClassName } from '../../components/m3/IconButton';
 import type { IconName } from '../../components/m3/icons';
 import { LinearProgress } from '../../components/m3/LinearProgress';
 import { PageHeader } from '../../components/m3/PageHeader';
 import { StatusChip } from '../../components/m3/StatusChip';
 import { categoryIcon } from '../../lib/categoryIcon';
+import { categoryShape, categoryTone } from '../../lib/categoryStyle';
 import { formatDateTime } from '../../lib/format';
 import { colorLabel, colorSwatch } from '../../lib/itemColor';
+import '../../components/claims/claims.css';
 import './ItemDetail.css';
 
 interface Detail {
-  id: string; category: string; color: string; state: string; found_area: string; found_at: string;
+  id: string; title: string; name: string | null; category: string; color: string; state: string; found_area: string; found_at: string;
   sensitive: number; photo_path: string | null; bin_id?: string | null;
   attributes: { key: string; value: string; is_public: number }[];
   custody: CustodyEvent[];
@@ -29,6 +35,10 @@ export function ItemDetail() {
   const { data, error, reload } = useGet<Detail>(`/items/${id}`);
   const bins = useGet<Bin[]>('/bins').data;
   const { label, fieldLabel } = useCategories();
+  const title = data?.title;
+  useEffect(() => {
+    if (title) document.title = `${title} · Lost & Found`;
+  }, [title]);
 
   if (error) {
     return (
@@ -54,20 +64,26 @@ export function ItemDetail() {
 
   return (
     <div className="app-page app-page--wide item-detail">
-      <PageHeader
-        title={`${label(data.category)} · ${colorLabel(data.color)}`}
-        back="/staff"
-        subtitle={
-          <span className="item-detail__subtitle">
-            <StatusChip state={data.state} />
-            {!!data.sensitive && (
-              <span className="item-detail__flag">
-                <Icon name="shield" size={16} /> Sensitive
-              </span>
-            )}
-          </span>
-        }
-      />
+      <header className="item-detail__hero md-rise">
+        <Link to="/staff" className={iconButtonClassName('standard', undefined, 'item-detail__back')} aria-label="Back" title="Back">
+          <Icon name="arrow_back" size={24} />
+        </Link>
+        <div className="item-detail__hero-main">
+          <CategoryAvatar category={data.category} color={data.color} size="xlarge" />
+          <div className="item-detail__hero-text">
+            <span className="item-detail__category">{label(data.category)} · {colorLabel(data.color)}</span>
+            <h1 className="item-detail__title">{data.title}</h1>
+            <span className="item-detail__subtitle">
+              <StatusChip state={data.state} />
+              {!!data.sensitive && (
+                <span className="item-detail__flag">
+                  <Icon name="shield" size={16} /> Sensitive
+                </span>
+              )}
+            </span>
+          </div>
+        </div>
+      </header>
 
       <div className="item-detail__layout">
         <div className="item-detail__primary">
@@ -75,14 +91,14 @@ export function ItemDetail() {
             <ItemPhoto itemId={data.id} sensitive={!!data.sensitive} fallbackIcon={categoryIcon(data.category)} />
           ) : (
             <div className="item-detail__nophoto">
-              <Icon name={categoryIcon(data.category)} size={40} />
+              <ShapeIcon shape={categoryShape(data.category)} tone={categoryTone(data.category)} icon={categoryIcon(data.category)} size={112} />
               <span className="md-typescale-body-medium">No photo</span>
             </div>
           )}
 
-          <Card variant="outlined" as="section" aria-labelledby="item-details-title" className="item-detail__card">
-            <h2 id="item-details-title" className="item-detail__card-title">
-              <Icon name="info" size={20} /> Details
+          <Card variant="filled" as="section" aria-labelledby="item-details-title" className="staff-card item-detail__card">
+            <h2 id="item-details-title" className="claims-card-title item-detail__card-title">
+              <ShapeIcon shape="cookie" tone="primary" icon="info" size={40} /> Details
             </h2>
             <dl className="item-detail__dl">
               <Row icon="location_on" term="Found where">{data.found_area}</Row>
@@ -108,9 +124,9 @@ export function ItemDetail() {
           </Card>
         </div>
 
-        <Card variant="outlined" as="section" aria-labelledby="custody-title" className="item-detail__card item-detail__custody">
-          <h2 id="custody-title" className="item-detail__card-title">
-            <Icon name="history" size={20} /> Chain of custody
+        <Card variant="filled" as="section" aria-labelledby="custody-title" className="staff-card item-detail__card item-detail__custody">
+          <h2 id="custody-title" className="claims-card-title item-detail__card-title">
+            <ShapeIcon shape="clover" tone="tertiary" icon="history" size={40} /> Chain of custody
           </h2>
           <CustodyTimeline events={data.custody} />
         </Card>

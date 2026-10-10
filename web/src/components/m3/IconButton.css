@@ -92,3 +92,7 @@
   border-color: color-mix(in srgb, var(--md-sys-color-on-surface) 12%, transparent);
 }
 .md-icon-button:disabled::before { opacity: 0; }
+
+/* M3 Expressive: icon buttons square off slightly while pressed (spring). */
+.md-icon-button { transition: border-radius var(--md-sys-motion-spring-fast-spatial-duration) var(--md-sys-motion-spring-fast-spatial); }
+.md-icon-button:active:not(:disabled) { border-radius: var(--md-sys-shape-corner-medium); }

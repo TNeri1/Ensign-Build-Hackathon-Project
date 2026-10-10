@@ -9,18 +9,23 @@
   align-items: stretch;
   gap: 16px;
   width: 100%;
-  max-width: 400px;
+  max-width: 420px;
   padding: 8px 24px 24px;
-  border-radius: var(--md-sys-shape-corner-extra-large);
+  border-radius: var(--md-sys-shape-corner-extra-large-increased);
+  background: var(--app-hero-fill);
+  color: var(--md-sys-color-on-primary-container);
+  box-shadow: none;
 }
 .staff-label__bar { display: flex; align-items: center; gap: 4px; margin-left: -12px; }
+.staff-label__bar .md-icon-button { color: var(--md-sys-color-on-primary-container); }
 .staff-label__title {
+  flex: 1 1 auto;
   margin: 0;
-  color: var(--md-sys-color-on-surface);
-  font-size: var(--md-sys-typescale-title-large-size);
-  line-height: var(--md-sys-typescale-title-large-line-height);
-  font-weight: var(--md-sys-typescale-title-large-weight);
+  font-size: var(--md-sys-typescale-headline-small-size);
+  line-height: var(--md-sys-typescale-headline-small-line-height);
+  font-weight: var(--md-sys-typescale-emphasized-weight);
 }
+.staff-label__shape { margin-top: 8px; }
 
 /* The label itself is physical paper: always black on white, in both themes and in print. */
 .staff-label__paper {
@@ -29,10 +34,10 @@
   align-items: center;
   gap: 4px;
   padding: 24px 16px;
-  border-radius: var(--md-sys-shape-corner-large);
+  border-radius: var(--md-sys-shape-corner-extra-large);
   background: #fff;
   color: #000;
-  box-shadow: inset 0 0 0 1px var(--md-sys-color-outline-variant);
+  box-shadow: var(--md-sys-elevation-level2);
   text-align: center;
 }
 .staff-label__qr { width: 100%; max-width: 240px; aspect-ratio: 1; }
@@ -41,7 +46,7 @@
   margin: 8px 0 0;
   font-size: var(--md-sys-typescale-display-small-size);
   line-height: var(--md-sys-typescale-display-small-line-height);
-  font-weight: 500;
+  font-weight: 700;
   letter-spacing: 0.02em;
   overflow-wrap: anywhere;
 }
@@ -52,7 +57,7 @@
 }
 .staff-label__hint {
   margin: 0;
-  color: var(--md-sys-color-on-surface-variant);
+  color: var(--md-sys-color-on-primary-container);
   font-size: var(--md-sys-typescale-body-medium-size);
   line-height: var(--md-sys-typescale-body-medium-line-height);
   text-align: center;
@@ -68,6 +73,7 @@
     background: #fff;
     box-shadow: none;
   }
+  .staff-label__card.md-card { background: #fff; color: #000; }
   .staff-label__bar,
   .staff-label__hint,
   .staff-label__print { display: none; }

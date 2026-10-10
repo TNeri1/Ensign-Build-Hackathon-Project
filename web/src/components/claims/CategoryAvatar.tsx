@@ -1,5 +1,6 @@
-import { Icon } from '../m3/Icon';
+import { ShapeIcon } from '../m3/ExpressiveShape';
 import { categoryIcon } from '../../lib/categoryIcon';
+import { categoryShape, categoryTone } from '../../lib/categoryStyle';
 import { colorLabel, colorSwatch } from '../../lib/itemColor';
 import './claims.css';
 
@@ -9,8 +10,8 @@ export function categoryName(id: string): string {
   return s ? s[0].toUpperCase() + s.slice(1) : s;
 }
 
-/** "Phone · Red" */
-export function itemTitle(category: string, color: string): string {
+/** Caption under an item's name: "Phone · Black". */
+export function categoryColorLine(category: string, color: string): string {
   return color ? `${categoryName(category)} · ${colorLabel(color)}` : categoryName(category);
 }
 
@@ -21,15 +22,17 @@ export function ColorDot({ color }: { color: string }) {
   return <span className="claims-dot" style={{ background: bg }} aria-hidden="true" />;
 }
 
+const SIZE = { medium: 48, large: 64, xlarge: 88 } as const;
+
 /**
- * 40px tonal circle with the category icon (56px when size="large"); `color` adds a swatch badge
- * in the corner so the item color reads at a glance in lists.
+ * The category's expressive shape (same shape + tone on every screen, see lib/categoryStyle); `color`
+ * adds a swatch badge in the corner so the item color reads at a glance in lists.
  */
-export function CategoryAvatar({ category, color, size = 'medium' }: { category: string; color?: string; size?: 'medium' | 'large' }) {
+export function CategoryAvatar({ category, color, size = 'medium' }: { category: string; color?: string; size?: keyof typeof SIZE }) {
   const bg = color ? colorSwatch(color) : undefined;
   return (
-    <span className={`claims-avatar${size === 'large' ? ' claims-avatar--large' : ''}`} aria-hidden="true">
-      <Icon name={categoryIcon(category)} size={size === 'large' ? 28 : 24} />
+    <span className={`claims-avatar claims-avatar--${size}`} aria-hidden="true">
+      <ShapeIcon shape={categoryShape(category)} tone={categoryTone(category)} icon={categoryIcon(category)} size={SIZE[size]} />
       {bg && <span className="claims-avatar__swatch" style={{ background: bg }} />}
     </span>
   );

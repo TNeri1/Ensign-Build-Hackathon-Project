@@ -1,4 +1,4 @@
-import { COLORS, type CategoryRegistry, type Color, type VisionSuggestion } from '@vlf/shared';
+import { COLORS, ITEM_NAME_MAX, type CategoryRegistry, type Color, type VisionSuggestion } from '@vlf/shared';
 
 /** Pull the first JSON object out of a model reply (handles ```json fences and chatter around it). */
 export function parseModelJson(text: string): Record<string, unknown> | null {
@@ -63,6 +63,7 @@ export function sanitizeSuggestion(raw: Record<string, unknown>, reg: CategoryRe
       }
     }
   }
+  if (typeof raw.name === 'string' && raw.name.trim()) out.name = clip(raw.name.trim().replace(/\s+/g, ' '), ITEM_NAME_MAX);
   if (typeof raw.summary === 'string' && raw.summary.trim()) out.summary = clip(raw.summary.trim(), 200);
   return out;
 }

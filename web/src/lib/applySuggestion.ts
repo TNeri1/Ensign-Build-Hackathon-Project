@@ -3,6 +3,7 @@ import type { CategoryInfo } from '../api/types';
 
 export interface IntakeDraft {
   category: string;
+  name: string;
   color: string;
   fields: Record<string, string>;
 }
@@ -15,13 +16,17 @@ export interface IntakeDraft {
  */
 export function applySuggestion(draft: IntakeDraft, s: VisionSuggestion, cats: CategoryInfo[]): { draft: IntakeDraft; filled: string[] } {
   const filled: string[] = [];
-  let { category, color } = draft;
+  let { category, color, name } = draft;
   let fields = draft.fields;
 
   if (!category && s.category && cats.some((c) => c.id === s.category)) {
     category = s.category;
     fields = {};
     filled.push('Category');
+  }
+  if (!name.trim() && s.name) {
+    name = s.name;
+    filled.push('Item name');
   }
   if (!color && s.color) {
     color = s.color;
@@ -39,5 +44,5 @@ export function applySuggestion(draft: IntakeDraft, s: VisionSuggestion, cats: C
     }
     fields = next;
   }
-  return { draft: { category, color, fields }, filled };
+  return { draft: { category, name, color, fields }, filled };
 }

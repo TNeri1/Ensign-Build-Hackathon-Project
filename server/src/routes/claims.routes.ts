@@ -7,6 +7,7 @@ import { requireClaim, submitAnswers } from '../services/claims/submit';
 import { compareClaim, decideClaim, listClaims } from '../services/claims/review';
 import { lookupPickup, releasePickup } from '../services/claims/pickup';
 import { notFound } from '../errors';
+import { titleOf } from '../services/itemTitle';
 
 const routes: FastifyPluginAsync = async (app) => {
   const ctx = app.ctx;
@@ -19,7 +20,7 @@ const routes: FastifyPluginAsync = async (app) => {
     return {
       status: claim.status,
       decisionReason: claim.status === 'denied' ? claim.decision_reason : null,
-      item: { categoryLabel: ctx.categories.get(item.category)?.label ?? item.category, color: item.color, area: item.found_area },
+      item: { title: titleOf(ctx, item), categoryLabel: ctx.categories.get(item.category)?.label ?? item.category, color: item.color, area: item.found_area },
       // Questions only. Expected answers are never sent.
       questions: challengesOf(claim).map(({ field, question }) => ({ field, question })),
     };

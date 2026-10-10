@@ -4,8 +4,8 @@
   position: relative;
   overflow: hidden;
   min-height: 240px;
-  border-radius: var(--md-sys-shape-corner-large);
-  background-color: var(--md-sys-color-surface-container-highest);
+  border-radius: var(--md-sys-shape-corner-extra-large);
+  background-color: var(--md-sys-color-surface-container-high);
 }
 .qr-scanner__viewfinder--off { min-height: 160px; }
 .qr-scanner__viewfinder--off .qr-scanner__frame { width: 120px; height: 120px; }
@@ -38,15 +38,15 @@
 /* Four corner brackets: the classic viewfinder look while the camera is not live. */
 .qr-scanner__frame {
   --_c: var(--md-sys-color-primary);
-  --_l: 28px;
-  --_w: 4px;
+  --_l: 32px;
+  --_w: 6px;
   position: absolute;
   top: 50%;
   left: 50%;
   width: 176px;
   height: 176px;
   transform: translate(-50%, -50%);
-  border-radius: var(--md-sys-shape-corner-medium);
+  border-radius: var(--md-sys-shape-corner-large-increased);
   background:
     linear-gradient(var(--_c), var(--_c)) top left / var(--_l) var(--_w),
     linear-gradient(var(--_c), var(--_c)) top left / var(--_w) var(--_l),

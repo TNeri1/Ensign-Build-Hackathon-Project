@@ -2,7 +2,7 @@ import { defineCategory } from '../schema';
 
 /**
  * Catch-all for anything no specific category covers (an AirPods case, an umbrella, a toy).
- * `item_type` says what it is and is public, so it shows in search. The photo reader picks this when nothing fits.
+ * The item's own name (required here, e.g. "AirPods case") is its heading everywhere. The photo reader picks this when nothing fits.
  * Matching for "other" relies on color, area and time only, so claims still need staff verification.
  */
 
@@ -11,8 +11,8 @@ export default defineCategory({
   label: "Other",
   sensitive: false,
   retentionDays: 60,
+  nameRequired: true,
   fields: [
-    { name: 'item_type', label: "Item name", public: true, required: true },
     { name: 'brand', label: "Brand (if visible)", public: true, required: false },
     { name: 'description', label: "Description (size, material, condition)", public: false, required: true },
     { name: 'distinguishing_marks', label: "Distinguishing marks (stickers, engraving, damage)", public: false, required: false },

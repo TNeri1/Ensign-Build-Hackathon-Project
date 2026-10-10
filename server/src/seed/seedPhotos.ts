@@ -23,7 +23,7 @@ export function photoPicker() {
   };
 }
 
-/** Make the item agree with its picture: same color, and for phones the brand (with a model of that brand). */
+/** Make the item agree with its picture: same color, phones the brand (with a model of that brand), and a public name. */
 export function matchSpecToPhoto(spec: ItemSpec, photo: SeedPhoto, rng: Rng): ItemSpec {
   const fields = { ...spec.fields };
   if (spec.category === 'phone' && photo.brand && fields.brand !== photo.brand) {
@@ -31,7 +31,11 @@ export function matchSpecToPhoto(spec: ItemSpec, photo: SeedPhoto, rng: Rng): It
     fields.model = pick(rng, MODELS[photo.brand] ?? [fields.model]);
   }
   if (spec.category === 'wallet') fields.material = 'Leather';
-  return { ...spec, color: photo.color, fields };
+  const color = photo.color[0].toUpperCase() + photo.color.slice(1);
+  const name = spec.category === 'phone'
+    ? `${color} ${fields.brand === 'Apple' ? 'iPhone' : `${fields.brand} phone`}`
+    : (fields.brand ? `${color} ${fields.brand} wallet` : `${color} leather wallet`);
+  return { ...spec, name, color: photo.color, fields };
 }
 
 export function readSeedPhoto(photo: SeedPhoto): { data: Buffer; mimetype: string } {

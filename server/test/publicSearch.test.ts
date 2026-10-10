@@ -39,17 +39,19 @@ describe('public search', () => {
     expect((await get(app, `/api/public/items/${phone}`)).statusCode).toBe(404);
   });
 
-  it('uses the item name as the title for "other" items, and keeps it out of details', async () => {
+  it('titles items by name, else "<brand> <category>", else category; name is searchable', async () => {
     const { app, db, venue } = await setup();
-    makeItem(db, venue, { category: 'other', color: 'white', found_area: 'Gate 5' }, [
-      { key: 'item_type', value: 'AirPods case', isPublic: true },
+    makeItem(db, venue, { category: 'other', name: 'AirPods case', color: 'white', found_area: 'Gate 5' }, [
       { key: 'brand', value: 'Apple', isPublic: true },
       { key: 'description', value: 'small glossy case', isPublic: false },
     ]);
+    makeItem(db, venue, { category: 'wallet', color: 'black', found_area: 'Gate 9' }, []);
     const [other] = (await get(app, '/api/public/items?category=other')).json();
-    expect(other).toMatchObject({ name: 'AirPods case', categoryLabel: 'Other', details: [{ label: 'Brand (if visible)', value: 'Apple' }] });
+    expect(other).toMatchObject({ name: 'AirPods case', title: 'AirPods case', categoryLabel: 'Other', details: [{ label: 'Brand (if visible)', value: 'Apple' }] });
     const [phone] = (await get(app, '/api/public/items?category=phone')).json();
-    expect(phone.name).toBeNull();
+    expect(phone).toMatchObject({ name: null, title: 'Apple phone' }); // brand is public
+    const wallets = (await get(app, '/api/public/items?category=wallet')).json() as { title: string }[];
+    expect(wallets.map((w) => w.title)).toContain('Wallet'); // no name, no brand
     expect((await get(app, '/api/public/items?q=airpods')).json()).toHaveLength(1);
   });
 

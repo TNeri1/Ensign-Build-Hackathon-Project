@@ -63,6 +63,13 @@ web/src/                    Vite + React + react-router. api/ (fetch wrapper, us
 data/photos/                uploaded photos (gitignored)
 ```
 
+### Item names (headings)
+
+Every item has an optional public `name` (`items.name`, "iPhone", "AirPods case"; required when the category sets
+`nameRequired`, e.g. `other`). Lists and pages show `title` as the heading: the name, else `"<public brand> <category>"`,
+else the category (`itemTitle` in `shared/src/itemTitle.ts`, `titleOf` in `server/src/services/itemTitle.ts`; every item API
+returns `title`). Category and color are the caption and the filters. The name is public: never put owner-only details in it.
+
 ### Item lifecycle
 
 `found → stored → claim_pending → verified → released`, plus `disposed` (from found/stored).

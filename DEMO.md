@@ -42,6 +42,7 @@ On the **phone** (or a narrow browser window), tab 1 → tap **Log item** (the f
 |---|---|
 | Photo | take any photo (optional) |
 | Category | tap the **Phone** chip |
+| Item name | `iPhone` (optional; it becomes the item's heading everywhere) |
 | Color | tap the **Black** chip |
 | Found where (area / zone) | `Gate 3` |
 | Found at | leave as now |

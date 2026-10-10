@@ -7,17 +7,20 @@ import './ItemPhoto.css';
 interface Props {
   itemId: string;
   sensitive: boolean;
-  /** 56px rounded thumbnail for list rows (sensitive thumbnails always stay blurred). */
+  /** Rounded thumbnail for list rows / cards, 64px by default (sensitive thumbnails always stay blurred). */
   small?: boolean;
   /** Icon shown when the photo cannot be loaded. */
   fallbackIcon?: IconName;
+  /** Extra class, e.g. to size a thumbnail to its container (cards). */
+  className?: string;
 }
 
 /**
  * Staff-only item photo. Sensitive photos render blurred until staff deliberately reveal them; list
  * thumbnails stay blurred. The blur is clipped inside the rounded frame so it never spills.
  */
-export function ItemPhoto({ itemId, sensitive, small, fallbackIcon = 'image' }: Props) {
+export function ItemPhoto({ itemId, sensitive, small, fallbackIcon = 'image', className }: Props) {
+  const extra = className ? ` ${className}` : '';
   const [revealed, setRevealed] = useState(false);
   const [failed, setFailed] = useState(false);
   const blurred = sensitive && (small || !revealed);
@@ -25,7 +28,7 @@ export function ItemPhoto({ itemId, sensitive, small, fallbackIcon = 'image' }: 
 
   if (small) {
     return (
-      <span className="item-photo item-photo--small">
+      <span className={`item-photo item-photo--small${extra}`}>
         {failed ? (
           <Icon name={fallbackIcon} size={24} className="item-photo__fallback" />
         ) : (
@@ -39,7 +42,7 @@ export function ItemPhoto({ itemId, sensitive, small, fallbackIcon = 'image' }: 
         )}
         {sensitive && (
           <span className="item-photo__badge" title="Sensitive photo">
-            <Icon name="lock" size={14} />
+            <Icon name="lock" size={16} />
           </span>
         )}
       </span>
@@ -47,7 +50,7 @@ export function ItemPhoto({ itemId, sensitive, small, fallbackIcon = 'image' }: 
   }
 
   return (
-    <figure className="item-photo item-photo--large">
+    <figure className={`item-photo item-photo--large${extra}`}>
       {failed ? (
         <span className="item-photo__empty">
           <Icon name={fallbackIcon} size={40} />

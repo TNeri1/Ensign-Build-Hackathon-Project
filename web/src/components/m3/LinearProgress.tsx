@@ -7,7 +7,14 @@ export interface LinearProgressProps {
   label?: string;
 }
 
-/** Material 3 linear progress indicator (4px track, primary active indicator). */
+/** One sine wave per 24 units across 480: the SVG is twice the track width and slides by half. */
+const WAVE = (() => {
+  let d = 'M0,6';
+  for (let x = 0; x < 480; x += 24) d += ` q6,-5 12,0 t12,0`;
+  return d;
+})();
+
+/** Material 3 linear progress indicator. Determinate: thick rounded bar. Indeterminate: M3 Expressive wavy. */
 export function LinearProgress({ value, label }: LinearProgressProps) {
   const determinate = typeof value === 'number' && Number.isFinite(value);
   const pct = determinate ? Math.min(1, Math.max(0, value)) : 0;
@@ -23,10 +30,10 @@ export function LinearProgress({ value, label }: LinearProgressProps) {
       {determinate ? (
         <span className="md-linear-progress__bar" style={{ transform: `scaleX(${pct})` }} />
       ) : (
-        <>
-          <span className="md-linear-progress__bar md-linear-progress__bar--primary" />
-          <span className="md-linear-progress__bar md-linear-progress__bar--secondary" />
-        </>
+        // M3 Expressive wavy indicator: a sine wave sliding along the track (static wave with reduced motion).
+        <svg className="md-linear-progress__wave" viewBox="0 0 480 12" preserveAspectRatio="none" aria-hidden="true" focusable="false">
+          <path d={WAVE} />
+        </svg>
       )}
     </div>
   );

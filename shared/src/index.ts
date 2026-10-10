@@ -1,4 +1,5 @@
 export * from './states';
+export * from './itemTitle';
 export * from './colors';
 export * from './categories/schema';
 export * from './categories/registry';

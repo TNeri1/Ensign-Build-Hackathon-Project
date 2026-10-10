@@ -1,16 +1,31 @@
-/* Public claim page (/claim/:token). */
+/* Public claim page (/claim/:token): hero with the item, question cards, tone-matched status cards. */
 .claim { display: flex; flex-direction: column; gap: 16px; }
-.claim > .md-page-header { margin-bottom: 8px; }
+.claim > .md-hero { margin-bottom: 8px; }
+.claim .md-hero__content { max-width: none; }
 
-/* Item summary */
-.claim-item { display: flex; flex-wrap: wrap; align-items: center; gap: 16px; padding: 16px; border-radius: var(--md-sys-shape-corner-large); }
+/* Item summary, a surface panel inside the hero */
+.claim-item {
+  align-self: stretch;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 16px;
+  margin-top: 12px;
+  padding: 16px;
+  border-radius: var(--md-sys-shape-corner-extra-large);
+  background-color: var(--md-sys-color-surface-container-lowest);
+  color: var(--md-sys-color-on-surface);
+  box-shadow: var(--md-sys-elevation-level1);
+}
 .claim-item__text { flex: 1 1 160px; min-width: 0; display: flex; flex-direction: column; gap: 4px; }
 .claim-item__title {
-  font-size: var(--md-sys-typescale-title-large-size);
-  line-height: var(--md-sys-typescale-title-large-line-height);
-  font-weight: var(--md-sys-typescale-title-large-weight);
+  margin: 0;
+  font-size: var(--md-sys-typescale-headline-small-size);
+  line-height: var(--md-sys-typescale-headline-small-line-height);
+  font-weight: var(--md-sys-typescale-emphasized-weight);
+  overflow-wrap: anywhere;
 }
-.claim-item__meta { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 16px; }
+.claim-item__meta { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 16px; font-size: var(--md-sys-typescale-body-medium-size); line-height: var(--md-sys-typescale-body-medium-line-height); }
 .claim-item__meta .pub-color {
   color: var(--md-sys-color-on-surface-variant);
   font-size: var(--md-sys-typescale-body-medium-size);
@@ -18,103 +33,142 @@
 }
 .claim-item__status { flex: none; }
 @media (max-width: 599.98px) {
-  .claim-item__status { flex-basis: 100%; margin-top: -8px; padding-left: 72px; }
+  .claim-item__status { flex-basis: 100%; margin-top: -8px; padding-left: 88px; }
 }
 
 /* Questions */
-.claim-form { display: flex; flex-direction: column; gap: 24px; margin-top: 8px; }
-.claim-form__intro { color: var(--md-sys-color-on-surface-variant); }
-.claim-questions { display: flex; flex-direction: column; gap: 24px; margin: 0; padding: 0; list-style: none; }
-.claim-question { display: flex; flex-direction: column; gap: 12px; }
+.claim-form { display: flex; flex-direction: column; gap: 16px; }
+.claim-form__intro { margin: 0; color: var(--md-sys-color-on-surface-variant); font-size: var(--md-sys-typescale-body-large-size); line-height: var(--md-sys-typescale-body-large-line-height); }
+.claim-questions { display: flex; flex-direction: column; gap: 12px; margin: 0; padding: 0; list-style: none; }
+.claim-question {
+  --_accent: var(--md-sys-color-primary);
+  --_on-accent: var(--md-sys-color-on-primary);
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 20px 16px;
+  border-radius: var(--md-sys-shape-corner-extra-large);
+  background-color: var(--md-sys-color-surface-container-low);
+}
+.claim-question--1 { --_accent: var(--md-sys-color-tertiary); --_on-accent: var(--md-sys-color-on-tertiary); animation-delay: 60ms; }
+.claim-question--2 { --_accent: var(--md-sys-color-success); --_on-accent: var(--md-sys-color-on-success); animation-delay: 120ms; }
+.claim-question--3 { --_accent: var(--md-sys-color-secondary); --_on-accent: var(--md-sys-color-on-secondary); animation-delay: 180ms; }
 .claim-question__text {
   display: flex;
-  align-items: flex-start;
-  gap: 12px;
+  align-items: center;
+  gap: 14px;
   font-size: var(--md-sys-typescale-title-medium-size);
   line-height: var(--md-sys-typescale-title-medium-line-height);
-  font-weight: var(--md-sys-typescale-title-medium-weight);
+  font-weight: var(--md-sys-typescale-emphasized-weight);
   letter-spacing: var(--md-sys-typescale-title-medium-tracking);
 }
 .claim-question__num {
+  position: relative;
   flex: none;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 24px;
-  height: 24px;
-  border-radius: var(--md-sys-shape-corner-full);
-  background-color: var(--md-sys-color-primary);
-  color: var(--md-sys-color-on-primary);
-  font-size: var(--md-sys-typescale-label-medium-size);
-  line-height: 1;
+  display: inline-grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  color: var(--_on-accent);
+  font-size: var(--md-sys-typescale-title-medium-size);
+  font-weight: 700;
 }
+.claim-question__num svg { position: absolute; inset: 0; width: 100%; height: 100%; fill: var(--_accent); }
+.claim-question__num span { position: relative; }
 
-/* Status cards */
-.claim-notice { display: flex; align-items: flex-start; gap: 16px; padding: 20px; }
-.claim-notice__icon,
-.claim-approved__icon {
-  flex: none;
-  display: inline-flex;
+/* Status cards (pending / done / denied) */
+.claim-notice {
+  --_tint: var(--md-sys-color-warning-container);
+  display: flex;
   align-items: center;
-  justify-content: center;
-  width: 48px;
-  height: 48px;
-  border-radius: var(--md-sys-shape-corner-full);
+  gap: 16px;
+  padding: 20px;
+  border-radius: var(--md-sys-shape-corner-extra-large);
+  background-color: color-mix(in srgb, var(--_tint) 40%, var(--md-sys-color-surface-container-low));
 }
-.claim-notice--pending { border-color: var(--md-sys-color-warning); }
-.claim-notice--pending .claim-notice__icon {
-  background-color: var(--md-sys-color-warning-container);
-  color: var(--md-sys-color-on-warning-container);
-}
-.claim-notice--done .claim-notice__icon {
-  background-color: var(--md-sys-color-surface-container-highest);
-  color: var(--md-sys-color-on-surface-variant);
-}
+.claim-notice--done { --_tint: var(--md-sys-color-success-container); }
+.claim-notice--denied { --_tint: var(--md-sys-color-error-container); }
 .claim-notice__text { display: flex; flex-direction: column; gap: 4px; min-width: 0; }
 .claim-notice__title {
-  font-size: var(--md-sys-typescale-title-medium-size);
-  line-height: var(--md-sys-typescale-title-medium-line-height);
-  font-weight: var(--md-sys-typescale-title-medium-weight);
-  letter-spacing: var(--md-sys-typescale-title-medium-tracking);
+  margin: 0;
+  font-size: var(--md-sys-typescale-title-large-size);
+  line-height: var(--md-sys-typescale-title-large-line-height);
+  font-weight: var(--md-sys-typescale-emphasized-weight);
 }
 .claim-notice__body {
+  margin: 0;
   color: var(--md-sys-color-on-surface-variant);
   font-size: var(--md-sys-typescale-body-medium-size);
   line-height: var(--md-sys-typescale-body-medium-line-height);
   letter-spacing: var(--md-sys-typescale-body-medium-tracking);
 }
 
-/* Approved: QR + steps */
-.claim-approved { display: flex; flex-direction: column; gap: 20px; padding: 20px; border-radius: var(--md-sys-shape-corner-large); }
-.claim-approved__head { display: flex; align-items: center; gap: 16px; }
-.claim-approved__icon {
-  background-color: var(--md-sys-color-success-container);
+/* Approved: celebratory success card with the QR on a white rounded surface */
+.claim-approved {
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  padding: 24px 20px;
+  border-radius: var(--md-sys-shape-corner-extra-large-increased);
+  background: linear-gradient(150deg, var(--md-sys-color-success-container), color-mix(in srgb, var(--md-sys-color-primary-container) 60%, var(--md-sys-color-success-container)));
   color: var(--md-sys-color-on-success-container);
 }
-.claim-approved__body { display: flex; flex-direction: column; align-items: center; gap: 20px; }
-/* The QR SVG carries its own white quiet zone, so it stays scannable in both themes. */
-.claim-approved__qr {
-  overflow: hidden;
-  border-radius: var(--md-sys-shape-corner-medium);
-  box-shadow: 0 0 0 1px var(--md-sys-color-outline-variant);
-  max-width: 100%;
+.claim-approved__decor { position: absolute; z-index: -1; pointer-events: none; fill: color-mix(in srgb, var(--md-sys-color-surface) 35%, transparent); }
+.claim-approved__decor--a { width: 240px; height: 240px; right: -80px; top: -90px; animation: md-shape-spin 50s linear infinite; }
+.claim-approved__decor--b { width: 160px; height: 160px; left: -60px; bottom: -70px; fill: color-mix(in srgb, var(--md-sys-color-success) 14%, transparent); }
+.claim-approved__head { display: flex; align-items: center; gap: 16px; }
+.claim-approved .claim-approved__badge { --_fill: var(--md-sys-color-success); --_on: var(--md-sys-color-on-success); }
+.claim-approved__title {
+  margin: 0;
+  font-size: var(--md-sys-typescale-headline-small-size);
+  line-height: var(--md-sys-typescale-headline-small-line-height);
+  font-weight: var(--md-sys-typescale-emphasized-weight);
 }
-.claim-approved__qr > * { max-width: 100%; }
-.claim-approved__qr svg { display: block; width: 100%; height: 100%; }
-.claim-approved__qr { line-height: 0; }
-.claim-approved__steps {
+.claim-approved__sub { margin: 4px 0 0; font-size: var(--md-sys-typescale-body-medium-size); line-height: var(--md-sys-typescale-body-medium-line-height); }
+.claim-approved__body { display: flex; flex-direction: column; align-items: center; gap: 20px; }
+.claim-approved__qr { max-width: 100%; line-height: 0; }
+.claim-approved__qr .qr-code {
+  padding: 20px;
+  border-radius: var(--md-sys-shape-corner-extra-large);
+  box-shadow: var(--md-sys-elevation-level2);
+}
+.claim-approved .claim-approved__steps {
+  align-self: stretch;
   display: flex;
   flex-direction: column;
   gap: 8px;
   margin: 0;
-  padding-left: 24px;
-  align-self: stretch;
+  padding: 12px;
+  list-style: none;
+  border-radius: var(--md-sys-shape-corner-large-increased);
+  background-color: color-mix(in srgb, var(--md-sys-color-surface) 75%, transparent);
+  color: var(--md-sys-color-on-surface);
 }
-.claim-approved__steps li::marker { color: var(--md-sys-color-primary); font-weight: 500; }
+.claim-approved__steps li { display: flex; align-items: center; gap: 12px; min-height: 40px; }
+.claim-approved__num {
+  flex: none;
+  display: inline-grid;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  border-radius: var(--md-sys-shape-corner-full);
+  background-color: var(--md-sys-color-success);
+  color: var(--md-sys-color-on-success);
+  font-weight: 700;
+}
 
 @media (min-width: 600px) {
   .claim-item { padding: 20px 24px; }
-  .claim-form .claim-submit { width: auto; min-width: 240px; align-self: flex-start; }
-  .claim-approved { padding: 24px; }
+  .claim-question { padding: 24px 28px 28px; }
+  .claim-form .claim-submit { width: auto; min-width: 260px; align-self: flex-start; }
+  .claim-notice { padding: 24px 28px; }
+  .claim-approved { padding: 32px; }
   .claim-approved__body { flex-direction: row; align-items: center; gap: 32px; }
+  .claim-approved .claim-approved__steps { align-self: center; flex: 1; padding: 16px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .claim-approved__decor--a { animation: none; }
 }

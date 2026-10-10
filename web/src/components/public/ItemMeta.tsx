@@ -1,15 +1,16 @@
 import { Icon } from '../m3/Icon';
 import type { IconName } from '../m3/icons';
+import { ShapeIcon } from '../m3/ExpressiveShape';
 import { categoryIcon } from '../../lib/categoryIcon';
+import { categoryShape, categoryTone } from '../../lib/categoryStyle';
 import { colorLabel, colorSwatch } from '../../lib/itemColor';
 import './ItemMeta.css';
 
-/** Tonal circle with the category's icon (40px; 56px when large). */
-export function CategoryAvatar({ category, large = false }: { category: string; large?: boolean }) {
+/** The category's icon in its own expressive shape + tone (same on every screen). 56px; 72px when large. */
+export function CategoryAvatar({ category, large = false, size }: { category: string; large?: boolean; size?: number }) {
   return (
-    <span className={large ? 'pub-avatar pub-avatar--large' : 'pub-avatar'} aria-hidden="true">
-      <Icon name={categoryIcon(category)} size={large ? 28 : 24} />
-    </span>
+    <ShapeIcon shape={categoryShape(category)} tone={categoryTone(category)} icon={categoryIcon(category)}
+      size={size ?? (large ? 72 : 56)} className="pub-avatar" />
   );
 }
 
@@ -24,10 +25,10 @@ export function ColorTag({ color }: { color: string }) {
   );
 }
 
-/** One line of item metadata with a small leading icon (location, date...). */
-export function MetaLine({ icon, children }: { icon: IconName; children: React.ReactNode }) {
+/** One line of item metadata with a small leading icon (location, date...); `pill` draws it as a tonal tag. */
+export function MetaLine({ icon, pill = false, children }: { icon: IconName; pill?: boolean; children: React.ReactNode }) {
   return (
-    <span className="pub-meta">
+    <span className={pill ? 'pub-meta pub-meta--pill' : 'pub-meta'}>
       <Icon name={icon} size={18} className="pub-meta__icon" />
       <span>{children}</span>
     </span>

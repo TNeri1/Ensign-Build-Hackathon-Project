@@ -1,86 +1,50 @@
-/* Staff inventory list. */
-.item-list__filters {
-  margin: 0 calc(-1 * var(--md-sys-layout-margin)) 8px;
-  padding: 4px var(--md-sys-layout-margin) 8px;
+/* Staff inventory: hero, filters, then item cards (rows on compact, a gallery grid on expanded). */
+
+/* The "Bins & labels" chip sits on the hero gradient: give it a solid surface so it reads as a button. */
+.item-list .md-hero .md-chip {
+  height: 40px;
+  border-color: transparent;
+  border-radius: var(--md-sys-shape-corner-full);
+  background-color: var(--md-sys-color-surface);
+  padding-inline: 12px 16px;
+}
+
+.item-list__filters { display: flex; flex-direction: column; gap: 12px; margin-bottom: 16px; }
+.item-list__category { max-width: 320px; }
+/* Compact: the state chips scroll sideways edge to edge. */
+.item-list__chips {
+  margin: 0 calc(-1 * var(--md-sys-layout-margin));
+  padding: 4px var(--md-sys-layout-margin);
   overflow-x: auto;
   scrollbar-width: none;
 }
-.item-list__filters::-webkit-scrollbar { display: none; }
-.item-list__filters .md-chip-set { flex-wrap: nowrap; width: max-content; }
+.item-list__chips::-webkit-scrollbar { display: none; }
+.item-list__chips .md-chip-set { flex-wrap: nowrap; width: max-content; }
+.item-list__chips .md-chip { height: 40px; border-radius: var(--md-sys-shape-corner-full); padding-inline: 16px; }
+.item-list__chips .md-chip[aria-checked='true'] { padding-left: 10px; }
 
-/* Compact: edge-to-edge list. Medium+: list in an outlined card. */
-.item-list__surface { margin-inline: calc(-1 * var(--md-sys-layout-margin)); }
-@media (min-width: 600px) {
-  .item-list__filters { margin-inline: 0; padding-inline: 0; overflow: visible; }
-  .item-list__filters .md-chip-set { flex-wrap: wrap; width: auto; }
-  .item-list__surface {
-    margin-inline: 0;
-    overflow: hidden;
-    border: 1px solid var(--md-sys-color-outline-variant);
-    border-radius: var(--md-sys-shape-corner-large);
-    background-color: var(--md-sys-color-surface-container-low);
-  }
-}
-
-.item-list__list .md-list__row + .md-list__row .md-list-item::after {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 88px;
-  right: 0;
-  border-top: 1px solid var(--md-sys-color-outline-variant);
-}
-.item-list__list .md-list-item { min-height: 80px; padding-right: 16px; }
-
-.item-list__avatar {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 56px;
-  height: 56px;
-  border-radius: var(--md-sys-shape-corner-medium);
-  background-color: var(--md-sys-color-secondary-container);
-  color: var(--md-sys-color-on-secondary-container);
-}
-
-.item-list__headline {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  max-width: 100%;
-  font-weight: var(--md-sys-typescale-title-medium-weight);
-}
-.item-list__dot { color: var(--md-sys-color-on-surface-variant); }
-.item-list__swatch {
-  flex: none;
-  width: 12px;
-  height: 12px;
-  border-radius: var(--md-sys-shape-corner-full);
-  box-shadow: inset 0 0 0 1px var(--md-sys-color-outline);
-}
-.item-list__color {
-  overflow: hidden;
-  text-overflow: ellipsis;
-  font-weight: var(--md-sys-typescale-body-large-weight);
-}
-
-.item-list__trailing {
+.item-list__grid {
   display: flex;
   flex-direction: column;
-  align-items: flex-end;
-  gap: 6px;
+  gap: 8px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
 }
-.item-list__bin {
-  display: inline-flex;
-  align-items: center;
-  gap: 4px;
-  color: var(--md-sys-color-on-surface-variant);
-  font-size: var(--md-sys-typescale-label-medium-size);
-  line-height: var(--md-sys-typescale-label-medium-line-height);
-  font-weight: var(--md-sys-typescale-label-medium-weight);
-  letter-spacing: var(--md-sys-typescale-label-medium-tracking);
+.item-list__cell { min-width: 0; }
+
+@media (min-width: 600px) {
+  .item-list__filters { flex-direction: row; flex-wrap: wrap; align-items: center; gap: 12px 16px; }
+  .item-list__category { flex: 0 0 280px; }
+  .item-list__chips { margin: 0; padding: 0; overflow: visible; }
+  .item-list__chips .md-chip-set { flex-wrap: wrap; width: auto; }
 }
 
-/* Compact: let the title and the "Bins & labels" chip share one row. */
-.item-list .md-page-header { flex-wrap: nowrap; align-items: center; }
-.item-list .md-page-header__text { flex-basis: auto; }
+/* Expanded: responsive gallery of cover cards. */
+@media (min-width: 840px) {
+  .item-list__grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    gap: 16px;
+  }
+}

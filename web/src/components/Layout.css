@@ -14,7 +14,10 @@
  * Gutter: <main> pads by --md-sys-layout-margin (16px compact, 24px medium+). Max width is the
  * page's job (.app-page / .app-page--wide), not the shell's.
  */
+/* M3 Expressive brand wash behind everything; the top bar stays see-through until the page scrolls. */
 .app-shell {
+  background: var(--app-wash), var(--md-sys-color-surface);
+  background-attachment: fixed;
   --app-rail-width: 0px;
   --app-bottom-inset: calc(80px + env(safe-area-inset-bottom, 0px));
   --app-fab-inset: 0px;
@@ -79,7 +82,10 @@ html { scroll-padding-top: calc(64px + env(safe-area-inset-top, 0px)); }
 }
 
 /* Rail header: a plain decorative icon (no container, so it does not read as a FAB). */
-.app-brand-mark { color: var(--md-sys-color-on-surface-variant); }
+.app-brand-mark { display: inline-grid; }
+.app-title .md-only-compact { display: inline-flex; }
+@media (min-width: 600px) { .app-title .md-only-compact { display: none; } }
+.app-title__text { font-weight: var(--md-sys-typescale-emphasized-weight); letter-spacing: -0.2px; }
 
 /* Compact: bottom bar only. */
 @media (max-width: 599.98px) {
@@ -105,3 +111,6 @@ html { scroll-padding-top: calc(64px + env(safe-area-inset-top, 0px)); }
   .app-main { padding: 0; }
   .app-shell { background: #fff; }
 }
+
+.app-shell .md-top-app-bar:not(.md-top-app-bar--scrolled) { background-color: transparent; }
+.app-shell .md-top-app-bar--scrolled { background-color: color-mix(in srgb, var(--md-sys-color-surface-container) 88%, transparent); backdrop-filter: blur(12px); }

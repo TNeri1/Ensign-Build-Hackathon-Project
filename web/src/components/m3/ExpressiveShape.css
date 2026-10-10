@@ -1,0 +1,23 @@
+/* Icon in an expressive shape. Tone picks a container / on-container pair. */
+.md-shape-icon {
+  --_fill: var(--md-sys-color-primary-container);
+  --_on: var(--md-sys-color-on-primary-container);
+  position: relative;
+  display: inline-grid;
+  place-items: center;
+  flex: none;
+  width: var(--_size);
+  height: var(--_size);
+  color: var(--_on);
+}
+.md-shape-icon__shape { position: absolute; inset: 0; width: 100%; height: 100%; fill: var(--_fill); }
+.md-shape-icon__icon { position: relative; }
+.md-shape-icon--secondary { --_fill: var(--md-sys-color-secondary-container); --_on: var(--md-sys-color-on-secondary-container); }
+.md-shape-icon--tertiary { --_fill: var(--md-sys-color-tertiary-container); --_on: var(--md-sys-color-on-tertiary-container); }
+.md-shape-icon--success { --_fill: var(--md-sys-color-success-container); --_on: var(--md-sys-color-on-success-container); }
+.md-shape-icon--warning { --_fill: var(--md-sys-color-warning-container); --_on: var(--md-sys-color-on-warning-container); }
+.md-shape-icon--error { --_fill: var(--md-sys-color-error-container); --_on: var(--md-sys-color-on-error-container); }
+.md-shape-icon--surface { --_fill: var(--md-sys-color-surface-container-highest); --_on: var(--md-sys-color-on-surface-variant); }
+
+.md-shape-icon--spin .md-shape-icon__shape { animation: md-shape-spin 18s linear infinite; }
+@media (prefers-reduced-motion: reduce) { .md-shape-icon--spin .md-shape-icon__shape { animation: none; } }

@@ -5,6 +5,7 @@ import { nowIso } from '../../ids';
 import { getClaimByToken } from '../../repos/claims';
 import { getItem } from '../../repos/items';
 import { transitionItem } from '../custody';
+import { titleOf } from '../itemTitle';
 
 /**
  * The pickup QR encodes the claim token (`vlf:pickup:<token>`). It only works while the claim is
@@ -21,7 +22,7 @@ function findApproved(ctx: AppContext, code: string, venueId: string) {
 
 export function lookupPickup(ctx: AppContext, user: SessionUser, code: string) {
   const { claim, item } = findApproved(ctx, code, user.venueId);
-  return { claimId: claim.id, claimantEmail: claim.claimant_email, item: { id: item.id, category: item.category, color: item.color, foundArea: item.found_area } };
+  return { claimId: claim.id, claimantEmail: claim.claimant_email, item: { id: item.id, title: titleOf(ctx, item), category: item.category, color: item.color, foundArea: item.found_area } };
 }
 
 export function releasePickup(ctx: AppContext, user: SessionUser, code: string): void {

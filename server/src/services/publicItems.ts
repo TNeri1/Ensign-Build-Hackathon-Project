@@ -1,4 +1,4 @@
-import type { CategoryRegistry } from '@vlf/shared';
+import { itemTitle, type CategoryRegistry } from '@vlf/shared';
 import type { Db } from '../db/connection';
 
 /** What the public may see. Built field by field; never spread a DB row into this. */
@@ -9,8 +9,10 @@ export interface PublicItem {
   color: string;
   area: string;
   foundDate: string;
-  /** The item's own name when its category records one (e.g. "AirPods case" for 'other'), else null. */
+  /** Staff-given public name ("AirPods case"), or null. */
   name: string | null;
+  /** Heading to show: name, else "<brand> <category>", else the category (see itemTitle). */
+  title: string;
   details: { label: string; value: string }[];
   /** True when a visitor can start a claim from the listing (item is shelved: state 'stored'). */
   claimable: boolean;
@@ -23,6 +25,7 @@ interface Row {
   found_area: string;
   found_at: string;
   state: string;
+  name: string | null;
 }
 
 export interface PublicSearchParams {
@@ -42,24 +45,21 @@ export function searchPublicItems(db: Db, venueId: string, reg: CategoryRegistry
   if (p.color) { where.push('color = ?'); args.push(p.color); }
   if (p.area) { where.push('found_area LIKE ?'); args.push(`%${p.area}%`); }
   if (p.q) {
-    where.push(`id IN (SELECT item_id FROM item_attributes WHERE is_public = 1 AND value LIKE ?)`);
-    args.push(`%${p.q}%`);
+    where.push(`(name LIKE ? OR id IN (SELECT item_id FROM item_attributes WHERE is_public = 1 AND value LIKE ?))`);
+    args.push(`%${p.q}%`, `%${p.q}%`);
   }
   const rows = db
-    .prepare(`SELECT id, category, color, found_area, found_at, state FROM items WHERE ${where.join(' AND ')} ORDER BY found_at DESC LIMIT 50`)
+    .prepare(`SELECT id, category, name, color, found_area, found_at, state FROM items WHERE ${where.join(' AND ')} ORDER BY found_at DESC LIMIT 50`)
     .all(...args) as Row[];
   return rows.map((r) => toPublicItem(db, reg, r));
 }
 
 export function getPublicItem(db: Db, venueId: string, reg: CategoryRegistry, id: string): PublicItem | null {
   const row = db
-    .prepare(`SELECT id, category, color, found_area, found_at, state FROM items WHERE id = ? AND venue_id = ? AND state IN ${LISTED}`)
+    .prepare(`SELECT id, category, name, color, found_area, found_at, state FROM items WHERE id = ? AND venue_id = ? AND state IN ${LISTED}`)
     .get(id, venueId) as Row | undefined;
   return row ? toPublicItem(db, reg, row) : null;
 }
-
-/** Public field that names the item itself (the 'other' category's "Item name"). Shown as the card title, not a detail. */
-const NAME_FIELD = 'item_type';
 
 export function toPublicItem(db: Db, reg: CategoryRegistry, r: Row): PublicItem {
   const def = reg.get(r.category);
@@ -74,8 +74,9 @@ export function toPublicItem(db: Db, reg: CategoryRegistry, r: Row): PublicItem 
     color: r.color,
     area: r.found_area,
     foundDate: r.found_at.slice(0, 10),
-    name: attrs.find((a) => a.key === NAME_FIELD)?.value ?? null,
-    details: attrs.filter((a) => a.key !== NAME_FIELD).map((a) => ({ label: labels.get(a.key) ?? a.key, value: a.value })),
+    name: r.name,
+    title: itemTitle(r.name, def?.label ?? r.category, attrs.find((a) => a.key === 'brand')?.value),
+    details: attrs.map((a) => ({ label: labels.get(a.key) ?? a.key, value: a.value })),
     claimable: r.state === 'stored',
   };
 }

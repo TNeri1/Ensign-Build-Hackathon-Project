@@ -59,3 +59,22 @@
   0%, 100% { opacity: 0.35; }
   50% { opacity: 1; }
 }
+
+/* ---- M3 Expressive ---- */
+.md-linear-progress { height: 6px; }
+.md-linear-progress--indeterminate { height: 12px; overflow: hidden; background: none; }
+.md-linear-progress__wave {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 200%;
+  height: 12px;
+  fill: none;
+  stroke: var(--md-sys-color-primary);
+  stroke-width: 4;
+  stroke-linecap: round;
+  vector-effect: non-scaling-stroke;
+  animation: md-wave-slide 1.1s linear infinite;
+}
+@keyframes md-wave-slide { to { transform: translateX(-50%); } }
+@media (prefers-reduced-motion: reduce) { .md-linear-progress__wave { animation: none; } }

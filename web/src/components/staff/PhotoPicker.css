@@ -6,27 +6,33 @@
   align-items: center;
   justify-content: center;
   overflow: hidden;
-  min-height: 168px;
-  border: 2px dashed var(--md-sys-color-outline);
-  border-radius: var(--md-sys-shape-corner-large);
-  background-color: var(--md-sys-color-surface-container-low);
+  min-height: 176px;
+  border: 2px dashed color-mix(in srgb, var(--md-sys-color-primary) 55%, var(--md-sys-color-outline-variant));
+  border-radius: var(--md-sys-shape-corner-extra-large);
+  background-color: color-mix(in srgb, var(--md-sys-color-primary-container) 35%, transparent);
   color: var(--md-sys-color-on-surface);
   cursor: pointer;
   -webkit-tap-highlight-color: transparent;
-  transition: background-color var(--md-sys-motion-duration-short4) var(--md-sys-motion-easing-standard);
+  transition:
+    background-color var(--md-sys-motion-duration-short4) var(--md-sys-motion-easing-standard),
+    border-radius var(--md-sys-motion-spring-fast-spatial-duration) var(--md-sys-motion-spring-fast-spatial);
 }
 @media (hover: hover) {
-  .photo-picker__target:hover { background-color: var(--md-sys-color-surface-container); }
+  .photo-picker__target:hover { background-color: color-mix(in srgb, var(--md-sys-color-primary-container) 60%, transparent); }
+  .photo-picker__target:hover .photo-picker__icon { transform: rotate(22deg) scale(1.05); }
 }
-.photo-picker__target:active { background-color: var(--md-sys-color-surface-container-high); }
+.photo-picker__target:active {
+  border-radius: var(--md-sys-shape-corner-extra-extra-large);
+  background-color: color-mix(in srgb, var(--md-sys-color-primary-container) 75%, transparent);
+}
 .photo-picker__input:focus-visible + .photo-picker__target {
   outline: 3px solid var(--md-sys-color-secondary);
   outline-offset: 2px;
 }
 .photo-picker--filled .photo-picker__target {
   height: clamp(200px, 60vw, 320px);
-  border-style: solid;
-  border-color: var(--md-sys-color-outline-variant);
+  border: none;
+  border-radius: var(--md-sys-shape-corner-extra-large-increased);
 }
 .photo-picker__empty {
   display: flex;
@@ -37,15 +43,15 @@
   text-align: center;
 }
 .photo-picker__icon {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 64px;
-  height: 64px;
-  margin-bottom: 8px;
-  border-radius: var(--md-sys-shape-corner-large);
-  background-color: var(--md-sys-color-primary-container);
-  color: var(--md-sys-color-on-primary-container);
+  margin-bottom: 4px;
+  transition: transform var(--md-sys-motion-spring-default-spatial-duration) var(--md-sys-motion-spring-default-spatial);
+}
+.photo-picker__icon .md-shape-icon__shape { filter: drop-shadow(0 2px 3px color-mix(in srgb, var(--md-sys-color-shadow) 18%, transparent)); }
+.photo-picker__title {
+  color: var(--md-sys-color-on-surface);
+  font-size: var(--md-sys-typescale-title-large-size);
+  line-height: var(--md-sys-typescale-title-large-line-height);
+  font-weight: var(--md-sys-typescale-emphasized-weight);
 }
 .photo-picker__preview {
   width: 100%;
@@ -59,19 +65,28 @@
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  height: 40px;
-  padding: 0 16px 0 12px;
+  height: 48px;
+  padding: 0 20px 0 16px;
   border-radius: var(--md-sys-shape-corner-full);
   background-color: var(--md-sys-color-inverse-surface);
   color: var(--md-sys-color-inverse-on-surface);
 }
 .photo-picker__remove {
   position: absolute;
-  top: 8px;
-  right: 8px;
+  top: 12px;
+  right: 12px;
+}
+@media (max-width: 599.98px) {
+  .photo-picker__empty { padding-block: 16px; }
+  .photo-picker__icon { --_size: 72px !important; }
+  .photo-picker__icon .md-icon { width: 34px; height: 34px; }
 }
 @media (min-width: 840px) {
   .photo-picker__target { min-height: 240px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .photo-picker__target,
+  .photo-picker__icon { transition: none; }
 }
 
 /* "Upload photo" (gallery/files) under the camera card. */
