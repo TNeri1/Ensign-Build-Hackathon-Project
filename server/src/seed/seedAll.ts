@@ -6,6 +6,7 @@ import { seedVenue } from './venueData';
 import { randomPhone, randomWallet, type ItemSpec } from './itemData';
 import { seedItem, type PATHS } from './lifecycle';
 import { seedReports } from './reports';
+import { matchSpecToPhoto, photoPicker, readSeedPhoto } from './seedPhotos';
 
 const TABLES = ['claim_attempts', 'notifications', 'custody_events', 'claims', 'lost_reports', 'item_attributes', 'items', 'storage_bins', 'sessions', 'users', 'venues'];
 
@@ -30,6 +31,13 @@ export function seedDatabase(ctx: AppContext) {
   const rng = mulberry32(42);
   const v = seedVenue(ctx.db);
   const who = { venueId: v.venueId, staffId: v.staffId, bins: v.bins };
+  const nextPhoto = photoPicker();
+  /** Real photo per item (vendored, see seed/photos/ATTRIBUTION.md); the item takes the photo's color/brand. */
+  const add = (raw: ItemSpec, daysAgo: number, end: PathName, bin: string) => {
+    const recentPhone = raw.category === 'phone' && daysAgo < 2;
+    const photo = nextPhoto(raw.category, recentPhone ? 'black' : undefined);
+    seedItem(ctx, who, matchSpecToPhoto(raw, photo, rng), daysAgo, end, bin, readSeedPhoto(photo));
+  };
   let n = 0;
 
   ctx.db.transaction(() => {
@@ -37,13 +45,12 @@ export function seedDatabase(ctx: AppContext) {
       for (let i = 0; i < count; i++, n++) {
         const bins = BIN_FOR[category];
         const daysAgo = end === 'found' ? 0.1 + rng() * 0.5 : end === 'released' || end === 'disposed' ? between(rng, 8, 25) : between(rng, 1, 20);
-        const spec = category === 'phone' ? randomPhone(rng, daysAgo < 2) : randomWallet(rng);
-        seedItem(ctx, who, spec, daysAgo, end, bins[n % bins.length]);
+        add(category === 'phone' ? randomPhone(rng, daysAgo < 2) : randomWallet(rng), daysAgo, end, bins[n % bins.length]);
       }
     }
     // Two items past retention (phone: 90d, wallet: 60d) so the retention page has something to show.
-    seedItem(ctx, who, randomPhone(rng), 100, 'stored', 'B1');
-    seedItem(ctx, who, randomWallet(rng), 70, 'stored', 'S1');
+    add(randomPhone(rng), 100, 'stored', 'B1');
+    add(randomWallet(rng), 70, 'stored', 'S1');
     seedReports(ctx.db, v.venueId);
   })();
   return { ...v, itemCount: n + 2 };

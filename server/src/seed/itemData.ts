@@ -4,7 +4,7 @@ export const AREAS = ['Gate 3', 'Gate 7', 'Food Court', 'Section 112', 'Parking 
 const PHONE_COLORS = ['black', 'black', 'white', 'silver', 'blue', 'red', 'gold'] as const;
 const WALLET_COLORS = ['brown', 'black', 'brown', 'blue', 'gray'] as const;
 
-const MODELS: Record<string, string[]> = {
+export const MODELS: Record<string, string[]> = {
   Apple: ['iPhone 12', 'iPhone 13', 'iPhone 15 Pro'],
   Samsung: ['Galaxy S22', 'Galaxy S23', 'Galaxy A54'],
   Google: ['Pixel 7', 'Pixel 8'],

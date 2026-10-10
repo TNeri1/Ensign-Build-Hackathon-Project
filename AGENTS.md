@@ -55,7 +55,8 @@ server/src/
   routes/*.routes.ts        AUTO-REGISTERED under /api. Default-export a FastifyPluginAsync.
   auth/                     password (scrypt), sessions (cookie), guard (requireStaff / requireAdmin)
   notify/outbox.ts          sendNotification() writes to the notifications table
-  seed/                     programmatic seed (run.ts entry, seedAll.ts orchestrates)
+  seed/                     programmatic seed (run.ts entry, seedAll.ts orchestrates); seed/photos/ = vendored CC0/public-domain
+                            item photos (catalog.ts + ATTRIBUTION.md); an item takes its photo's color (and phone brand)
 server/test/                API-level tests; helpers.ts (testApp, testDb) and fixtures.ts (makeVenue/Item/Bin/User, loginCookie)
 web/src/                    Vite + React + react-router. api/ (fetch wrapper, useGet), auth/, lib/ (categoryIcon, colorSwatch, format),
                             theme/ (Material 3 tokens + vendored Roboto), components/m3/ (design system), components/<area>/, pages/{public,staff,admin,dev}
