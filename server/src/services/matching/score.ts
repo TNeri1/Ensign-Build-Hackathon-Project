@@ -18,7 +18,7 @@ export interface MatchConfig {
 export const DEFAULT_WEIGHTS: MatchWeights = { category: 40, color: 20, area: 20, time: 20 };
 export const HOUR = 3_600_000;
 
-export function defaultMatchConfig(threshold = 60): MatchConfig {
+export function defaultMatchConfig(threshold = 70): MatchConfig {
   return { weights: DEFAULT_WEIGHTS, threshold, timeToleranceMs: 3 * HOUR };
 }
 
@@ -34,13 +34,14 @@ export interface MatchResult {
 const STOP = new Set(['the', 'a', 'an', 'at', 'near', 'by', 'of', 'in', 'on', 'area', 'zone']);
 const tokens = (s: string) => s.toLowerCase().split(/[^a-z0-9]+/).filter((t) => t && !STOP.has(t));
 
-/** Exact (normalized) area = full points; any shared token = half; otherwise 0. */
+/** Same words = 1; at least half the words shared (Jaccard) = 0.5; otherwise 0. "Gate 3" vs "Gate 7" = 0. */
 export function areaFactor(a: string, b: string): number {
-  const ta = tokens(a);
+  const ta = new Set(tokens(a));
   const tb = new Set(tokens(b));
-  if (!ta.length || !tb.size) return 0;
-  if (ta.length === tb.size && ta.every((t) => tb.has(t))) return 1;
-  return ta.some((t) => tb.has(t)) ? 0.5 : 0;
+  if (!ta.size || !tb.size) return 0;
+  const shared = [...ta].filter((t) => tb.has(t)).length;
+  if (shared === ta.size && shared === tb.size) return 1;
+  return shared / (ta.size + tb.size - shared) >= 0.5 ? 0.5 : 0;
 }
 
 /** Found time inside the window = 1; within tolerance of it = 0.5; else 0. */

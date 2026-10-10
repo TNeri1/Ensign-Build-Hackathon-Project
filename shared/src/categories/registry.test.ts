@@ -66,5 +66,9 @@ describe('challenges', () => {
     expect(checkAnswer('exact', '40', ' 40 ')).toBe(true);
     expect(checkAnswer('exact', '40', '400')).toBe(false);
     expect(checkAnswer('contains', 'iPhone 14', '')).toBe(false);
+    expect(checkAnswer('contains', 'clear case with a green sticker', 'Clear case, green sticker on the back')).toBe(true);
+    expect(checkAnswer('contains', 'iPhone 14', 'iPhone 13')).toBe(false);
+    expect(checkAnswer('contains', 'iPhone 14', 'an iPhone 14 Pro')).toBe(true);
+    expect(checkAnswer('contains', 'golden retriever on a beach', 'a dog on a beach')).toBe(false);
   });
 });

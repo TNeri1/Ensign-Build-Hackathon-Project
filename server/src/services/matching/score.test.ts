@@ -20,7 +20,7 @@ describe('scoreMatch', () => {
     expect(r.score).toBe(80);
     expect(r.breakdown.color).toBe(0);
   });
-  it('category alone (40) is below the default threshold', () => {
+  it('category alone (40) is below the threshold', () => {
     const r = scoreMatch(report, { category: 'phone', color: 'red', found_area: 'Parking', found_at: '2026-06-03T12:00:00Z' }, cfg);
     expect(r).toMatchObject({ score: 40, isMatch: false });
   });
@@ -33,6 +33,10 @@ describe('scoreMatch', () => {
     expect(r.score).toBe(70); // 40 + 20 + 10 + 0
     expect(r.isMatch).toBe(true);
   });
+  it('category + color alone (60) does not reach the default threshold of 70', () => {
+    const r = scoreMatch(report, { ...item, found_area: 'Parking', found_at: '2026-06-09T12:00:00Z' }, defaultMatchConfig());
+    expect(r).toMatchObject({ score: 60, isMatch: false });
+  });
   it('threshold is configurable', () => {
     const strict = { ...cfg, threshold: 95 };
     expect(scoreMatch(report, { ...item, color: 'white' }, strict).isMatch).toBe(false);
@@ -44,6 +48,8 @@ describe('areaFactor', () => {
     expect(areaFactor('Gate 3', 'gate 3')).toBe(1);
     expect(areaFactor('near the Gate 3', 'Gate 3')).toBe(1);
     expect(areaFactor('Gate 3 entrance', 'Gate 3 lobby')).toBe(0.5);
+    expect(areaFactor('Gate 3', 'Gate 7')).toBe(0);
+    expect(areaFactor('Section 112', 'Section 112 upper')).toBe(0.5);
     expect(areaFactor('Food Court', 'Parking')).toBe(0);
     expect(areaFactor('', 'Gate 3')).toBe(0);
   });

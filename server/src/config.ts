@@ -9,7 +9,7 @@ export interface Config {
   photoDir: string;
   /** Base URL of the web app, used when building links in notifications. */
   publicUrl: string;
-  /** Minimum match score (0-100) that triggers a notification. */
+  /** Minimum match score (0-100, default 70) that triggers a notification. */
   matchThreshold: number;
 }
 
@@ -19,6 +19,6 @@ export function loadConfig(env: NodeJS.ProcessEnv = process.env): Config {
     dbPath: env.DB_PATH ?? path.join(REPO_ROOT, 'data', 'vlf.db'),
     photoDir: env.PHOTO_DIR ?? path.join(REPO_ROOT, 'data', 'photos'),
     publicUrl: env.PUBLIC_URL ?? 'http://localhost:5173',
-    matchThreshold: Number(env.MATCH_THRESHOLD ?? 60),
+    matchThreshold: Number(env.MATCH_THRESHOLD ?? 70),
   };
 }
