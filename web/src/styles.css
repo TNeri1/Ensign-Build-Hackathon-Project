@@ -2,7 +2,6 @@
  * App-level styles. Theme tokens/typography/base come from ./theme/index.css (imported first in main.tsx).
  * The shell layout lives in components/Layout.css.
  */
-@import './legacy.css';
 
 /*
  * Page width. Every direct child of <main> is centred and capped at the reading width (840px).
