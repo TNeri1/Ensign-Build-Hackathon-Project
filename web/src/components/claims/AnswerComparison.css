@@ -32,6 +32,10 @@
   background-color: var(--md-sys-color-success-container);
   color: var(--md-sys-color-on-success-container);
 }
+.answer-match--close {
+  background-color: var(--md-sys-color-warning-container);
+  color: var(--md-sys-color-on-warning-container);
+}
 .answer-match--no {
   background-color: var(--md-sys-color-error-container);
   color: var(--md-sys-color-on-error-container);
@@ -51,6 +55,7 @@
   background-color: var(--md-sys-color-surface);
 }
 .answer-card--no { border-color: color-mix(in srgb, var(--md-sys-color-error) 45%, var(--md-sys-color-outline-variant)); }
+.answer-card--close { border-color: color-mix(in srgb, var(--md-sys-color-warning) 45%, var(--md-sys-color-outline-variant)); }
 .answer-card__head { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; }
 .answer-card__question {
   margin: 0;
@@ -128,3 +133,4 @@
 }
 .answer-table tbody tr:last-child > * { border-bottom: none; }
 .answer-table__row--no > th { box-shadow: inset 3px 0 0 var(--md-sys-color-error); }
+.answer-table__row--close > th { box-shadow: inset 3px 0 0 var(--md-sys-color-warning); }
