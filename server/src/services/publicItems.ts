@@ -9,6 +9,8 @@ export interface PublicItem {
   color: string;
   area: string;
   foundDate: string;
+  /** The item's own name when its category records one (e.g. "AirPods case" for 'other'), else null. */
+  name: string | null;
   details: { label: string; value: string }[];
   /** True when a visitor can start a claim from the listing (item is shelved: state 'stored'). */
   claimable: boolean;
@@ -56,6 +58,9 @@ export function getPublicItem(db: Db, venueId: string, reg: CategoryRegistry, id
   return row ? toPublicItem(db, reg, row) : null;
 }
 
+/** Public field that names the item itself (the 'other' category's "Item name"). Shown as the card title, not a detail. */
+const NAME_FIELD = 'item_type';
+
 export function toPublicItem(db: Db, reg: CategoryRegistry, r: Row): PublicItem {
   const def = reg.get(r.category);
   const labels = new Map(def?.fields.map((f) => [f.name, f.label]));
@@ -69,7 +74,8 @@ export function toPublicItem(db: Db, reg: CategoryRegistry, r: Row): PublicItem 
     color: r.color,
     area: r.found_area,
     foundDate: r.found_at.slice(0, 10),
-    details: attrs.map((a) => ({ label: labels.get(a.key) ?? a.key, value: a.value })),
+    name: attrs.find((a) => a.key === NAME_FIELD)?.value ?? null,
+    details: attrs.filter((a) => a.key !== NAME_FIELD).map((a) => ({ label: labels.get(a.key) ?? a.key, value: a.value })),
     claimable: r.state === 'stored',
   };
 }

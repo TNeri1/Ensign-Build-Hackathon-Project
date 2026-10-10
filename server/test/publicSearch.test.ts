@@ -39,6 +39,20 @@ describe('public search', () => {
     expect((await get(app, `/api/public/items/${phone}`)).statusCode).toBe(404);
   });
 
+  it('uses the item name as the title for "other" items, and keeps it out of details', async () => {
+    const { app, db, venue } = await setup();
+    makeItem(db, venue, { category: 'other', color: 'white', found_area: 'Gate 5' }, [
+      { key: 'item_type', value: 'AirPods case', isPublic: true },
+      { key: 'brand', value: 'Apple', isPublic: true },
+      { key: 'description', value: 'small glossy case', isPublic: false },
+    ]);
+    const [other] = (await get(app, '/api/public/items?category=other')).json();
+    expect(other).toMatchObject({ name: 'AirPods case', categoryLabel: 'Other', details: [{ label: 'Brand (if visible)', value: 'Apple' }] });
+    const [phone] = (await get(app, '/api/public/items?category=phone')).json();
+    expect(phone.name).toBeNull();
+    expect((await get(app, '/api/public/items?q=airpods')).json()).toHaveLength(1);
+  });
+
   it('returns a single public item', async () => {
     const { app, phone } = await setup();
     const res = await get(app, `/api/public/items/${phone}`);
