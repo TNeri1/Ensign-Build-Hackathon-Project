@@ -138,3 +138,12 @@
   .md-button,
   .md-button::before { transition: none; }
 }
+
+/* M3 Expressive: buttons morph from pill to a rounder rectangle while pressed, with a spring. */
+.md-button {
+  transition:
+    box-shadow var(--md-sys-motion-duration-short4) var(--md-sys-motion-easing-standard),
+    border-radius var(--md-sys-motion-spring-fast-spatial-duration) var(--md-sys-motion-spring-fast-spatial);
+}
+.md-button:active:not(:disabled) { border-radius: var(--md-sys-shape-corner-medium); }
+.md-button--large { height: 56px; font-size: var(--md-sys-typescale-title-medium-size); }

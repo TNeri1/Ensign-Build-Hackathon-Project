@@ -1,0 +1,66 @@
+/*
+ * Material 3 Expressive layer (2025): extra shape sizes, spring motion, emphasized type, brand wash.
+ * Builds on tokens.css / system.css; components opt in through these variables and classes.
+ */
+:root {
+  /* Shape: expressive additions to the corner scale. */
+  --md-sys-shape-corner-large-increased: 20px;
+  --md-sys-shape-corner-extra-large-increased: 32px;
+  --md-sys-shape-corner-extra-extra-large: 48px;
+
+  /* Motion: springs (approximated as cubic-beziers; spatial ones overshoot a little, effects do not). */
+  --md-sys-motion-spring-fast-spatial: cubic-bezier(0.42, 1.67, 0.21, 0.9);
+  --md-sys-motion-spring-fast-spatial-duration: 350ms;
+  --md-sys-motion-spring-default-spatial: cubic-bezier(0.38, 1.21, 0.22, 1);
+  --md-sys-motion-spring-default-spatial-duration: 500ms;
+  --md-sys-motion-spring-fast-effects: cubic-bezier(0.31, 0.94, 0.34, 1);
+  --md-sys-motion-spring-fast-effects-duration: 150ms;
+
+  /* Typography: emphasized weights for headings and key numbers. */
+  --md-sys-typescale-emphasized-weight: 600;
+  --md-sys-typescale-display-medium-size: 45px;
+  --md-sys-typescale-display-medium-line-height: 52px;
+  --md-sys-typescale-display-large-size: 57px;
+  --md-sys-typescale-display-large-line-height: 64px;
+
+  /* Brand wash behind the app: soft blobs of primary/tertiary containers. */
+  --app-wash:
+    radial-gradient(60rem 30rem at 100% -10%, color-mix(in srgb, var(--md-sys-color-primary-container) 70%, transparent), transparent 70%),
+    radial-gradient(40rem 24rem at -10% 0%, color-mix(in srgb, var(--md-sys-color-tertiary-container) 45%, transparent), transparent 70%);
+  /* Hero banner fill. */
+  --app-hero-fill: linear-gradient(135deg, var(--md-sys-color-primary-container), color-mix(in srgb, var(--md-sys-color-tertiary-container) 70%, var(--md-sys-color-primary-container)));
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --md-sys-motion-spring-fast-spatial-duration: 0ms;
+    --md-sys-motion-spring-default-spatial-duration: 0ms;
+    --md-sys-motion-spring-fast-effects-duration: 0ms;
+  }
+}
+
+.md-emphasized { font-weight: var(--md-sys-typescale-emphasized-weight); }
+.md-typescale-display-medium {
+  font-size: var(--md-sys-typescale-display-medium-size);
+  line-height: var(--md-sys-typescale-display-medium-line-height);
+  font-weight: var(--md-sys-typescale-emphasized-weight);
+  letter-spacing: -0.25px;
+}
+
+/* Interactive cards lift on hover with a spring (opt in with .md-card--interactive). */
+.md-card--interactive {
+  transition:
+    transform var(--md-sys-motion-spring-fast-spatial-duration) var(--md-sys-motion-spring-fast-spatial),
+    box-shadow var(--md-sys-motion-duration-short4) var(--md-sys-motion-easing-standard);
+}
+@media (hover: hover) {
+  .md-card--interactive:hover { transform: translateY(-2px); box-shadow: var(--md-sys-elevation-level2); }
+}
+.md-card--interactive:active { transform: scale(0.99); }
+
+/* Gentle entrance for page content (skipped with reduced motion). */
+@keyframes md-rise { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+.md-rise { animation: md-rise var(--md-sys-motion-spring-default-spatial-duration) var(--md-sys-motion-spring-default-spatial) both; }
+
+@keyframes md-shape-spin { to { transform: rotate(360deg); } }
+@keyframes md-pill-in { from { transform: scaleX(0.35); opacity: 0.4; } to { transform: none; opacity: 1; } }

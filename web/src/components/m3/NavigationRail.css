@@ -105,3 +105,6 @@
 @media print {
   .md-nav-rail { display: none; }
 }
+
+/* M3 Expressive: the active indicator springs open when a destination is selected. */
+.md-nav-rail__item.is-active .md-nav-rail__indicator { animation: md-pill-in var(--md-sys-motion-spring-fast-spatial-duration) var(--md-sys-motion-spring-fast-spatial); }

@@ -1,8 +1,8 @@
 import { useEffect, useRef } from 'react';
 import { Link, Outlet, useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '../auth/AuthProvider';
-import { Icon } from './m3/Icon';
 import { Fab } from './m3/Fab';
+import { ShapeIcon } from './m3/ExpressiveShape';
 import { Menu, type MenuItem } from './m3/Menu';
 import { NavigationBar } from './m3/NavigationBar';
 import { NavigationRail } from './m3/NavigationRail';
@@ -12,9 +12,9 @@ import { destinations } from './nav';
 import { ThemeToggle } from './ThemeToggle';
 import './Layout.css';
 
-/** Decorative rail header: a plain icon, not a container, so it is never mistaken for the rail FAB. */
-function BrandMark() {
-  return <Icon name="backpack" size={24} className="app-brand-mark" />;
+/** Brand mark: a magnifier in an M3 Expressive cookie shape (decorative). */
+function BrandMark({ size = 40 }: { size?: number }) {
+  return <ShapeIcon shape="cookie" icon="travel_explore" tone="primary" size={size} className="app-brand-mark" />;
 }
 
 /**
@@ -80,6 +80,7 @@ export function Layout() {
         <TopAppBar
           title={
             <Link to="/" className="app-title">
+              <span className="md-only-compact"><BrandMark size={32} /></span>
               <span className="app-title__text">Lost &amp; Found</span>
               {subtitle && <span className="app-title__role">{subtitle}</span>}
             </Link>
