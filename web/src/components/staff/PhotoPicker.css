@@ -73,3 +73,10 @@
 @media (min-width: 840px) {
   .photo-picker__target { min-height: 240px; }
 }
+
+/* "Upload photo" (gallery/files) under the camera card. */
+.photo-picker__actions { display: flex; justify-content: center; margin-top: 4px; }
+
+/* Fill-from-photo status under the picker (see PhotoAssistNote). */
+.photo-assist { display: flex; flex-direction: column; gap: 8px; }
+.photo-assist__text { margin: 0; color: var(--md-sys-color-on-surface-variant); }

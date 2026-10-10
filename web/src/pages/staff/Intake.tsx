@@ -1,12 +1,13 @@
-import { useEffect, useMemo, useState, type FormEvent } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState, type FormEvent } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { COLORS } from '@vlf/shared';
+import { COLORS, type VisionSuggestion } from '@vlf/shared';
 import { api } from '../../api/client';
 import { useGet } from '../../api/useApi';
 import type { Bin, CategoryInfo } from '../../api/types';
 import { CategoryFields } from '../../components/CategoryFields';
 import { FormSection } from '../../components/staff/FormSection';
 import { PhotoPicker } from '../../components/staff/PhotoPicker';
+import { PhotoAssistNote } from '../../components/staff/PhotoAssistNote';
 import { Alert } from '../../components/m3/Alert';
 import { Button } from '../../components/m3/Button';
 import { ChoiceChips } from '../../components/m3/Chips';
@@ -16,6 +17,8 @@ import { useSnackbar } from '../../components/m3/Snackbar';
 import { TextField } from '../../components/m3/TextField';
 import { categoryIcon } from '../../lib/categoryIcon';
 import { colorLabel, colorSwatch } from '../../lib/itemColor';
+import { applySuggestion } from '../../lib/applySuggestion';
+import { usePhotoAssist } from './usePhotoAssist';
 import './Intake.css';
 
 const BIN_KEY = 'vlf:lastBin';
@@ -42,7 +45,36 @@ export function Intake() {
   const [busy, setBusy] = useState(false);
 
   const def = useMemo(() => cats.find((c) => c.id === category), [cats, category]);
-  useEffect(() => setFields({}), [category]);
+
+  // Latest form values for merging a photo suggestion that arrives asynchronously.
+  const draft = useRef({ category, color, fields });
+  draft.current = { category, color, fields };
+  const onSuggestion = useCallback((sug: VisionSuggestion) => {
+    const { draft: next, filled } = applySuggestion(draft.current, sug, cats);
+    setCategory(next.category); setColor(next.color); setFields(next.fields);
+    if (next.color && error === 'Pick a color') setError('');
+    return filled;
+  }, [cats, error]);
+  const assist = usePhotoAssist(onSuggestion);
+
+  // Read each new photo once, as soon as both the photo and the model status are known (either order).
+  const autoRead = useRef<File | null>(null);
+  useEffect(() => {
+    if (photo && assist.available && autoRead.current !== photo) {
+      autoRead.current = photo;
+      void assist.run(photo);
+    }
+  }, [photo, assist.available, assist.run]);
+
+  function choosePhoto(file: File | null) {
+    setPhoto(file);
+    if (!file) assist.reset();
+  }
+
+  function chooseCategory(next: string) {
+    if (next !== category) setFields({});
+    setCategory(next);
+  }
 
   async function submit(e: FormEvent) {
     e.preventDefault();
@@ -56,7 +88,7 @@ export function Intake() {
     try {
       const { id } = await api.post<{ id: string }>('/items', fd);
       if (binId) { try { localStorage.setItem(BIN_KEY, binId); } catch { /* storage unavailable */ } }
-      setCategory(''); setColor(''); setFields({}); setPhoto(null);
+      setCategory(''); setColor(''); setFields({}); setPhoto(null); assist.reset();
       setFoundAt(toLocalInput(new Date()));
       snackbar.show('Item saved', { actionLabel: 'View', onAction: () => navigate(`/staff/items/${id}`) });
       window.scrollTo({ top: 0 });
@@ -68,7 +100,9 @@ export function Intake() {
       <PageHeader title="Log found item" subtitle="Photo, category, color, where. About 20 seconds." back="/staff" />
       <div className="intake__layout">
         <FormSection icon="photo_camera" title="Photo" className="intake__section intake__photo">
-          <PhotoPicker file={photo} onChange={setPhoto} />
+          <PhotoPicker file={photo} onChange={choosePhoto} />
+          <PhotoAssistNote state={assist.state} model={assist.model} canRun={!!photo && assist.available && assist.state.kind !== 'reading'}
+            onRun={() => photo && void assist.run(photo)} />
         </FormSection>
 
         <div className="intake__main">
@@ -78,7 +112,7 @@ export function Intake() {
               <ChoiceChips
                 options={cats.map((c) => ({ value: c.id, label: c.label, icon: categoryIcon(c.id) }))}
                 value={category}
-                onChange={setCategory}
+                onChange={chooseCategory}
                 ariaLabel="Category"
               />
             </div>
