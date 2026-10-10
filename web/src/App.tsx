@@ -12,6 +12,7 @@ import { Claims } from './pages/staff/Claims';
 import { ClaimReview } from './pages/staff/ClaimReview';
 import { Pickup } from './pages/staff/Pickup';
 import { Retention } from './pages/admin/Retention';
+import { Dashboard } from './pages/admin/Dashboard';
 import { ItemList } from './pages/staff/ItemList';
 import { Intake } from './pages/staff/Intake';
 import { Bins } from './pages/staff/Bins';
@@ -39,6 +40,7 @@ export function App() {
             <Route path="staff/claims" element={staff(<Claims />)} />
             <Route path="staff/claims/:id" element={staff(<ClaimReview />)} />
             <Route path="staff/pickup" element={staff(<Pickup />)} />
+            <Route path="admin" element={<RequireRole role="admin"><Dashboard /></RequireRole>} />
             <Route path="admin/retention" element={<RequireRole role="admin"><Retention /></RequireRole>} />
             <Route path="staff/items/:id" element={staff(<ItemDetail />)} />
           </Route>
