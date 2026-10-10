@@ -18,7 +18,7 @@ import { colorLabel, colorSwatch } from '../../lib/itemColor';
 import './ItemDetail.css';
 
 interface Detail {
-  id: string; category: string; color: string; state: string; found_area: string; found_at: string;
+  id: string; title: string; name: string | null; category: string; color: string; state: string; found_area: string; found_at: string;
   sensitive: number; photo_path: string | null; bin_id?: string | null;
   attributes: { key: string; value: string; is_public: number }[];
   custody: CustodyEvent[];
@@ -55,10 +55,11 @@ export function ItemDetail() {
   return (
     <div className="app-page app-page--wide item-detail">
       <PageHeader
-        title={`${label(data.category)} · ${colorLabel(data.color)}`}
+        title={data.title}
         back="/staff"
         subtitle={
           <span className="item-detail__subtitle">
+            <span className="item-detail__category">{label(data.category)} · {colorLabel(data.color)}</span>
             <StatusChip state={data.state} />
             {!!data.sensitive && (
               <span className="item-detail__flag">

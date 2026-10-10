@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo, useRef, useState, type FormEvent } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { COLORS, type VisionSuggestion } from '@vlf/shared';
+import { COLORS, ITEM_NAME_MAX, itemTitle, type VisionSuggestion } from '@vlf/shared';
 import { api } from '../../api/client';
 import { useGet } from '../../api/useApi';
 import type { Bin, CategoryInfo } from '../../api/types';
@@ -40,6 +40,7 @@ export function Intake() {
   const [foundAt, setFoundAt] = useState(toLocalInput(new Date()));
   const [binId, setBinId] = useState(readLastBin);
   const [fields, setFields] = useState<Record<string, string>>({});
+  const [name, setName] = useState('');
   const [photo, setPhoto] = useState<File | null>(null);
   const [error, setError] = useState('');
   const [busy, setBusy] = useState(false);
@@ -47,11 +48,11 @@ export function Intake() {
   const def = useMemo(() => cats.find((c) => c.id === category), [cats, category]);
 
   // Latest form values for merging a photo suggestion that arrives asynchronously.
-  const draft = useRef({ category, color, fields });
-  draft.current = { category, color, fields };
+  const draft = useRef({ category, name, color, fields });
+  draft.current = { category, name, color, fields };
   const onSuggestion = useCallback((sug: VisionSuggestion) => {
     const { draft: next, filled } = applySuggestion(draft.current, sug, cats);
-    setCategory(next.category); setColor(next.color); setFields(next.fields);
+    setCategory(next.category); setName(next.name); setColor(next.color); setFields(next.fields);
     if (next.color && error === 'Pick a color') setError('');
     return filled;
   }, [cats, error]);
@@ -82,13 +83,13 @@ export function Intake() {
     setBusy(true); setError('');
     const fd = new FormData();
     fd.append('data', JSON.stringify({
-      category, color, foundArea: area, foundAt: new Date(foundAt).toISOString(), binId: binId || undefined, fields,
+      category, name: name.trim() || undefined, color, foundArea: area, foundAt: new Date(foundAt).toISOString(), binId: binId || undefined, fields,
     }));
     if (photo) fd.append('photo', photo);
     try {
       const { id } = await api.post<{ id: string }>('/items', fd);
       if (binId) { try { localStorage.setItem(BIN_KEY, binId); } catch { /* storage unavailable */ } }
-      setCategory(''); setColor(''); setFields({}); setPhoto(null); assist.reset();
+      setCategory(''); setName(''); setColor(''); setFields({}); setPhoto(null); assist.reset();
       setFoundAt(toLocalInput(new Date()));
       snackbar.show('Item saved', { actionLabel: 'View', onAction: () => navigate(`/staff/items/${id}`) });
       window.scrollTo({ top: 0 });
@@ -116,6 +117,21 @@ export function Intake() {
                 ariaLabel="Category"
               />
             </div>
+            <TextField
+              label="Item name"
+              value={name}
+              onChange={(v) => setName(v.slice(0, ITEM_NAME_MAX))}
+              required={!!def?.nameRequired}
+              leadingIcon="label"
+              placeholder="e.g. iPhone, Leather wallet, AirPods case"
+              supportingText={
+                def?.nameRequired
+                  ? `Required for ${def.label}. Shown publicly as the item's heading; no owner-only details.`
+                  : `Shown publicly as the heading; no owner-only details. Empty shows "${itemTitle(null, def?.label ?? 'Category', fields.brand)}".`
+              }
+              name="itemName"
+              autoComplete="off"
+            />
             <div className="intake__group">
               <span className="intake__label">Color *</span>
               <ChoiceChips

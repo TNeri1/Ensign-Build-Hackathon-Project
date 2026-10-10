@@ -6,6 +6,7 @@ import { answersOf, challengesOf, getClaim } from '../../repos/claims';
 import { getAttributes, getItem } from '../../repos/items';
 import { sendNotification } from '../../notify/outbox';
 import { transitionItem } from '../custody';
+import { titleOf } from '../itemTitle';
 
 export interface Comparison {
   field: string;
@@ -33,7 +34,7 @@ export function compareClaim(ctx: AppContext, claimId: string, venueId: string) 
   });
   return {
     claim: { id: claim.id, status: claim.status, claimantEmail: claim.claimant_email, submittedAt: claim.submitted_at, decisionReason: claim.decision_reason },
-    item: { id: item.id, category: item.category, color: item.color, foundArea: item.found_area, state: item.state, hasPhoto: !!item.photo_path, sensitive: !!item.sensitive },
+    item: { id: item.id, title: titleOf(ctx, item), category: item.category, color: item.color, foundArea: item.found_area, state: item.state, hasPhoto: !!item.photo_path, sensitive: !!item.sensitive },
     comparisons,
   };
 }
@@ -41,13 +42,13 @@ export function compareClaim(ctx: AppContext, claimId: string, venueId: string) 
 export function listClaims(ctx: AppContext, venueId: string, status?: string) {
   const rows = ctx.db
     .prepare(
-      `SELECT c.id, c.status, c.claimant_email AS claimantEmail, c.submitted_at AS submittedAt, i.category, i.color, i.id AS itemId
+      `SELECT c.id, c.status, c.claimant_email AS claimantEmail, c.submitted_at AS submittedAt, i.category, i.name, i.color, i.id AS itemId
          FROM claims c JOIN items i ON i.id = c.item_id
         WHERE i.venue_id = ? AND c.status != 'open' ${status ? 'AND c.status = ?' : ''}
         ORDER BY c.submitted_at DESC LIMIT 100`,
     )
-    .all(...(status ? [venueId, status] : [venueId]));
-  return rows;
+    .all(...(status ? [venueId, status] : [venueId])) as { itemId: string; name: string | null; category: string }[];
+  return rows.map((r) => ({ ...r, title: titleOf(ctx, { id: r.itemId, name: r.name, category: r.category }) }));
 }
 
 /** Approve (item -> verified) or deny (item -> stored). Only submitted claims can be decided. */

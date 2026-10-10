@@ -19,7 +19,7 @@ export function makeItem(db: Db, venueId: string, over: Partial<ItemRow> = {}, a
   const id = newId();
   const now = nowIso();
   insertItem(db, {
-    id, venue_id: venueId, category: 'phone', color: 'black', found_area: 'Main Hall', found_at: now,
+    id, venue_id: venueId, category: 'phone', name: null, color: 'black', found_area: 'Main Hall', found_at: now,
     state: 'found', bin_id: null, photo_path: null, sensitive: 0, created_by: null, created_at: now, updated_at: now,
     ...over,
   });

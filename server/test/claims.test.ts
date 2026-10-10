@@ -50,6 +50,7 @@ describe('claim flow', () => {
 
     const list = (await s.app.inject({ method: 'GET', url: '/api/claims?status=submitted', headers: { cookie: s.cookie } })).json();
     expect(list).toHaveLength(1);
+    expect(list[0].title).toBe('Apple phone');
     const cmp = (await s.app.inject({ method: 'GET', url: `/api/claims/${list[0].id}`, headers: { cookie: s.cookie } })).json();
     expect(cmp.comparisons.every((c: { autoMatch: boolean }) => c.autoMatch)).toBe(true);
     expect(cmp.comparisons[0]).toHaveProperty('expected');
@@ -62,6 +63,7 @@ describe('claim flow', () => {
     const code = `vlf:pickup:${s.token}`;
     const look = await s.app.inject({ method: 'POST', url: '/api/pickup/lookup', payload: { code }, headers: { cookie: s.cookie } });
     expect(look.json().claimantEmail).toBe('lena@example.com');
+    expect(look.json().item.title).toBe('Apple phone'); // brand is public, no name given
 
     const noId = await s.app.inject({ method: 'POST', url: '/api/pickup/release', payload: { code, idChecked: false }, headers: { cookie: s.cookie } });
     expect(noId.statusCode).toBe(400);

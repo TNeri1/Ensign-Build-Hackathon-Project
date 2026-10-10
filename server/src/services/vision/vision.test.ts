@@ -22,15 +22,16 @@ describe('buildVisionPrompt', () => {
 
 describe('buildVisionPrompt with a catch-all', () => {
   it('tells the model to use "other" instead of forcing a wrong category, only when "other" exists', () => {
-    expect(buildVisionPrompt(buildRegistry([phone, wallet, other]))).toMatch(/use "other" and set fields\.item_type/);
+    expect(buildVisionPrompt(buildRegistry([phone, wallet, other]))).toMatch(/use "other" and make "name" say what it is/);
     expect(buildVisionPrompt(reg)).not.toContain('"other"');
   });
-  it('sanitizes an AirPods photo into headphones, or into other with item_type', () => {
+  it('sanitizes an AirPods photo into headphones, or into other with a name', () => {
     const full = buildRegistry([phone, wallet, other, headphones]);
     expect(sanitizeSuggestion({ category: 'headphones', color: 'white', fields: { style: 'earbuds', brand: 'Apple', model: 'AirPods Pro' } }, full))
       .toEqual({ category: 'headphones', color: 'white', fields: { style: 'Earbuds', brand: 'Apple', model: 'AirPods Pro' } });
-    expect(sanitizeSuggestion({ category: 'other', color: 'white', fields: { item_type: 'AirPods case', model: 'ignored' } }, buildRegistry([phone, wallet, other])))
-      .toEqual({ category: 'other', color: 'white', fields: { item_type: 'AirPods case' } });
+    expect(sanitizeSuggestion({ category: 'other', name: '  AirPods   case ', color: 'white', fields: { model: 'ignored', brand: 'Apple' } }, buildRegistry([phone, wallet, other])))
+      .toEqual({ category: 'other', name: 'AirPods case', color: 'white', fields: { brand: 'Apple' } });
+    expect(sanitizeSuggestion({ name: 'x'.repeat(200), fields: {} }, reg).name).toHaveLength(60);
   });
 });
 

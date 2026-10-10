@@ -17,6 +17,8 @@ export function createItem(ctx: AppContext, user: SessionUser, input: IntakeInpu
   const def = ctx.categories.get(input.category);
   if (!def) throw badRequest(`Unknown category: ${input.category}`);
   const { attributes, errors } = resolveAttributes(def, input.fields);
+  const name = input.name?.trim() || null;
+  if (def.nameRequired && !name) errors.unshift('Item name is required');
   if (errors.length) throw badRequest(errors.join('; '));
 
   if (input.binId) {
@@ -31,7 +33,7 @@ export function createItem(ctx: AppContext, user: SessionUser, input: IntakeInpu
 
   ctx.db.transaction(() => {
     insertItem(ctx.db, {
-      id, venue_id: user.venueId, category: def.id, color: input.color, found_area: input.foundArea,
+      id, venue_id: user.venueId, category: def.id, name, color: input.color, found_area: input.foundArea,
       found_at: input.foundAt ?? now, state: 'found', bin_id: null, photo_path: photoPath,
       sensitive: def.sensitive ? 1 : 0, created_by: user.id, created_at: now, updated_at: now,
     });

@@ -119,3 +119,6 @@
     top: calc(64px + 16px);
   }
 }
+
+/* "Phone · Black" under the item's name. */
+.item-detail__category { color: var(--md-sys-color-on-surface-variant); }

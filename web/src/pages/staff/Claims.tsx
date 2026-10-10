@@ -7,10 +7,10 @@ import { LinearProgress } from '../../components/m3/LinearProgress';
 import { List, ListItem } from '../../components/m3/ListItem';
 import { PageHeader } from '../../components/m3/PageHeader';
 import { StatusChip } from '../../components/m3/StatusChip';
-import { CategoryAvatar, itemTitle } from '../../components/claims/CategoryAvatar';
+import { CategoryAvatar, categoryColorLine } from '../../components/claims/CategoryAvatar';
 import { relativeTime } from '../../lib/format';
 
-interface Row { id: string; status: string; claimantEmail: string; submittedAt: string; category: string; color: string }
+interface Row { id: string; status: string; claimantEmail: string; submittedAt: string; title: string; category: string; color: string }
 
 export function Claims() {
   const { data, error, loading } = useGet<Row[]>('/claims?status=submitted');
@@ -34,9 +34,10 @@ export function Claims() {
                 key={c.id}
                 to={`/staff/claims/${c.id}`}
                 leading={<CategoryAvatar category={c.category} color={c.color} />}
-                headline={itemTitle(c.category, c.color)}
+                headline={c.title}
                 supporting={
                   <span className="claims-row__meta">
+                    <span>{categoryColorLine(c.category, c.color)}</span>
                     <span className="claims-row__email">{c.claimantEmail}</span>
                     <span className="claims-row__time">{relativeTime(c.submittedAt)}</span>
                   </span>

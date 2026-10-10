@@ -17,7 +17,7 @@ import './Claim.css';
 interface ClaimView {
   status: 'open' | 'submitted' | 'approved' | 'denied' | 'released';
   decisionReason: string | null;
-  item: { categoryLabel: string; color: string; area: string };
+  item: { title: string; categoryLabel: string; color: string; area: string };
   questions: { field: string; question: string }[];
 }
 
@@ -65,8 +65,9 @@ export function Claim() {
       <Card variant="filled" className="claim-item" as="section" aria-label="Item">
         <CategoryAvatar category={categoryIdFromLabel(item.categoryLabel)} large />
         <div className="claim-item__text">
-          <h2 className="claim-item__title">{item.categoryLabel}</h2>
+          <h2 className="claim-item__title">{item.title}</h2>
           <div className="claim-item__meta">
+            {item.title !== item.categoryLabel && <span className="md-on-surface-variant">{item.categoryLabel}</span>}
             <ColorTag color={item.color} />
             <MetaLine icon="location_on">Found near {item.area}</MetaLine>
           </div>

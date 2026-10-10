@@ -5,6 +5,8 @@ export interface ItemRow {
   id: string;
   venue_id: string;
   category: string;
+  /** Short public name shown as the heading (null: heading falls back to brand + category). */
+  name: string | null;
   color: string;
   found_area: string;
   found_at: string;
@@ -35,9 +37,9 @@ export function getAttributes(db: Db, itemId: string): AttributeRow[] {
 
 export function insertItem(db: Db, row: ItemRow): void {
   db.prepare(
-    `INSERT INTO items (id, venue_id, category, color, found_area, found_at, state, bin_id, photo_path,
+    `INSERT INTO items (id, venue_id, category, name, color, found_area, found_at, state, bin_id, photo_path,
        sensitive, created_by, created_at, updated_at)
-     VALUES (@id, @venue_id, @category, @color, @found_area, @found_at, @state, @bin_id, @photo_path,
+     VALUES (@id, @venue_id, @category, @name, @color, @found_area, @found_at, @state, @bin_id, @photo_path,
        @sensitive, @created_by, @created_at, @updated_at)`,
   ).run(row);
 }

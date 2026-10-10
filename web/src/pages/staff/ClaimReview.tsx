@@ -11,12 +11,12 @@ import { PageHeader } from '../../components/m3/PageHeader';
 import { StatusChip } from '../../components/m3/StatusChip';
 import { TextField } from '../../components/m3/TextField';
 import { AnswerComparison, type Comparison } from '../../components/claims/AnswerComparison';
-import { CategoryAvatar, itemTitle } from '../../components/claims/CategoryAvatar';
+import { CategoryAvatar, categoryColorLine } from '../../components/claims/CategoryAvatar';
 import './ClaimReview.css';
 
 interface Review {
   claim: { id: string; status: string; claimantEmail: string; decisionReason: string | null };
-  item: { id: string; category: string; color: string; foundArea: string; state: string; hasPhoto: boolean; sensitive: boolean };
+  item: { id: string; title: string; category: string; color: string; foundArea: string; state: string; hasPhoto: boolean; sensitive: boolean };
   comparisons: Comparison[];
 }
 
@@ -55,7 +55,8 @@ export function ClaimReview() {
           <CategoryAvatar category={item.category} color={item.color} />
           <div className="claims-field claim-review__item">
             <span className="claims-field__label">Claims item</span>
-            <Link to={`/staff/items/${item.id}`} className="claims-field__value claim-review__item-link">{itemTitle(item.category, item.color)}</Link>
+            <Link to={`/staff/items/${item.id}`} className="claims-field__value claim-review__item-link">{item.title}</Link>
+            <span className="claim-review__where">{categoryColorLine(item.category, item.color)}</span>
             <span className="claim-review__where"><Icon name="location_on" size={16} />Found near {item.foundArea}</span>
             <span className="claim-review__state"><StatusChip state={item.state} /></span>
           </div>

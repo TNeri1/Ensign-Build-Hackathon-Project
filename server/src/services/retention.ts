@@ -2,6 +2,7 @@ import type { SessionUser } from '@vlf/shared';
 import type { AppContext } from '../context';
 import { badRequest } from '../errors';
 import { transitionItem } from './custody';
+import { titleOf } from './itemTitle';
 
 const DAY = 86_400_000;
 
@@ -34,11 +35,11 @@ export function listFlagged(ctx: AppContext, venueId: string, now: Date = new Da
   const overdue = new Map(findOverdue(ctx, now).map((r) => [r.id, r.daysOverdue]));
   const rows = ctx.db
     .prepare(
-      `SELECT id, category, color, found_area AS foundArea, found_at AS foundAt, sensitive, state, disposal_flagged_at AS flaggedAt
+      `SELECT id, category, name, color, found_area AS foundArea, found_at AS foundAt, sensitive, state, disposal_flagged_at AS flaggedAt
          FROM items WHERE venue_id = ? AND disposal_flagged_at IS NOT NULL AND state IN ('found','stored') ORDER BY found_at`,
     )
-    .all(venueId) as { id: string; category: string }[];
-  return rows.map((r) => ({ ...r, categoryLabel: ctx.categories.get(r.category)?.label ?? r.category, daysOverdue: overdue.get(r.id) ?? 0 }));
+    .all(venueId) as { id: string; category: string; name: string | null }[];
+  return rows.map((r) => ({ ...r, title: titleOf(ctx, r), categoryLabel: ctx.categories.get(r.category)?.label ?? r.category, daysOverdue: overdue.get(r.id) ?? 0 }));
 }
 
 /** Dispose flagged items in one transaction; each gets its own custody event. All-or-nothing. */

@@ -10,7 +10,8 @@ export function categoryName(id: string): string {
 }
 
 /** "Phone · Red" */
-export function itemTitle(category: string, color: string): string {
+/** Caption under an item's name: "Phone · Black". */
+export function categoryColorLine(category: string, color: string): string {
   return color ? `${categoryName(category)} · ${colorLabel(color)}` : categoryName(category);
 }
 

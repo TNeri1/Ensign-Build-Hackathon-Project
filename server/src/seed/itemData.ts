@@ -18,6 +18,8 @@ const CONTENTS = ['Starbucks gift card', 'library card', 'folded concert ticket'
 
 export interface ItemSpec {
   category: 'phone' | 'wallet';
+  /** Public heading name ("iPhone"); set from the photo in seedPhotos.ts. */
+  name?: string;
   color: string;
   area: string;
   fields: Record<string, string>;

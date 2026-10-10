@@ -5,7 +5,7 @@ import { EmptyState } from '../../components/m3/EmptyState';
 import { LinearProgress } from '../../components/m3/LinearProgress';
 import { List, ListItem } from '../../components/m3/ListItem';
 import { PageHeader } from '../../components/m3/PageHeader';
-import { CategoryAvatar, itemTitle } from '../../components/claims/CategoryAvatar';
+import { CategoryAvatar, categoryColorLine } from '../../components/claims/CategoryAvatar';
 import { formatDateTime } from '../../lib/format';
 import './Reports.css';
 
@@ -36,7 +36,7 @@ export function Reports() {
               <ListItem
                 key={r.id}
                 leading={<CategoryAvatar category={r.category} color={r.color} />}
-                headline={`${itemTitle(r.category, r.color)} · ${r.area}`}
+                headline={`${categoryColorLine(r.category, r.color)} · ${r.area}`}
                 supporting={
                   <>
                     <span className="reports-list__meta">

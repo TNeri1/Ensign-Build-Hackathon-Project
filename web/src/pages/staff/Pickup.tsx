@@ -9,10 +9,10 @@ import { Icon } from '../../components/m3/Icon';
 import { PageHeader } from '../../components/m3/PageHeader';
 import { TextField } from '../../components/m3/TextField';
 import { QrScanner } from '../../components/QrScanner';
-import { CategoryAvatar, itemTitle } from '../../components/claims/CategoryAvatar';
+import { CategoryAvatar, categoryColorLine } from '../../components/claims/CategoryAvatar';
 import './Pickup.css';
 
-interface Lookup { claimantEmail: string; item: { id: string; category: string; color: string; foundArea: string } }
+interface Lookup { claimantEmail: string; item: { id: string; title: string; category: string; color: string; foundArea: string } }
 
 export function Pickup() {
   const [lookup, setLookup] = useState<Lookup | null>(null);
@@ -85,7 +85,8 @@ export function Pickup() {
               <CategoryAvatar category={lookup.item.category} color={lookup.item.color} size="large" />
               <div className="claims-field">
                 <span className="claims-field__label">Ready for pickup</span>
-                <h2 className="pickup__title">{itemTitle(lookup.item.category, lookup.item.color)}</h2>
+                <h2 className="pickup__title">{lookup.item.title}</h2>
+                <span className="pickup__meta">{categoryColorLine(lookup.item.category, lookup.item.color)}</span>
                 <span className="pickup__meta"><Icon name="location_on" size={16} />Found near {lookup.item.foundArea}</span>
               </div>
             </div>

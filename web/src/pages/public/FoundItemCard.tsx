@@ -6,8 +6,10 @@ import { formatDate } from '../../lib/format';
 
 export interface PublicItem {
   id: string; category: string; categoryLabel: string; color: string; area: string; foundDate: string;
-  /** The item's own name when recorded (e.g. "AirPods case"); the card title falls back to the category. */
+  /** Staff-given name or null. */
   name: string | null;
+  /** Heading: name, else "<brand> <category>", else category (server-computed). */
+  title: string;
   details: { label: string; value: string }[];
   /** Shelved items can be claimed straight from the listing. */
   claimable: boolean;
@@ -22,9 +24,9 @@ export function FoundItemCard({ item, onClaim }: { item: PublicItem; onClaim: (i
       <div className="search-card__head">
         <CategoryAvatar category={item.category} />
         <div className="search-card__titles">
-          <h3>{item.name ?? item.categoryLabel}</h3>
+          <h3>{item.title}</h3>
           <span className="search-card__sub">
-            {item.name && <span className="search-card__category">{item.categoryLabel}</span>}
+            {item.title !== item.categoryLabel && <span className="search-card__category">{item.categoryLabel}</span>}
             <ColorTag color={item.color} />
           </span>
         </div>

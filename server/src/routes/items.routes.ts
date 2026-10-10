@@ -6,6 +6,7 @@ import { createItem } from '../services/intake';
 import { readPhoto } from '../services/photos';
 import { listCustody } from '../services/custody';
 import { getAttributes, getItem } from '../repos/items';
+import { titleOf } from '../services/itemTitle';
 
 const routes: FastifyPluginAsync = async (app) => {
   const ctx = app.ctx;
@@ -39,12 +40,13 @@ const routes: FastifyPluginAsync = async (app) => {
     if (q.binId) { where.push('i.bin_id = ?'); args.push(q.binId); }
     return ctx.db
       .prepare(
-        `SELECT i.id, i.category, i.color, i.found_area AS foundArea, i.found_at AS foundAt, i.state,
+        `SELECT i.id, i.category, i.name, i.color, i.found_area AS foundArea, i.found_at AS foundAt, i.state,
                 i.sensitive, i.photo_path IS NOT NULL AS hasPhoto, b.code AS binCode
            FROM items i LEFT JOIN storage_bins b ON b.id = i.bin_id
           WHERE ${where.join(' AND ')} ORDER BY i.created_at DESC LIMIT 200`,
       )
-      .all(...args);
+      .all(...args)
+      .map((r) => ({ ...(r as { id: string; name: string | null; category: string }), title: titleOf(ctx, r as never) }));
   });
 
   app.get('/items/:id', async (req) => {
@@ -53,6 +55,7 @@ const routes: FastifyPluginAsync = async (app) => {
     if (!item || item.venue_id !== user.venueId) throw notFound('Item not found');
     return {
       ...item,
+      title: titleOf(ctx, item),
       attributes: getAttributes(ctx.db, item.id),
       custody: listCustody(ctx.db, item.id),
     };

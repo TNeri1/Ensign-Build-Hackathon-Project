@@ -29,6 +29,8 @@ export const categoryDefinitionSchema = z
     /** Sensitive categories (IDs, payment cards): photos staff-only and blurred. */
     sensitive: z.boolean(),
     retentionDays: z.number().int().positive(),
+    /** Item name is mandatory at intake (e.g. 'other', where the name is the only description). */
+    nameRequired: z.boolean().default(false),
   })
   .superRefine((def, ctx) => {
     const byName = new Map(def.fields.map((f) => [f.name, f]));
