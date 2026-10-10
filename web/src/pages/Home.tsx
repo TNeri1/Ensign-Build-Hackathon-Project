@@ -65,7 +65,7 @@ export function Home() {
             {held > 0 && (
               <>
                 <span className="home-hero__pulse" aria-hidden="true" />
-                <strong>{held}</strong>&nbsp;{held === 1 ? 'item is' : 'items are'} waiting for their owners right now
+                <span><strong>{held}</strong> {held === 1 ? 'item is' : 'items are'} waiting for their owners right now</span>
               </>
             )}
           </p>

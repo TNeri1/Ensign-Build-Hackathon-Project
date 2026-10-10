@@ -1,23 +1,19 @@
 import { useMemo, useState } from 'react';
 import { useGet } from '../../api/useApi';
 import type { ItemListRow } from '../../api/types';
-import { ItemPhoto } from '../../components/ItemPhoto';
+import { InventoryCard } from '../../components/staff/InventoryCard';
 import { useCategories } from '../../components/staff/useCategories';
 import { Alert } from '../../components/m3/Alert';
 import { Button } from '../../components/m3/Button';
 import { AssistChip, ChoiceChips } from '../../components/m3/Chips';
 import { EmptyState } from '../../components/m3/EmptyState';
 import { Fab } from '../../components/m3/Fab';
-import { Icon } from '../../components/m3/Icon';
+import { HeroHeader } from '../../components/m3/HeroHeader';
 import { LinearProgress } from '../../components/m3/LinearProgress';
 import { LinkButton } from '../../components/m3/LinkButton';
-import { List, ListItem } from '../../components/m3/ListItem';
-import { PageHeader } from '../../components/m3/PageHeader';
 import { Select } from '../../components/m3/Select';
-import { StatusChip, stateLabel } from '../../components/m3/StatusChip';
-import { categoryIcon } from '../../lib/categoryIcon';
-import { relativeTime } from '../../lib/format';
-import { colorLabel, colorSwatch } from '../../lib/itemColor';
+import { stateLabel } from '../../components/m3/StatusChip';
+import '../../components/claims/claims.css';
 import './ItemList.css';
 
 /** Lifecycle order for the state filter. */
@@ -55,9 +51,11 @@ export function ItemList() {
 
   return (
     <div className="app-page app-page--wide item-list">
-      <PageHeader
+      <HeroHeader
         title="Inventory"
         subtitle={subtitle}
+        icon="inventory_2"
+        shape="cookie"
         actions={<AssistChip label="Bins & labels" icon="warehouse" to="/staff/bins" />}
       />
       {loading && !data && <LinearProgress label="Loading inventory" />}
@@ -80,50 +78,20 @@ export function ItemList() {
             <div className="item-list__category">
               <Select label="Category" value={category} onChange={setCategory} placeholder="All categories" leadingIcon="category" options={categoryOptions} />
             </div>
-            <ChoiceChips options={filterOptions} value={filter} onChange={setFilter} ariaLabel="Filter by state" />
+            <div className="item-list__chips">
+              <ChoiceChips options={filterOptions} value={filter} onChange={setFilter} ariaLabel="Filter by state" />
+            </div>
           </div>
           {shown.length === 0 ? (
             <EmptyState icon="filter_list" title="No items match these filters" action={<Button variant="text" onClick={() => { setFilter(ALL); setCategory(''); }}>Show all</Button>} />
           ) : (
-            <div className="item-list__surface">
-              <List className="item-list__list">
-                {shown.map((i) => (
-                  <ListItem
-                    key={i.id}
-                    to={`/staff/items/${i.id}`}
-                    leading={
-                      i.hasPhoto ? (
-                        <ItemPhoto itemId={i.id} sensitive={!!i.sensitive} small fallbackIcon={categoryIcon(i.category)} />
-                      ) : (
-                        <span className="item-list__avatar">
-                          <Icon name={categoryIcon(i.category)} size={24} />
-                        </span>
-                      )
-                    }
-                    headline={i.title}
-                    supporting={
-                      <span className="item-list__meta">
-                        <span className="item-list__kind">
-                          <span>{label(i.category)}</span>
-                          <span className="item-list__dot" aria-hidden="true">·</span>
-                          <span className="item-list__swatch" style={{ background: colorSwatch(i.color) }} aria-hidden="true" />
-                          <span>{colorLabel(i.color)}</span>
-                        </span>
-                        <span className="item-list__where">{i.foundArea} · {relativeTime(i.foundAt)}</span>
-                      </span>
-                    }
-                    trailing={
-                      <span className="item-list__trailing">
-                        <StatusChip state={i.state} />
-                        <span className="item-list__bin">
-                          {i.binCode ? (<><Icon name="warehouse" size={14} /> {i.binCode}</>) : 'No bin'}
-                        </span>
-                      </span>
-                    }
-                  />
-                ))}
-              </List>
-            </div>
+            <ul role="list" className="item-list__grid">
+              {shown.map((i) => (
+                <li key={i.id} className="item-list__cell">
+                  <InventoryCard item={i} categoryLabel={label(i.category)} />
+                </li>
+              ))}
+            </ul>
           )}
         </>
       )}

@@ -2,6 +2,7 @@ import { Button } from '../../components/m3/Button';
 import { Card } from '../../components/m3/Card';
 import { Icon } from '../../components/m3/Icon';
 import { CategoryAvatar, ColorTag, MetaLine } from '../../components/public/ItemMeta';
+import { categoryTone } from '../../lib/categoryStyle';
 import { formatDate } from '../../lib/format';
 
 export interface PublicItem {
@@ -20,11 +21,11 @@ export function FoundItemCard({ item, onClaim }: { item: PublicItem; onClaim: (i
   // foundDate is a plain YYYY-MM-DD; anchor at noon so no timezone shifts it a day.
   const date = formatDate(`${item.foundDate}T12:00:00`) || item.foundDate;
   return (
-    <Card variant="outlined" className="search-card">
+    <Card variant="filled" className={`search-card search-card--${categoryTone(item.category)}${item.claimable ? ' md-card--interactive search-card--claimable' : ''}`}>
       <div className="search-card__head">
         <CategoryAvatar category={item.category} />
         <div className="search-card__titles">
-          <h3>{item.title}</h3>
+          <h3 className="search-card__title">{item.title}</h3>
           <span className="search-card__sub">
             {item.title !== item.categoryLabel && <span className="search-card__category">{item.categoryLabel}</span>}
             <ColorTag color={item.color} />
@@ -32,8 +33,8 @@ export function FoundItemCard({ item, onClaim }: { item: PublicItem; onClaim: (i
         </div>
       </div>
       <div className="search-card__meta">
-        <MetaLine icon="location_on">{item.area}</MetaLine>
-        <MetaLine icon="event">Found {date}</MetaLine>
+        <MetaLine icon="location_on" pill>{item.area}</MetaLine>
+        <MetaLine icon="event" pill>Found {date}</MetaLine>
       </div>
       {item.details.length > 0 && (
         <dl className="search-card__details">
@@ -44,7 +45,7 @@ export function FoundItemCard({ item, onClaim }: { item: PublicItem; onClaim: (i
       )}
       <div className="search-card__action">
         {item.claimable ? (
-          <Button variant="tonal" icon="verified" onClick={() => onClaim(item)}>This is mine</Button>
+          <Button variant="filled" icon="verified" full onClick={() => onClaim(item)}>This is mine</Button>
         ) : (
           <p className="search-card__note"><Icon name="hourglass_empty" size={18} /> Still being logged. File a lost report to be notified.</p>
         )}

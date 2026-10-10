@@ -43,7 +43,7 @@
 }
 .home-hero__actions { display: flex; flex-direction: column; gap: 12px; margin-top: 4px; }
 .home-hero__secondary.md-button--elevated {
-  background-color: var(--md-sys-color-surface-container-lowest);
+  background-color: var(--md-sys-color-surface-bright);
   color: var(--md-sys-color-primary);
 }
 .home-hero__stat {
@@ -112,6 +112,7 @@
 .home-step {
   --_tint: var(--md-sys-color-primary-container);
   --_accent: var(--md-sys-color-primary);
+  --_on-accent: var(--md-sys-color-on-primary);
   position: relative;
   overflow: hidden;
   display: flex;
@@ -121,8 +122,8 @@
   border-radius: var(--md-sys-shape-corner-extra-large);
   background-color: color-mix(in srgb, var(--_tint) 38%, var(--md-sys-color-surface-container-low));
 }
-.home-step--tertiary { --_tint: var(--md-sys-color-tertiary-container); --_accent: var(--md-sys-color-tertiary); }
-.home-step--success { --_tint: var(--md-sys-color-success-container); --_accent: var(--md-sys-color-success); }
+.home-step--tertiary { --_tint: var(--md-sys-color-tertiary-container); --_accent: var(--md-sys-color-tertiary); --_on-accent: var(--md-sys-color-on-tertiary); }
+.home-step--success { --_tint: var(--md-sys-color-success-container); --_accent: var(--md-sys-color-success); --_on-accent: var(--md-sys-color-on-success); }
 .home-step__num {
   position: absolute;
   right: 16px;
@@ -133,6 +134,7 @@
   color: color-mix(in srgb, var(--_accent) 16%, transparent);
   pointer-events: none;
 }
+.home-step .home-step__icon { --_fill: var(--_accent); --_on: var(--_on-accent); }
 .home-step__text { position: relative; display: flex; flex-direction: column; gap: 4px; min-width: 0; }
 .home-step__label {
   color: var(--_accent);
