@@ -1,0 +1,78 @@
+/* Material 3 FAB and extended FAB. */
+.md-fab {
+  --_container: var(--md-sys-color-primary-container);
+  --_content: var(--md-sys-color-on-primary-container);
+  position: relative;
+  isolation: isolate;
+  box-sizing: border-box;
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  width: 56px;
+  height: 56px;
+  margin: 0;
+  padding: 0;
+  border: none;
+  border-radius: var(--md-sys-shape-corner-large);
+  background-color: var(--_container);
+  color: var(--_content);
+  box-shadow: var(--md-sys-elevation-level3);
+  font-family: inherit;
+  font-size: var(--md-sys-typescale-label-large-size);
+  line-height: var(--md-sys-typescale-label-large-line-height);
+  font-weight: var(--md-sys-typescale-label-large-weight);
+  letter-spacing: var(--md-sys-typescale-label-large-tracking);
+  text-decoration: none;
+  white-space: nowrap;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  transition: box-shadow var(--md-sys-motion-duration-short4) var(--md-sys-motion-easing-standard);
+}
+.md-fab::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  border-radius: inherit;
+  background-color: currentColor;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity var(--md-sys-motion-duration-short2) var(--md-sys-motion-easing-standard);
+}
+@media (hover: hover) {
+  .md-fab:hover { box-shadow: var(--md-sys-elevation-level4); }
+  .md-fab:hover::before { opacity: 0.08; }
+}
+.md-fab:focus-visible::before,
+.md-fab:active::before { opacity: 0.1; }
+.md-fab:active { box-shadow: var(--md-sys-elevation-level3); }
+.md-fab:focus-visible {
+  outline: 3px solid var(--md-sys-color-secondary);
+  outline-offset: 2px;
+}
+
+.md-fab--extended {
+  width: auto;
+  min-width: 80px;
+  padding: 0 20px 0 16px;
+}
+
+.md-fab--secondary {
+  --_container: var(--md-sys-color-secondary-container);
+  --_content: var(--md-sys-color-on-secondary-container);
+}
+.md-fab--tertiary {
+  --_container: var(--md-sys-color-tertiary-container);
+  --_content: var(--md-sys-color-on-tertiary-container);
+}
+.md-fab--surface {
+  --_container: var(--md-sys-color-surface-container-high);
+  --_content: var(--md-sys-color-primary);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .md-fab,
+  .md-fab::before { transition: none; }
+}

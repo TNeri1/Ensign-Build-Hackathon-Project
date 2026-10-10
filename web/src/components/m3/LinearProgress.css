@@ -1,0 +1,61 @@
+/* Material 3 linear progress indicator. */
+.md-linear-progress {
+  position: relative;
+  display: block;
+  width: 100%;
+  height: 4px;
+  overflow: hidden;
+  border-radius: var(--md-sys-shape-corner-full);
+  background-color: var(--md-sys-color-surface-container-highest);
+}
+.md-linear-progress__bar {
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background-color: var(--md-sys-color-primary);
+  transform-origin: left center;
+  transition: transform var(--md-sys-motion-duration-medium2) var(--md-sys-motion-easing-standard);
+}
+[dir='rtl'] .md-linear-progress__bar { transform-origin: right center; }
+
+.md-linear-progress--indeterminate .md-linear-progress__bar {
+  transform-origin: left center;
+  transition: none;
+  will-change: left, right;
+}
+.md-linear-progress__bar--primary {
+  animation: md-linear-progress-primary 2s infinite cubic-bezier(0.65, 0.815, 0.735, 0.395);
+}
+.md-linear-progress__bar--secondary {
+  animation: md-linear-progress-secondary 2s infinite cubic-bezier(0.165, 0.84, 0.44, 1) 1.15s;
+  left: -200%;
+  right: 100%;
+}
+
+@keyframes md-linear-progress-primary {
+  0% { left: -35%; right: 100%; }
+  60% { left: 100%; right: -90%; }
+  100% { left: 100%; right: -90%; }
+}
+@keyframes md-linear-progress-secondary {
+  0% { left: -200%; right: 100%; }
+  60% { left: 107%; right: -8%; }
+  100% { left: 107%; right: -8%; }
+}
+
+/* Reduced motion: replace the sweep with a gentle, static-width pulse. */
+@media (prefers-reduced-motion: reduce) {
+  .md-linear-progress__bar { transition: none; }
+  .md-linear-progress__bar--primary {
+    animation: md-linear-progress-pulse 2s ease-in-out infinite !important;
+    animation-iteration-count: infinite !important;
+    animation-duration: 2s !important;
+    left: 0;
+    right: 0;
+  }
+  .md-linear-progress__bar--secondary { display: none; }
+}
+@keyframes md-linear-progress-pulse {
+  0%, 100% { opacity: 0.35; }
+  50% { opacity: 1; }
+}

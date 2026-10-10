@@ -1,0 +1,66 @@
+/* Material 3 top app bar (small + center-aligned). */
+.md-top-app-bar {
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  height: 64px;
+  padding: 0 4px;
+  padding-top: env(safe-area-inset-top, 0px);
+  box-sizing: content-box;
+  background-color: var(--md-sys-color-surface);
+  color: var(--md-sys-color-on-surface);
+  transition: background-color var(--md-sys-motion-duration-medium2) var(--md-sys-motion-easing-standard);
+}
+.md-top-app-bar--scrolled { background-color: var(--md-sys-color-surface-container); }
+
+.md-top-app-bar__leading,
+.md-top-app-bar__actions {
+  display: flex;
+  flex: none;
+  align-items: center;
+  gap: 0;
+  min-width: 0;
+  color: var(--md-sys-color-on-surface-variant);
+}
+/* 40px icon buttons have centred 48px touch targets: 8px apart, the targets meet but never overlap. */
+.md-top-app-bar__actions { gap: 8px; }
+/* No leading icon: the title starts on the page gutter (16px compact, 24px medium+), minus the
+   bar's 4px padding and 4px gap. */
+.md-top-app-bar__leading:empty { width: calc(var(--md-sys-layout-margin, 16px) - 8px); }
+.md-top-app-bar__leading { color: var(--md-sys-color-on-surface); }
+.md-top-app-bar__actions { margin-left: auto; }
+
+/*
+ * The title slot does NOT clip (overflow:hidden here would cut off the focus ring of a title link).
+ * Ellipsis lives on the text inside: a string title is wrapped in .md-top-app-bar__title-text, and
+ * a custom title (e.g. a link) should give its text spans the same overflow/ellipsis rules.
+ */
+.md-top-app-bar__title {
+  display: flex;
+  flex: 1 1 auto;
+  align-items: center;
+  min-width: 0;
+  white-space: nowrap;
+  font-size: var(--md-sys-typescale-title-large-size);
+  line-height: var(--md-sys-typescale-title-large-line-height);
+  font-weight: var(--md-sys-typescale-title-large-weight);
+  letter-spacing: var(--md-sys-typescale-title-large-tracking);
+}
+.md-top-app-bar__title a { color: inherit; text-decoration: none; }
+.md-top-app-bar__title-text {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.md-top-app-bar--center .md-top-app-bar__leading,
+.md-top-app-bar--center .md-top-app-bar__actions { flex: 1 1 0; }
+.md-top-app-bar--center .md-top-app-bar__actions { justify-content: flex-end; }
+.md-top-app-bar--center .md-top-app-bar__title { flex: 0 1 auto; justify-content: center; text-align: center; }
+
+@media print {
+  .md-top-app-bar { display: none; }
+}

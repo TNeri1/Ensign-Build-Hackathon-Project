@@ -1,0 +1,48 @@
+/* Pickup desk: scanner + manual entry (side by side on expanded), then the result card. */
+.pickup__grid { display: grid; grid-template-columns: 1fr; gap: 16px; align-items: start; }
+@media (min-width: 840px) {
+  .pickup__grid { grid-template-columns: minmax(0, 3fr) minmax(0, 2fr); gap: 24px; }
+}
+.pickup__card,
+.pickup__result { border-radius: var(--md-sys-shape-corner-large); }
+@media (min-width: 600px) {
+  .pickup__card,
+  .pickup__result { padding: 24px; }
+}
+.pickup__lookup { display: flex; justify-content: flex-end; }
+
+.pickup__result { width: 100%; max-width: 640px; }
+.pickup__item { display: flex; align-items: center; gap: 16px; }
+.pickup__title {
+  margin: 0;
+  font-size: var(--md-sys-typescale-headline-small-size);
+  line-height: var(--md-sys-typescale-headline-small-line-height);
+  font-weight: var(--md-sys-typescale-headline-small-weight);
+}
+.pickup__meta {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  color: var(--md-sys-color-on-surface-variant);
+  font-size: var(--md-sys-typescale-body-medium-size);
+  line-height: var(--md-sys-typescale-body-medium-line-height);
+}
+.pickup__claimant {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 12px 16px;
+  border-radius: var(--md-sys-shape-corner-medium);
+  background-color: var(--md-sys-color-surface-container-high);
+}
+.pickup__claimant > .md-icon { flex: none; color: var(--md-sys-color-on-surface-variant); }
+.pickup__claimant strong { font-weight: 500; word-break: break-all; }
+.pickup__check {
+  padding: 4px 16px;
+  border-radius: var(--md-sys-shape-corner-medium);
+  background-color: var(--md-sys-color-secondary-container);
+  color: var(--md-sys-color-on-secondary-container);
+}
+@media (max-width: 599.98px) {
+  .pickup__lookup .md-button { width: 100%; }
+}

@@ -1,0 +1,302 @@
+/*
+ * Material 3 outlined text field. Shared field shell: Select.tsx imports this file too.
+ * Container 56px, corner extra-small (4px). The label floats into a <fieldset><legend> notch.
+ * Floated when: .md-field--populated, focus inside the container, or browser autofill.
+ */
+.md-field {
+  --_outline: var(--md-sys-color-outline);
+  --_outline-width: 1px;
+  --_label: var(--md-sys-color-on-surface-variant);
+  --_icon: var(--md-sys-color-on-surface-variant);
+  --_caret: var(--md-sys-color-primary);
+  --_label-x: 16px;
+  --_pad-start: 16px;
+  --_pad-end: 16px;
+  --_ease: var(--md-sys-motion-easing-standard);
+  --_dur: var(--md-sys-motion-duration-short4);
+  display: block;
+  width: 100%;
+  min-width: 0;
+  box-sizing: border-box;
+  font-family: inherit;
+}
+.md-field--leading { --_label-x: 52px; --_pad-start: 52px; }
+.md-field--trailing { --_pad-end: 52px; }
+
+.md-field__container {
+  position: relative;
+  display: flex;
+  align-items: center;
+  min-height: 56px;
+  border-radius: var(--md-sys-shape-corner-extra-small);
+}
+
+/* Outline + notch */
+.md-field__outline {
+  position: absolute;
+  inset: -5px 0 0 0;
+  margin: 0;
+  /* border + padding = 12px, so the notch text (4px inner padding) starts at 16px like the label */
+  padding: 0 calc(12px - var(--_outline-width));
+  min-width: 0;
+  border: var(--_outline-width) solid var(--_outline);
+  border-radius: var(--md-sys-shape-corner-extra-small);
+  pointer-events: none;
+  text-align: start;
+  overflow: hidden;
+  transition: border-color var(--md-sys-motion-duration-short2) var(--_ease);
+}
+.md-field__notch {
+  float: none;
+  display: block;
+  width: auto;
+  max-width: 0.01px;
+  height: 10px;
+  padding: 0;
+  overflow: hidden;
+  visibility: hidden;
+  white-space: nowrap;
+  font-size: var(--md-sys-typescale-body-small-size);
+  line-height: 10px;
+  letter-spacing: var(--md-sys-typescale-body-small-tracking);
+  font-weight: var(--md-sys-typescale-body-small-weight);
+  transition: max-width 50ms var(--_ease);
+}
+.md-field__notch > span {
+  display: inline-block;
+  padding: 0 4px;
+  opacity: 0;
+}
+
+/* Native control */
+.md-field__input {
+  flex: 1 1 auto;
+  box-sizing: border-box;
+  width: 100%;
+  min-width: 0;
+  height: 56px;
+  margin: 0;
+  padding: 16px var(--_pad-end) 16px var(--_pad-start);
+  border: none;
+  border-radius: var(--md-sys-shape-corner-extra-small);
+  outline: none;
+  background: transparent;
+  color: var(--md-sys-color-on-surface);
+  caret-color: var(--_caret);
+  font-family: inherit;
+  font-size: var(--md-sys-typescale-body-large-size);
+  line-height: var(--md-sys-typescale-body-large-line-height);
+  font-weight: var(--md-sys-typescale-body-large-weight);
+  letter-spacing: var(--md-sys-typescale-body-large-tracking);
+  -webkit-appearance: none;
+  appearance: none;
+}
+.md-field__input::placeholder {
+  color: var(--md-sys-color-on-surface-variant);
+  opacity: 1;
+  transition: color var(--md-sys-motion-duration-short2) var(--_ease);
+}
+.md-field:not(.md-field--populated) .md-field__container:not(:focus-within) .md-field__input::placeholder {
+  color: transparent;
+}
+
+/* Multiline */
+.md-field--multiline .md-field__container { align-items: stretch; padding-top: 8px; }
+.md-field--multiline .md-field__input {
+  height: auto;
+  min-height: 48px;
+  padding-top: 8px;
+  resize: vertical;
+}
+
+/* Label */
+.md-field__label {
+  position: absolute;
+  left: var(--_label-x);
+  top: 50%;
+  max-width: calc(100% - var(--_label-x) - var(--_pad-end));
+  transform: translateY(-50%);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  color: var(--_label);
+  pointer-events: none;
+  font-size: var(--md-sys-typescale-body-large-size);
+  line-height: var(--md-sys-typescale-body-large-line-height);
+  letter-spacing: var(--md-sys-typescale-body-large-tracking);
+  font-weight: var(--md-sys-typescale-body-large-weight);
+  transition:
+    top var(--_dur) var(--_ease),
+    left var(--_dur) var(--_ease),
+    transform var(--_dur) var(--_ease),
+    font-size var(--_dur) var(--_ease),
+    line-height var(--_dur) var(--_ease),
+    color var(--md-sys-motion-duration-short2) var(--_ease);
+}
+.md-field--multiline .md-field__label { top: 16px; transform: none; }
+
+/* Floated label + open notch */
+.md-field--populated .md-field__label,
+.md-field__container:focus-within .md-field__label {
+  top: 0;
+  left: 16px;
+  max-width: calc(100% - 32px);
+  transform: translateY(-50%);
+  font-size: var(--md-sys-typescale-body-small-size);
+  line-height: var(--md-sys-typescale-body-small-line-height);
+  letter-spacing: var(--md-sys-typescale-body-small-tracking);
+}
+.md-field--populated .md-field__notch,
+.md-field__container:focus-within .md-field__notch {
+  max-width: 100%;
+  transition: max-width 100ms var(--_ease) 50ms;
+}
+/* Autofill (Chrome may not report the value until the user interacts). Separate rules on purpose. */
+.md-field__input:-webkit-autofill ~ .md-field__label {
+  top: 0;
+  left: 16px;
+  transform: translateY(-50%);
+  font-size: var(--md-sys-typescale-body-small-size);
+  line-height: var(--md-sys-typescale-body-small-line-height);
+}
+.md-field__container:has(.md-field__input:-webkit-autofill) .md-field__notch { max-width: 100%; }
+
+/* Icons */
+.md-field__leading-icon,
+.md-field__trailing-icon {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--_icon);
+  pointer-events: none;
+}
+.md-field__leading-icon { left: 12px; }
+.md-field__trailing-icon { right: 12px; }
+.md-field--multiline :is(.md-field__leading-icon, .md-field__trailing-icon) { top: 16px; transform: none; }
+
+.md-field__icon-button {
+  position: absolute;
+  right: 4px;
+  top: 50%;
+  transform: translateY(-50%);
+  isolation: isolate;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  margin: 0;
+  padding: 0;
+  border: none;
+  border-radius: var(--md-sys-shape-corner-full);
+  background: transparent;
+  color: var(--_icon);
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+.md-field--multiline .md-field__icon-button { top: 8px; transform: none; }
+.md-field__icon-button::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  border-radius: inherit;
+  background-color: currentColor;
+  opacity: 0;
+  transition: opacity var(--md-sys-motion-duration-short2) var(--_ease);
+}
+/* 48px touch target */
+.md-field__icon-button::after { content: ''; position: absolute; inset: -4px; }
+@media (hover: hover) {
+  .md-field__icon-button:hover::before { opacity: 0.08; }
+}
+.md-field__icon-button:focus-visible::before,
+.md-field__icon-button:active::before { opacity: 0.1; }
+.md-field__icon-button:focus-visible {
+  outline: 3px solid var(--md-sys-color-secondary);
+  outline-offset: 2px;
+}
+
+/* Supporting / error text */
+.md-field__supporting {
+  padding: 4px 16px 0;
+  color: var(--md-sys-color-on-surface-variant);
+  font-size: var(--md-sys-typescale-body-small-size);
+  line-height: var(--md-sys-typescale-body-small-line-height);
+  letter-spacing: var(--md-sys-typescale-body-small-tracking);
+  font-weight: var(--md-sys-typescale-body-small-weight);
+}
+
+/* States: hover, focus, error, disabled */
+@media (hover: hover) {
+  .md-field:not(.md-field--disabled) .md-field__container:hover { --_outline: var(--md-sys-color-on-surface); }
+}
+.md-field__container:focus-within {
+  --_outline: var(--md-sys-color-primary) !important;
+  --_outline-width: 2px;
+}
+.md-field__container:focus-within .md-field__label { color: var(--md-sys-color-primary); }
+
+.md-field--error {
+  --_outline: var(--md-sys-color-error);
+  --_label: var(--md-sys-color-error);
+  --_caret: var(--md-sys-color-error);
+}
+@media (hover: hover) {
+  .md-field--error:not(.md-field--disabled) .md-field__container:hover { --_outline: var(--md-sys-color-on-error-container); }
+  .md-field--error .md-field__container:hover .md-field__label { color: var(--md-sys-color-on-error-container); }
+}
+.md-field--error .md-field__container:focus-within { --_outline: var(--md-sys-color-error) !important; }
+.md-field--error .md-field__container:focus-within .md-field__label { color: var(--md-sys-color-error); }
+.md-field--error .md-field__trailing-icon,
+.md-field--error .md-field__icon-button { color: var(--md-sys-color-error); }
+.md-field--error .md-field__supporting { color: var(--md-sys-color-error); }
+
+.md-field--disabled {
+  --_outline: color-mix(in srgb, var(--md-sys-color-on-surface) 12%, transparent);
+  --_label: color-mix(in srgb, var(--md-sys-color-on-surface) 38%, transparent);
+  --_icon: color-mix(in srgb, var(--md-sys-color-on-surface) 38%, transparent);
+}
+.md-field--disabled .md-field__input {
+  color: color-mix(in srgb, var(--md-sys-color-on-surface) 38%, transparent);
+  cursor: default;
+}
+.md-field--disabled .md-field__supporting {
+  color: color-mix(in srgb, var(--md-sys-color-on-surface) 38%, transparent);
+}
+.md-field--disabled .md-field__icon-button { cursor: default; }
+.md-field--disabled .md-field__icon-button::before { opacity: 0; }
+
+/* type="file": the picker button styled as a tonal button. */
+.md-field__input[type='file'] {
+  padding-top: 12px;
+  padding-bottom: 12px;
+  font-size: var(--md-sys-typescale-body-medium-size);
+  color: var(--md-sys-color-on-surface-variant);
+  cursor: pointer;
+}
+.md-field__input[type='file']::file-selector-button {
+  height: 32px;
+  margin: 0 12px 0 0;
+  padding: 0 16px;
+  border: none;
+  border-radius: var(--md-sys-shape-corner-full);
+  background: var(--md-sys-color-secondary-container);
+  color: var(--md-sys-color-on-secondary-container);
+  font-family: inherit;
+  font-size: var(--md-sys-typescale-label-large-size);
+  font-weight: var(--md-sys-typescale-label-large-weight);
+  letter-spacing: var(--md-sys-typescale-label-large-tracking);
+  cursor: pointer;
+}
+.md-field__input[type='file']:focus-visible::file-selector-button {
+  outline: 3px solid var(--md-sys-color-secondary);
+  outline-offset: 2px;
+}
+
+/* Date/time pickers: keep the native indicator readable in both themes. */
+.md-field__input::-webkit-calendar-picker-indicator { cursor: pointer; opacity: 0.7; }
+
+@media (prefers-reduced-motion: reduce) {
+  .md-field__label, .md-field__notch, .md-field__outline, .md-field__icon-button::before { transition: none !important; }
+}

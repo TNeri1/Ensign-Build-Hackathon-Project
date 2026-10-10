@@ -1,0 +1,45 @@
+/* Status label: small-radius tonal chip, label-medium. Non-interactive. */
+.md-status-chip {
+  box-sizing: border-box;
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  gap: 4px;
+  height: 24px;
+  padding: 0 8px 0 6px;
+  border-radius: var(--md-sys-shape-corner-small);
+  font-size: var(--md-sys-typescale-label-medium-size);
+  line-height: var(--md-sys-typescale-label-medium-line-height);
+  font-weight: var(--md-sys-typescale-label-medium-weight);
+  letter-spacing: var(--md-sys-typescale-label-medium-tracking);
+  white-space: nowrap;
+  vertical-align: middle;
+}
+.md-status-chip__label::first-letter { text-transform: uppercase; }
+.md-status-chip__label { display: inline-block; }
+.md-status-chip__icon { flex: none; }
+
+.md-status-chip--secondary {
+  background-color: var(--md-sys-color-secondary-container);
+  color: var(--md-sys-color-on-secondary-container);
+}
+.md-status-chip--primary {
+  background-color: var(--md-sys-color-primary-container);
+  color: var(--md-sys-color-on-primary-container);
+}
+.md-status-chip--warning {
+  background-color: var(--md-sys-color-warning-container);
+  color: var(--md-sys-color-on-warning-container);
+}
+.md-status-chip--success {
+  background-color: var(--md-sys-color-success-container);
+  color: var(--md-sys-color-on-success-container);
+}
+.md-status-chip--neutral {
+  background-color: var(--md-sys-color-surface-container-highest);
+  color: var(--md-sys-color-on-surface-variant);
+}
+.md-status-chip--error {
+  background-color: var(--md-sys-color-error-container);
+  color: var(--md-sys-color-on-error-container);
+}

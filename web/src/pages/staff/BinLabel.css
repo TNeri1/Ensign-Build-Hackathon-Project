@@ -1,0 +1,81 @@
+.staff-label {
+  display: flex;
+  justify-content: center;
+  padding-block: 8px 24px;
+}
+.staff-label__card.md-card {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 16px;
+  width: 100%;
+  max-width: 400px;
+  padding: 8px 24px 24px;
+  border-radius: var(--md-sys-shape-corner-extra-large);
+}
+.staff-label__bar { display: flex; align-items: center; gap: 4px; margin-left: -12px; }
+.staff-label__title {
+  margin: 0;
+  color: var(--md-sys-color-on-surface);
+  font-size: var(--md-sys-typescale-title-large-size);
+  line-height: var(--md-sys-typescale-title-large-line-height);
+  font-weight: var(--md-sys-typescale-title-large-weight);
+}
+
+/* The label itself is physical paper: always black on white, in both themes and in print. */
+.staff-label__paper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  padding: 24px 16px;
+  border-radius: var(--md-sys-shape-corner-large);
+  background: #fff;
+  color: #000;
+  box-shadow: inset 0 0 0 1px var(--md-sys-color-outline-variant);
+  text-align: center;
+}
+.staff-label__qr { width: 100%; max-width: 240px; aspect-ratio: 1; }
+.staff-label__qr svg { width: 100%; height: 100%; }
+.staff-label__code {
+  margin: 8px 0 0;
+  font-size: var(--md-sys-typescale-display-small-size);
+  line-height: var(--md-sys-typescale-display-small-line-height);
+  font-weight: 500;
+  letter-spacing: 0.02em;
+  overflow-wrap: anywhere;
+}
+.staff-label__text {
+  margin: 0;
+  font-size: var(--md-sys-typescale-body-large-size);
+  line-height: var(--md-sys-typescale-body-large-line-height);
+}
+.staff-label__hint {
+  margin: 0;
+  color: var(--md-sys-color-on-surface-variant);
+  font-size: var(--md-sys-typescale-body-medium-size);
+  line-height: var(--md-sys-typescale-body-medium-line-height);
+  text-align: center;
+}
+
+@media print {
+  html:has(.staff-label),
+  body:has(.staff-label) { background: #fff; }
+  .staff-label { padding: 0; }
+  .staff-label__card.md-card {
+    max-width: none;
+    padding: 0;
+    background: #fff;
+    box-shadow: none;
+  }
+  .staff-label__bar,
+  .staff-label__hint,
+  .staff-label__print { display: none; }
+  .staff-label__paper {
+    padding: 0.5in 0;
+    box-shadow: none;
+  }
+  .staff-label__qr { max-width: 3in; }
+  .staff-label__code { font-size: 48pt; line-height: 1.1; }
+  .staff-label__text { font-size: 16pt; }
+}

@@ -1,0 +1,89 @@
+/* M3 data viz: horizontal bars with rounded ends on a tonal track. Text never wears the bar color. */
+.data-bars {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.data-bars__row {
+  --_fill: var(--md-sys-color-primary);
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  grid-template-areas: 'label value' 'track track';
+  align-items: center;
+  gap: 6px 12px;
+}
+.data-bars__row--secondary { --_fill: var(--md-sys-color-secondary); }
+.data-bars__row--tertiary { --_fill: var(--md-sys-color-tertiary); }
+.data-bars__row--warning { --_fill: var(--md-sys-color-warning); }
+.data-bars__row--success { --_fill: var(--md-sys-color-success); }
+.data-bars__row--error { --_fill: var(--md-sys-color-error); }
+.data-bars__row--neutral { --_fill: var(--md-sys-color-outline); }
+
+.data-bars__label {
+  grid-area: label;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+  color: var(--md-sys-color-on-surface-variant);
+  font-size: var(--md-sys-typescale-body-medium-size);
+  line-height: var(--md-sys-typescale-body-medium-line-height);
+  font-weight: var(--md-sys-typescale-body-medium-weight);
+  letter-spacing: var(--md-sys-typescale-body-medium-tracking);
+}
+.data-bars__label-text {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.data-bars__label-text::first-letter { text-transform: uppercase; }
+.data-bars__icon { flex: none; color: var(--_fill); align-self: center; }
+
+.data-bars__value {
+  grid-area: value;
+  color: var(--md-sys-color-on-surface);
+  font-size: var(--md-sys-typescale-label-large-size);
+  line-height: var(--md-sys-typescale-label-large-line-height);
+  font-weight: var(--md-sys-typescale-label-large-weight);
+  letter-spacing: var(--md-sys-typescale-label-large-tracking);
+  font-variant-numeric: tabular-nums;
+}
+
+.data-bars__track {
+  grid-area: track;
+  display: block;
+  height: 12px;
+  overflow: hidden;
+  border-radius: var(--md-sys-shape-corner-full);
+  background-color: var(--md-sys-color-surface-container-highest);
+}
+.data-bars__fill {
+  display: block;
+  height: 100%;
+  min-width: 12px; /* a tiny non-zero value still shows a rounded dot */
+  border-radius: var(--md-sys-shape-corner-full);
+  background-color: var(--_fill);
+  transform-origin: left center;
+  animation: data-bars-grow var(--md-sys-motion-duration-long2) var(--md-sys-motion-easing-emphasized-decelerate);
+}
+@keyframes data-bars-grow {
+  from { transform: scaleX(0); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .data-bars__fill { animation: none; }
+}
+@media (forced-colors: active) {
+  .data-bars__track { border: 1px solid CanvasText; }
+  .data-bars__fill { background-color: Highlight; }
+}
+
+.data-bars__empty {
+  margin: 0;
+  color: var(--md-sys-color-on-surface-variant);
+  font-size: var(--md-sys-typescale-body-medium-size);
+  line-height: var(--md-sys-typescale-body-medium-line-height);
+}

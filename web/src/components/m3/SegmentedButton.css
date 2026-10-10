@@ -1,0 +1,104 @@
+/* Material 3 segmented button: 40px tall, full corners at the ends, 1px outline between segments.
+   Grid columns are equal and sized to the widest segment (icon included), so labels never get
+   squeezed; the label ellipsis is only a fallback when the group exceeds max-width. */
+.md-segmented {
+  display: inline-grid;
+  grid-auto-flow: column;
+  grid-auto-columns: minmax(0, 1fr);
+  max-width: 100%;
+  vertical-align: middle;
+}
+
+.md-segmented__segment {
+  --_container: transparent;
+  --_content: var(--md-sys-color-on-surface);
+  position: relative;
+  isolation: isolate;
+  box-sizing: border-box;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-width: 48px;
+  height: 40px;
+  margin: 0;
+  padding: 0 12px;
+  border: 1px solid var(--md-sys-color-outline);
+  border-radius: 0;
+  background-color: var(--_container);
+  color: var(--_content);
+  font-family: inherit;
+  font-size: var(--md-sys-typescale-label-large-size);
+  line-height: var(--md-sys-typescale-label-large-line-height);
+  font-weight: var(--md-sys-typescale-label-large-weight);
+  letter-spacing: var(--md-sys-typescale-label-large-tracking);
+  white-space: nowrap;
+  cursor: pointer;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+  transition: background-color var(--md-sys-motion-duration-short4) var(--md-sys-motion-easing-standard);
+}
+.md-segmented__segment + .md-segmented__segment { margin-left: -1px; }
+.md-segmented__segment:first-child {
+  border-start-start-radius: var(--md-sys-shape-corner-full);
+  border-end-start-radius: var(--md-sys-shape-corner-full);
+  padding-left: 16px;
+}
+.md-segmented__segment:last-child {
+  border-start-end-radius: var(--md-sys-shape-corner-full);
+  border-end-end-radius: var(--md-sys-shape-corner-full);
+  padding-right: 16px;
+}
+
+.md-segmented__segment--selected {
+  --_container: var(--md-sys-color-secondary-container);
+  --_content: var(--md-sys-color-on-secondary-container);
+}
+
+/* State layer */
+.md-segmented__segment::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  border-radius: inherit;
+  background-color: var(--_content);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity var(--md-sys-motion-duration-short2) var(--md-sys-motion-easing-standard);
+}
+@media (hover: hover) {
+  .md-segmented__segment:hover::before { opacity: 0.08; }
+}
+.md-segmented__segment:focus-visible::before,
+.md-segmented__segment:active::before { opacity: 0.1; }
+
+/* 48px touch target */
+.md-segmented__segment::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 50%;
+  height: 48px;
+  transform: translateY(-50%);
+}
+
+.md-segmented__segment:focus-visible {
+  z-index: 1;
+  outline: 3px solid var(--md-sys-color-secondary);
+  outline-offset: 2px;
+}
+
+.md-segmented__icon { flex: none; }
+.md-segmented__label { min-width: 0; overflow: hidden; text-overflow: ellipsis; }
+
+/* Narrow screens: keep labels, drop decorative (unselected) icons to save room. */
+@media (max-width: 599px) {
+  .md-segmented__segment:not(.md-segmented__segment--selected) .md-segmented__icon { display: none; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .md-segmented__segment,
+  .md-segmented__segment::before { transition: none; }
+}

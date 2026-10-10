@@ -3,7 +3,16 @@ import { useParams } from 'react-router-dom';
 import { PICKUP_PREFIX } from '@vlf/shared';
 import { api } from '../../api/client';
 import { useGet } from '../../api/useApi';
-import { QrCode } from '../../components/QrCode';
+import { Alert } from '../../components/m3/Alert';
+import { Button } from '../../components/m3/Button';
+import { Card } from '../../components/m3/Card';
+import { LinearProgress } from '../../components/m3/LinearProgress';
+import { PageHeader } from '../../components/m3/PageHeader';
+import { StatusChip } from '../../components/m3/StatusChip';
+import { TextField } from '../../components/m3/TextField';
+import { CategoryAvatar, ColorTag, MetaLine, categoryIdFromLabel } from '../../components/public/ItemMeta';
+import { ClaimApproved, ClaimNotice } from './ClaimStatus';
+import './Claim.css';
 
 interface ClaimView {
   status: 'open' | 'submitted' | 'approved' | 'denied' | 'released';
@@ -11,6 +20,14 @@ interface ClaimView {
   item: { categoryLabel: string; color: string; area: string };
   questions: { field: string; question: string }[];
 }
+
+const SUBTITLE: Record<ClaimView['status'], string> = {
+  open: 'Answer a few questions so we can confirm the item is yours.',
+  submitted: 'Your answers are with our staff.',
+  approved: 'Your claim is approved. Collect your item at the lost & found desk.',
+  denied: 'We could not verify this claim.',
+  released: 'This claim is complete.',
+};
 
 export function Claim() {
   const { token } = useParams();
@@ -23,36 +40,75 @@ export function Claim() {
     try { await api.post(`/public/claims/${token}/answers`, { answers }); setErr(''); reload(); } catch (x) { setErr((x as Error).message); }
   }
 
-  if (error) return <p className="error">{error}</p>;
-  if (!data) return <p className="muted">Loading…</p>;
+  if (error) {
+    return (
+      <div className="app-page claim">
+        <PageHeader title="Claim your item" subtitle="We could not open this claim link." />
+        <Alert kind="error">{error}</Alert>
+      </div>
+    );
+  }
+  if (!data) {
+    return (
+      <div className="app-page claim">
+        <PageHeader title="Claim your item" subtitle="Loading your claim…" />
+        <LinearProgress label="Loading claim" />
+      </div>
+    );
+  }
   const { item } = data;
 
   return (
-    <div className="stack">
-      <h1>Claim your item</h1>
-      <p>{item.categoryLabel} · {item.color} · found near {item.area}</p>
+    <div className="app-page claim">
+      <PageHeader title="Claim your item" subtitle={SUBTITLE[data.status]} />
+
+      <Card variant="filled" className="claim-item" as="section" aria-label="Item">
+        <CategoryAvatar category={categoryIdFromLabel(item.categoryLabel)} large />
+        <div className="claim-item__text">
+          <h2 className="claim-item__title">{item.categoryLabel}</h2>
+          <div className="claim-item__meta">
+            <ColorTag color={item.color} />
+            <MetaLine icon="location_on">Found near {item.area}</MetaLine>
+          </div>
+        </div>
+        <div className="claim-item__status"><StatusChip state={data.status} /></div>
+      </Card>
+
       {data.status === 'open' && (
-        <form onSubmit={submit} className="stack">
-          <p>Answer these questions about your item so we can confirm it is yours.</p>
-          {data.questions.map((q) => (
-            <label key={q.field} className="field">
-              <span>{q.question}</span>
-              <input value={answers[q.field] ?? ''} onChange={(e) => setAnswers((a) => ({ ...a, [q.field]: e.target.value }))} required />
-            </label>
-          ))}
-          {err && <p className="error">{err}</p>}
-          <button className="primary big">Submit answers</button>
+        <form onSubmit={submit} className="claim-form">
+          <p className="claim-form__intro">Only the owner should know these details. Answer as best you can; staff review every answer.</p>
+          <ol className="claim-questions" role="list">
+            {data.questions.map((q, i) => (
+              <li key={q.field} className="claim-question">
+                <label htmlFor={`claim-q-${q.field}`} className="claim-question__text">
+                  <span className="claim-question__num" aria-hidden="true">{i + 1}</span>
+                  {q.question}
+                </label>
+                <TextField id={`claim-q-${q.field}`} label="Your answer" required value={answers[q.field] ?? ''}
+                  onChange={(v) => setAnswers((a) => ({ ...a, [q.field]: v }))} />
+              </li>
+            ))}
+          </ol>
+          {err && <Alert kind="error">{err}</Alert>}
+          <Button type="submit" size="large" full icon="send" className="claim-submit">Submit answers</Button>
         </form>
       )}
-      {data.status === 'submitted' && <p className="ok">Thanks. Staff are reviewing your answers. Check back on this page or watch your email.</p>}
-      {data.status === 'denied' && <p className="error">We could not verify this claim: {data.decisionReason}</p>}
-      {data.status === 'approved' && (
-        <div className="stack">
-          <p className="ok">Approved! Bring photo ID and show this code at the lost &amp; found desk. It works once.</p>
-          <QrCode value={`${PICKUP_PREFIX}${token}`} />
-        </div>
+      {data.status === 'submitted' && (
+        <ClaimNotice tone="pending" icon="hourglass_empty" title="Staff are reviewing your answers">
+          Thanks! Staff will compare them with the item. Check back on this page or watch your email for the result.
+        </ClaimNotice>
       )}
-      {data.status === 'released' && <p className="ok">This item has been collected.</p>}
+      {data.status === 'denied' && (
+        <Alert kind="error" title="We could not verify this claim">
+          {data.decisionReason || 'Your answers did not match the item closely enough.'} If you think this is a mistake, visit the lost &amp; found desk.
+        </Alert>
+      )}
+      {data.status === 'approved' && <ClaimApproved value={`${PICKUP_PREFIX}${token}`} />}
+      {data.status === 'released' && (
+        <ClaimNotice tone="done" icon="task_alt" title="Item collected">
+          This item has been collected. Thanks for using venue lost &amp; found.
+        </ClaimNotice>
+      )}
     </div>
   );
 }

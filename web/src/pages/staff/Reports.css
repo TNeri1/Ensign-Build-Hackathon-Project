@@ -1,0 +1,25 @@
+/* Lost reports list: up to three lines (headline, when + contact, description). */
+.reports-list .md-list-item { align-items: flex-start; padding-block: 12px; }
+.reports-list .md-list-item__headline { white-space: normal; }
+.reports-list .md-list-item__supporting {
+  display: flex;
+  flex-direction: column;
+  -webkit-line-clamp: unset;
+  line-clamp: none;
+}
+.reports-list__meta { display: flex; flex-direction: column; min-width: 0; }
+.reports-list__when { flex: none; }
+.reports-list__email { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+@media (min-width: 600px) {
+  .reports-list__meta { flex-direction: row; gap: 4px; }
+  .reports-list__email::before { content: '· '; }
+}
+.reports-list__desc {
+  display: -webkit-box;
+  overflow: hidden;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+  margin-top: 2px;
+  color: var(--md-sys-color-on-surface);
+}

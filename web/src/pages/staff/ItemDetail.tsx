@@ -1,35 +1,133 @@
 import { useParams } from 'react-router-dom';
 import { useGet } from '../../api/useApi';
+import type { Bin } from '../../api/types';
 import { ItemPhoto } from '../../components/ItemPhoto';
+import { CustodyTimeline, type CustodyEvent } from '../../components/staff/CustodyTimeline';
+import { useCategories } from '../../components/staff/useCategories';
+import { Alert } from '../../components/m3/Alert';
+import { Button } from '../../components/m3/Button';
+import { Card } from '../../components/m3/Card';
+import { Icon } from '../../components/m3/Icon';
+import type { IconName } from '../../components/m3/icons';
+import { LinearProgress } from '../../components/m3/LinearProgress';
+import { PageHeader } from '../../components/m3/PageHeader';
+import { StatusChip } from '../../components/m3/StatusChip';
+import { categoryIcon } from '../../lib/categoryIcon';
+import { formatDateTime } from '../../lib/format';
+import { colorLabel, colorSwatch } from '../../lib/itemColor';
+import './ItemDetail.css';
 
 interface Detail {
   id: string; category: string; color: string; state: string; found_area: string; found_at: string;
-  sensitive: number; photo_path: string | null;
+  sensitive: number; photo_path: string | null; bin_id?: string | null;
   attributes: { key: string; value: string; is_public: number }[];
-  custody: { id: number; at: string; actor_label: string; from_state: string | null; to_state: string; note: string }[];
+  custody: CustodyEvent[];
 }
 
 export function ItemDetail() {
   const { id } = useParams();
-  const { data, error } = useGet<Detail>(`/items/${id}`);
-  if (error) return <p className="error">{error}</p>;
-  if (!data) return <p className="muted">Loading…</p>;
+  const { data, error, reload } = useGet<Detail>(`/items/${id}`);
+  const bins = useGet<Bin[]>('/bins').data;
+  const { label, fieldLabel } = useCategories();
+
+  if (error) {
+    return (
+      <div className="app-page app-page--wide">
+        <PageHeader title="Item" back="/staff" />
+        <Alert kind="error" title="Couldn't load this item" action={<Button variant="text" onClick={reload}>Retry</Button>}>
+          {error}
+        </Alert>
+      </div>
+    );
+  }
+  if (!data) {
+    return (
+      <div className="app-page app-page--wide">
+        <PageHeader title="Item" back="/staff" />
+        <LinearProgress label="Loading item" />
+      </div>
+    );
+  }
+
+  const bin = data.bin_id ? bins?.find((b) => b.id === data.bin_id) : undefined;
+  const swatch = colorSwatch(data.color);
+
   return (
-    <div className="stack">
-      <h1>{data.category} · {data.color}</h1>
-      <span className={`badge ${data.state}`}>{data.state.replace('_', ' ')}</span>
-      {data.photo_path && <ItemPhoto itemId={data.id} sensitive={!!data.sensitive} />}
-      <p>Found at {data.found_area}, {new Date(data.found_at).toLocaleString()}</p>
-      <h2>Details</h2>
-      <ul className="list">
-        {data.attributes.map((a) => <li key={a.key}><strong>{a.key}</strong>: {a.value} <em className="muted">{a.is_public ? 'public' : 'private'}</em></li>)}
-      </ul>
-      <h2>Chain of custody</h2>
-      <ol className="list">
-        {data.custody.map((e) => (
-          <li key={e.id}>{new Date(e.at).toLocaleString()} — {e.from_state ?? 'new'} → <strong>{e.to_state}</strong> by {e.actor_label}{e.note && ` (${e.note})`}</li>
-        ))}
-      </ol>
+    <div className="app-page app-page--wide item-detail">
+      <PageHeader
+        title={`${label(data.category)} · ${colorLabel(data.color)}`}
+        back="/staff"
+        subtitle={
+          <span className="item-detail__subtitle">
+            <StatusChip state={data.state} />
+            {!!data.sensitive && (
+              <span className="item-detail__flag">
+                <Icon name="shield" size={16} /> Sensitive
+              </span>
+            )}
+          </span>
+        }
+      />
+
+      <div className="item-detail__layout">
+        <div className="item-detail__primary">
+          {data.photo_path ? (
+            <ItemPhoto itemId={data.id} sensitive={!!data.sensitive} fallbackIcon={categoryIcon(data.category)} />
+          ) : (
+            <div className="item-detail__nophoto">
+              <Icon name={categoryIcon(data.category)} size={40} />
+              <span className="md-typescale-body-medium">No photo</span>
+            </div>
+          )}
+
+          <Card variant="outlined" as="section" aria-labelledby="item-details-title" className="item-detail__card">
+            <h2 id="item-details-title" className="item-detail__card-title">
+              <Icon name="info" size={20} /> Details
+            </h2>
+            <dl className="item-detail__dl">
+              <Row icon="location_on" term="Found where">{data.found_area}</Row>
+              <Row icon="schedule" term="Found at">{formatDateTime(data.found_at)}</Row>
+              <Row icon="palette" term="Color">
+                <span className="item-detail__color">
+                  {swatch && <span className="item-detail__swatch" style={{ background: swatch }} aria-hidden="true" />}
+                  {colorLabel(data.color)}
+                </span>
+              </Row>
+              <Row icon="warehouse" term="Storage bin">{bin ? `${bin.code} — ${bin.label}` : data.bin_id ? '…' : 'Not stored yet'}</Row>
+              {data.attributes.map((a) => (
+                <Row key={a.key} icon={a.is_public ? 'visibility' : 'lock'} term={fieldLabel(data.category, a.key)} isPrivate={!a.is_public}>
+                  {a.value}
+                </Row>
+              ))}
+            </dl>
+            {data.attributes.some((a) => !a.is_public) && (
+              <p className="item-detail__legend">
+                <Icon name="lock" size={16} /> Private: never shown publicly, used for claim questions.
+              </p>
+            )}
+          </Card>
+        </div>
+
+        <Card variant="outlined" as="section" aria-labelledby="custody-title" className="item-detail__card item-detail__custody">
+          <h2 id="custody-title" className="item-detail__card-title">
+            <Icon name="history" size={20} /> Chain of custody
+          </h2>
+          <CustodyTimeline events={data.custody} />
+        </Card>
+      </div>
+    </div>
+  );
+}
+
+function Row({ icon, term, isPrivate, children }: { icon: IconName; term: string; isPrivate?: boolean; children: React.ReactNode }) {
+  return (
+    <div className={`item-detail__row${isPrivate ? ' item-detail__row--private' : ''}`}>
+      <dt>
+        <Icon name={icon} size={18} className="item-detail__row-icon" />
+        <span>{term}</span>
+        {isPrivate && <span className="md-visually-hidden"> (private)</span>}
+      </dt>
+      <dd>{children}</dd>
     </div>
   );
 }

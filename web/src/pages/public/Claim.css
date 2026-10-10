@@ -1,0 +1,120 @@
+/* Public claim page (/claim/:token). */
+.claim { display: flex; flex-direction: column; gap: 16px; }
+.claim > .md-page-header { margin-bottom: 8px; }
+
+/* Item summary */
+.claim-item { display: flex; flex-wrap: wrap; align-items: center; gap: 16px; padding: 16px; border-radius: var(--md-sys-shape-corner-large); }
+.claim-item__text { flex: 1 1 160px; min-width: 0; display: flex; flex-direction: column; gap: 4px; }
+.claim-item__title {
+  font-size: var(--md-sys-typescale-title-large-size);
+  line-height: var(--md-sys-typescale-title-large-line-height);
+  font-weight: var(--md-sys-typescale-title-large-weight);
+}
+.claim-item__meta { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 16px; }
+.claim-item__meta .pub-color {
+  color: var(--md-sys-color-on-surface-variant);
+  font-size: var(--md-sys-typescale-body-medium-size);
+  line-height: var(--md-sys-typescale-body-medium-line-height);
+}
+.claim-item__status { flex: none; }
+@media (max-width: 599.98px) {
+  .claim-item__status { flex-basis: 100%; margin-top: -8px; padding-left: 72px; }
+}
+
+/* Questions */
+.claim-form { display: flex; flex-direction: column; gap: 24px; margin-top: 8px; }
+.claim-form__intro { color: var(--md-sys-color-on-surface-variant); }
+.claim-questions { display: flex; flex-direction: column; gap: 24px; margin: 0; padding: 0; list-style: none; }
+.claim-question { display: flex; flex-direction: column; gap: 12px; }
+.claim-question__text {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  font-size: var(--md-sys-typescale-title-medium-size);
+  line-height: var(--md-sys-typescale-title-medium-line-height);
+  font-weight: var(--md-sys-typescale-title-medium-weight);
+  letter-spacing: var(--md-sys-typescale-title-medium-tracking);
+}
+.claim-question__num {
+  flex: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  border-radius: var(--md-sys-shape-corner-full);
+  background-color: var(--md-sys-color-primary);
+  color: var(--md-sys-color-on-primary);
+  font-size: var(--md-sys-typescale-label-medium-size);
+  line-height: 1;
+}
+
+/* Status cards */
+.claim-notice { display: flex; align-items: flex-start; gap: 16px; padding: 20px; }
+.claim-notice__icon,
+.claim-approved__icon {
+  flex: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 48px;
+  height: 48px;
+  border-radius: var(--md-sys-shape-corner-full);
+}
+.claim-notice--pending { border-color: var(--md-sys-color-warning); }
+.claim-notice--pending .claim-notice__icon {
+  background-color: var(--md-sys-color-warning-container);
+  color: var(--md-sys-color-on-warning-container);
+}
+.claim-notice--done .claim-notice__icon {
+  background-color: var(--md-sys-color-surface-container-highest);
+  color: var(--md-sys-color-on-surface-variant);
+}
+.claim-notice__text { display: flex; flex-direction: column; gap: 4px; min-width: 0; }
+.claim-notice__title {
+  font-size: var(--md-sys-typescale-title-medium-size);
+  line-height: var(--md-sys-typescale-title-medium-line-height);
+  font-weight: var(--md-sys-typescale-title-medium-weight);
+  letter-spacing: var(--md-sys-typescale-title-medium-tracking);
+}
+.claim-notice__body {
+  color: var(--md-sys-color-on-surface-variant);
+  font-size: var(--md-sys-typescale-body-medium-size);
+  line-height: var(--md-sys-typescale-body-medium-line-height);
+  letter-spacing: var(--md-sys-typescale-body-medium-tracking);
+}
+
+/* Approved: QR + steps */
+.claim-approved { display: flex; flex-direction: column; gap: 20px; padding: 20px; border-radius: var(--md-sys-shape-corner-large); }
+.claim-approved__head { display: flex; align-items: center; gap: 16px; }
+.claim-approved__icon {
+  background-color: var(--md-sys-color-success-container);
+  color: var(--md-sys-color-on-success-container);
+}
+.claim-approved__body { display: flex; flex-direction: column; align-items: center; gap: 20px; }
+/* The QR SVG carries its own white quiet zone, so it stays scannable in both themes. */
+.claim-approved__qr {
+  overflow: hidden;
+  border-radius: var(--md-sys-shape-corner-medium);
+  box-shadow: 0 0 0 1px var(--md-sys-color-outline-variant);
+  max-width: 100%;
+}
+.claim-approved__qr > * { max-width: 100%; }
+.claim-approved__qr svg { display: block; width: 100%; height: 100%; }
+.claim-approved__qr { line-height: 0; }
+.claim-approved__steps {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin: 0;
+  padding-left: 24px;
+  align-self: stretch;
+}
+.claim-approved__steps li::marker { color: var(--md-sys-color-primary); font-weight: 500; }
+
+@media (min-width: 600px) {
+  .claim-item { padding: 20px 24px; }
+  .claim-form .claim-submit { width: auto; min-width: 240px; align-self: flex-start; }
+  .claim-approved { padding: 24px; }
+  .claim-approved__body { flex-direction: row; align-items: center; gap: 32px; }
+}

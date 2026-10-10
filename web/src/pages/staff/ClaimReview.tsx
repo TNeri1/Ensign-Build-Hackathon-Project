@@ -2,11 +2,22 @@ import { useState } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import { api } from '../../api/client';
 import { useGet } from '../../api/useApi';
+import { Alert } from '../../components/m3/Alert';
+import { Button } from '../../components/m3/Button';
+import { Card } from '../../components/m3/Card';
+import { Icon } from '../../components/m3/Icon';
+import { LinearProgress } from '../../components/m3/LinearProgress';
+import { PageHeader } from '../../components/m3/PageHeader';
+import { StatusChip } from '../../components/m3/StatusChip';
+import { TextField } from '../../components/m3/TextField';
+import { AnswerComparison, type Comparison } from '../../components/claims/AnswerComparison';
+import { CategoryAvatar, itemTitle } from '../../components/claims/CategoryAvatar';
+import './ClaimReview.css';
 
 interface Review {
   claim: { id: string; status: string; claimantEmail: string; decisionReason: string | null };
   item: { id: string; category: string; color: string; foundArea: string; state: string; hasPhoto: boolean; sensitive: boolean };
-  comparisons: { field: string; question: string; expected: string; given: string; autoMatch: boolean }[];
+  comparisons: Comparison[];
 }
 
 export function ClaimReview() {
@@ -15,40 +26,74 @@ export function ClaimReview() {
   const { data, error } = useGet<Review>(`/claims/${id}`);
   const [reason, setReason] = useState('');
   const [err, setErr] = useState('');
+  const [busy, setBusy] = useState(false);
+  const [tried, setTried] = useState<'approve' | 'deny' | null>(null);
 
   async function decide(decision: 'approve' | 'deny') {
-    try { await api.post(`/claims/${id}/decision`, { decision, reason }); nav('/staff/claims'); } catch (e) { setErr((e as Error).message); }
+    setBusy(true); setTried(decision);
+    try { await api.post(`/claims/${id}/decision`, { decision, reason }); nav('/staff/claims'); } catch (e) { setErr((e as Error).message); setBusy(false); }
   }
 
-  if (error) return <p className="error">{error}</p>;
-  if (!data) return <p className="muted">Loading…</p>;
+  const header = <PageHeader title="Review claim" back="/staff/claims" subtitle={data && <StatusChip state={data.claim.status} />} />;
+  if (error) return <div className="app-page app-page--wide md-stack">{header}<Alert kind="error">{error}</Alert></div>;
+  if (!data) return <div className="app-page app-page--wide md-stack">{header}<LinearProgress label="Loading claim" /></div>;
   const pending = data.claim.status === 'submitted';
+  const { claim, item } = data;
 
   return (
-    <div className="stack">
-      <h1>Review claim</h1>
-      <p>{data.claim.claimantEmail} claims <Link to={`/staff/items/${data.item.id}`}>{data.item.category} · {data.item.color}</Link> (found near {data.item.foundArea})</p>
-      <table className="compare">
-        <thead><tr><th>Question</th><th>Claimant said</th><th>On record (private)</th><th></th></tr></thead>
-        <tbody>
-          {data.comparisons.map((c) => (
-            <tr key={c.field}>
-              <td>{c.question}</td><td>{c.given}</td><td>{c.expected}</td>
-              <td className={c.autoMatch ? 'ok' : 'error'}>{c.autoMatch ? '✓ match' : '✗ differs'}</td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
-      {pending ? (
-        <div className="card stack">
-          <input value={reason} onChange={(e) => setReason(e.target.value)} placeholder="Reason (required to deny)" />
-          {err && <p className="error">{err}</p>}
-          <div className="row">
-            <button className="primary" onClick={() => decide('approve')}>Approve</button>
-            <button onClick={() => decide('deny')}>Deny</button>
+    <div className="app-page app-page--wide claim-review md-stack">
+      {header}
+      <Card variant="filled" className="claim-review__summary">
+        <div className="claim-review__party">
+          <span className="claim-review__person" aria-hidden="true"><Icon name="person" /></span>
+          <div className="claims-field">
+            <span className="claims-field__label">Claimant</span>
+            <span className="claims-field__value claim-review__email">{claim.claimantEmail}</span>
           </div>
         </div>
-      ) : <p>Status: <strong>{data.claim.status}</strong> {data.claim.decisionReason}</p>}
+        <div className="claim-review__party">
+          <CategoryAvatar category={item.category} color={item.color} />
+          <div className="claims-field claim-review__item">
+            <span className="claims-field__label">Claims item</span>
+            <Link to={`/staff/items/${item.id}`} className="claims-field__value claim-review__item-link">{itemTitle(item.category, item.color)}</Link>
+            <span className="claim-review__where"><Icon name="location_on" size={16} />Found near {item.foundArea}</span>
+            <span className="claim-review__state"><StatusChip state={item.state} /></span>
+          </div>
+        </div>
+      </Card>
+
+      <Card variant="outlined" className="claim-review__compare" as="section">
+        <div className="md-stack">
+          <h2 className="claims-card-title"><Icon name="assignment" size={20} />Verification answers</h2>
+          <AnswerComparison rows={data.comparisons} />
+        </div>
+      </Card>
+
+      {pending ? (
+        <Card variant="elevated" className="claim-review__decision" as="section">
+          <div className="md-stack">
+            <h2 className="claims-card-title"><Icon name="verified" size={20} />Decision</h2>
+            <TextField
+              label="Reason (required to deny)"
+              value={reason}
+              onChange={setReason}
+              multiline
+              rows={2}
+              supportingText="Sent to the claimant with the decision."
+              error={err && tried === 'deny' && !reason.trim() ? 'Enter a reason to deny this claim.' : undefined}
+            />
+            {err && <Alert kind="error">{err}</Alert>}
+            <div className="claim-review__actions">
+              <Button variant="outlined" size="large" icon="close" className="claim-review__deny" disabled={busy} onClick={() => decide('deny')}>Deny</Button>
+              <Button variant="filled" size="large" icon="check" disabled={busy} onClick={() => decide('approve')}>Approve</Button>
+            </div>
+          </div>
+        </Card>
+      ) : (
+        <Alert kind={claim.status === 'denied' ? 'warning' : 'success'} title={`Claim ${claim.status}`}>
+          {claim.decisionReason || 'No reason recorded.'}
+        </Alert>
+      )}
     </div>
   );
 }

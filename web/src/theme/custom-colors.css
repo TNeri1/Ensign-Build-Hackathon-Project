@@ -1,0 +1,34 @@
+/*
+ * Harmonized custom "success" color roles.
+ *
+ * Overrides the success roles from tokens.css (imported just before this file, same selectors,
+ * so cascade order wins). The original tone-90 container (#80f9c9) was a high-chroma mint that
+ * out-shouted the muted tonal-spot primary; these values are lower-chroma, harmonized toward
+ * the blue source color as M3 recommends for custom colors.
+ *
+ * WCAG contrast (AA needs 4.5:1):
+ *   light  on-success #fff / success #2a6a47              6.5:1
+ *          on-success-container #002111 / #b4f1c8        13.4:1
+ *   dark   on-success #003920 / success #98d5ad           7.8:1
+ *          on-success-container #b4f1c8 / #0e5131         7.3:1
+ */
+:root {
+  --md-sys-color-success: #2a6a47;
+  --md-sys-color-on-success: #ffffff;
+  --md-sys-color-success-container: #b4f1c8;
+  --md-sys-color-on-success-container: #002111;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --md-sys-color-success: #98d5ad;
+    --md-sys-color-on-success: #003920;
+    --md-sys-color-success-container: #0e5131;
+    --md-sys-color-on-success-container: #b4f1c8;
+  }
+}
+:root[data-theme="dark"] {
+  --md-sys-color-success: #98d5ad;
+  --md-sys-color-on-success: #003920;
+  --md-sys-color-success-container: #0e5131;
+  --md-sys-color-on-success-container: #b4f1c8;
+}

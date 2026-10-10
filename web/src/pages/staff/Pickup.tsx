@@ -1,7 +1,16 @@
-import { useState } from 'react';
+import { useState, type FormEvent } from 'react';
 import { parsePickupCode } from '@vlf/shared';
 import { api } from '../../api/client';
+import { Alert } from '../../components/m3/Alert';
+import { Button } from '../../components/m3/Button';
+import { Card } from '../../components/m3/Card';
+import { Checkbox } from '../../components/m3/Checkbox';
+import { Icon } from '../../components/m3/Icon';
+import { PageHeader } from '../../components/m3/PageHeader';
+import { TextField } from '../../components/m3/TextField';
 import { QrScanner } from '../../components/QrScanner';
+import { CategoryAvatar, itemTitle } from '../../components/claims/CategoryAvatar';
+import './Pickup.css';
 
 interface Lookup { claimantEmail: string; item: { id: string; category: string; color: string; foundArea: string } }
 
@@ -26,31 +35,73 @@ export function Pickup() {
   async function release() {
     try {
       await api.post('/pickup/release', { code, idChecked: true });
-      setMsg('Item released. Custody log updated.'); setLookup(null); setIdChecked(false); setScanning(true);
+      setMsg('Custody log updated.'); setLookup(null); setIdChecked(false); setScanning(true);
     } catch (e) { setErr((e as Error).message); }
   }
 
+  function submitManual(e: FormEvent) {
+    e.preventDefault();
+    if (manual.length >= 10) find(manual);
+  }
+
   return (
-    <div className="stack">
-      <h1>Pickup</h1>
-      {msg && <p className="ok">{msg}</p>}
-      {err && <p className="error">{err}</p>}
-      {!lookup && scanning && <QrScanner onScan={find} />}
+    <div className="app-page app-page--wide pickup md-stack">
+      <PageHeader title="Pickup" subtitle="Scan the claimant's pickup QR code, check their photo ID, then release the item." />
+      {msg && <Alert kind="success" title="Item released">{msg}</Alert>}
+      {err && <Alert kind="error">{err}</Alert>}
       {!lookup && (
-        <div className="card stack">
-          <label className="field"><span>Manual entry (if the camera is unavailable)</span>
-            <input value={manual} onChange={(e) => setManual(e.target.value)} placeholder="Paste pickup code" />
-          </label>
-          <button onClick={() => find(manual)} disabled={manual.length < 10}>Look up</button>
+        <div className="pickup__grid">
+          {scanning && (
+            <Card variant="outlined" className="pickup__card" as="section">
+              <div className="md-stack">
+                <h2 className="claims-card-title"><Icon name="qr_code_scanner" size={20} />Scan pickup code</h2>
+                <QrScanner onScan={find} />
+              </div>
+            </Card>
+          )}
+          <Card variant="outlined" className="pickup__card" as="section">
+            <form className="md-stack" onSubmit={submitManual}>
+              <h2 className="claims-card-title"><Icon name="edit" size={20} />Manual entry</h2>
+              <TextField
+                label="Can't scan? Enter the code"
+                value={manual}
+                onChange={setManual}
+                leadingIcon="qr_code"
+                placeholder="vlf:pickup:…"
+                autoComplete="off"
+                supportingText="Accepts vlf:pickup:… or the bare token."
+              />
+              <div className="pickup__lookup">
+                <Button type="submit" variant="filled" icon="search" disabled={manual.length < 10}>Look up</Button>
+              </div>
+            </form>
+          </Card>
         </div>
       )}
       {lookup && (
-        <div className="card stack">
-          <h2>{lookup.item.category} · {lookup.item.color}</h2>
-          <p>Release to <strong>{lookup.claimantEmail}</strong></p>
-          <label><input type="checkbox" checked={idChecked} onChange={(e) => setIdChecked(e.target.checked)} style={{ width: 'auto' }} /> I checked the claimant&apos;s photo ID</label>
-          <button className="primary big" disabled={!idChecked} onClick={release}>Release item</button>
-        </div>
+        <Card variant="elevated" className="pickup__result" as="section">
+          <div className="md-stack md-stack--lg">
+            <div className="pickup__item">
+              <CategoryAvatar category={lookup.item.category} color={lookup.item.color} size="large" />
+              <div className="claims-field">
+                <span className="claims-field__label">Ready for pickup</span>
+                <h2 className="pickup__title">{itemTitle(lookup.item.category, lookup.item.color)}</h2>
+                <span className="pickup__meta"><Icon name="location_on" size={16} />Found near {lookup.item.foundArea}</span>
+              </div>
+            </div>
+            <div className="pickup__claimant">
+              <Icon name="person" />
+              <div className="claims-field">
+                <span className="claims-field__label">Release to</span>
+                <strong className="claims-field__value">{lookup.claimantEmail}</strong>
+              </div>
+            </div>
+            <div className="pickup__check">
+              <Checkbox checked={idChecked} onChange={setIdChecked} label="I checked the claimant's photo ID" />
+            </div>
+            <Button variant="filled" size="large" full icon="task_alt" disabled={!idChecked} onClick={release}>Release item</Button>
+          </div>
+        </Card>
       )}
     </div>
   );
